@@ -3,6 +3,9 @@
 #include "IncludeWin.h"
 #include "DirectXException.h"
 #include "Keyboard.h"
+#include "Mouse.h"
+
+#include <optional>
 
 class Window {
 public:
@@ -41,12 +44,15 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void SetTitle(const std::string& title);
+	static std::optional<int> ProcessMessages();
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 public:
 	Keyboard kbd;
+	Mouse mouse;
 private:
 	int width;
 	int height;

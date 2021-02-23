@@ -1,31 +1,18 @@
 #include "Window.h"
 #include "DirectXException.h"
+#include "App.h"
+
+#include <sstream>
+#include <iostream>
 
 int CALLBACK WinMain(
 	HINSTANCE	hInstance,
 	HINSTANCE	hPrevInstance,
 	LPSTR		lpCmdLine,
-	int			nCmdShow) 
+	int			nCmdShow)
 {
 	try {
-		Window wnd(800, 300, "DirextX Learning");
-
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-			if (wnd.kbd.KeyIsPressed(VK_SPACE)) {
-				MessageBox(nullptr, "Space pressed!", "Space pressed", MB_OK | MB_ICONEXCLAMATION);
-			}
-		}
-;
-		if (gResult == -1) {
-			return -1;
-		}
-
-		return msg.wParam;
+		return App{}.Go();
 	}
 	catch (const DirectXException& e) {
 		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
