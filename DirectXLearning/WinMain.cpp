@@ -1,9 +1,4 @@
-#include "Window.h"
-#include "DirectXException.h"
 #include "App.h"
-
-#include <sstream>
-#include <iostream>
 
 int CALLBACK WinMain(
 	HINSTANCE	hInstance,
