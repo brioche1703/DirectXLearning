@@ -51,7 +51,7 @@ public:
 			return type != Type::Invalid;
 		}
 
-		Mouse::Event::Type GetType() const noexcept {
+		Type GetType() const noexcept {
 			return type;
 		}
 

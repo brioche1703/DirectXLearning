@@ -1,7 +1,7 @@
 #include "Window.h"
+#include "resource.h"
 
 #include <sstream>
-#include "resource.h"
 #include <iostream>
 
 Window::WindowClass Window::WindowClass::wndClass;
@@ -67,6 +67,8 @@ Window::Window(int width, int height, const char* name)
 	}
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window() {
@@ -92,6 +94,11 @@ std::optional<int> Window::ProcessMessages() {
 	}
 
 	return {};
+}
+
+Graphics& Window::Gfx()
+{
+	return *pGfx;
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept{
@@ -145,13 +152,13 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		const POINTS pt = MAKEPOINTS(lParam);
 		if (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height) {
 			mouse.OnMouseMove(pt.x, pt.y);
-			if (!mouse.isInWindow) {
+			if (!mouse.IsInWindow()) {
 				SetCapture(hWnd);
 				mouse.OnMouseEnter();
 			}
 		}
 		else {
-			if (mouse.leftIsPressed | mouse.rightIsPressed) {
+			if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
 				mouse.OnMouseMove(pt.x, pt.y);
 			}
 			else {
@@ -171,7 +178,12 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	{
 		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnLeftReleased(pt.x, pt.y);
-		break;
+		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height)
+		{
+			ReleaseCapture();
+			mouse.OnMouseLeave();
+		}
+		break;	
 	}
 	case WM_RBUTTONDOWN:
 	{
@@ -182,8 +194,13 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_RBUTTONUP:
 	{
 		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnRightPressed(pt.x, pt.y);
-		break;
+		mouse.OnRightReleased(pt.x, pt.y);
+		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height)
+		{
+			ReleaseCapture();
+			mouse.OnMouseLeave();
+		}
+		break;	
 	}
 	case WM_MOUSEWHEEL:
 	{

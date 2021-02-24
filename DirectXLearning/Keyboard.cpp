@@ -26,7 +26,7 @@ void Keyboard::FlushKey() noexcept {
 char Keyboard::ReadChar() noexcept {
 	if (charBuffer.size() > 0u) {
 		unsigned char charCode = charBuffer.front();
-		keyBuffer.pop();
+		charBuffer.pop();
 		return charCode;
 	}
 	else {
