@@ -14,4 +14,5 @@ private:
 private:
 	Window wnd;
 	Timer timer;
+	bool quit = false;
 };
