@@ -5,6 +5,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "WindowThrowMacros.h"
 
 #include <optional>
 #include <memory>
@@ -74,8 +75,3 @@ private:
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
 };
-
-// Error exception macro helper
-#define DXWND_EXCEPT(hr) Window::HrException(__LINE__, __FILE__, hr)
-#define DXWND_LAST_EXCEPT() Window::HrException(__LINE__, __FILE__, GetLastError())
-#define DXWND_NOGFX_EXCEPT() Window::NoGfxException(__LINE__, __FILE__)
