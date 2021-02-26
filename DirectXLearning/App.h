@@ -2,10 +2,13 @@
 
 #include "Window.h"
 #include "Timer.h"
+#include "BindableBase.h"
 
 class App {
 public:
 	App();
+	~App();
+
 	int Go();
 
 private:
@@ -14,5 +17,6 @@ private:
 private:
 	Window wnd;
 	Timer timer;
-	bool quit = false;
+
+	std::vector<std::unique_ptr<class Box>> boxes;
 };
