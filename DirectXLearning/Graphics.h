@@ -7,6 +7,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <wrl.h>
+#include <DirectXMath.h>
 
 class Graphics {
 	friend class Bindable;
@@ -60,8 +61,12 @@ public:
 	void ClearBuffer(float red, float green, float blue) noexcept;
 
 	void DrawTriangle(float angle, float x, float z);
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 
 private:
+	DirectX::XMMATRIX projection;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif // NDEBUG
