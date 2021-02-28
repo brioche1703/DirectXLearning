@@ -1,6 +1,13 @@
 #include "Box.h"
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
+#include "Cube.h"
+#include "Plane.h"
+#include "Cone.h"
+#include "Prism.h"
+#include "Sphere.h"
+
+#include <DirectXMath.h>
 
 
 Box::Box(
@@ -9,7 +16,8 @@ Box::Box(
 	std::uniform_real_distribution<float>& adist, 
 	std::uniform_real_distribution<float>& ddist, 
 	std::uniform_real_distribution<float>& odist, 
-	std::uniform_real_distribution<float>& rdist)
+	std::uniform_real_distribution<float>& rdist,
+	std::uniform_real_distribution<float>& bdist)
 	:
 	r(rdist(rng)),
 	theta(adist(rng)),
@@ -24,34 +32,13 @@ Box::Box(
 {
 	if (!IsStaticInitialized()) {
 		struct Vertex {
-			struct {
-				float x;
-				float y;
-				float z;
-			} pos;
+			DirectX::XMFLOAT3 pos;
 		};
 
-		const std::vector<Vertex> vertices{
-			{-1.0f, -1.0f, -1.0f},
-			{ 1.0f, -1.0f, -1.0f},
-			{-1.0f,  1.0f, -1.0f},
-			{ 1.0f,  1.0f, -1.0f},
-			{-1.0f, -1.0f,  1.0f},
-			{ 1.0f, -1.0f,  1.0f},
-			{-1.0f,  1.0f,  1.0f},
-			{ 1.0f,  1.0f,  1.0f},
-		};
+		auto model = Cube::Make<Vertex>();
+		model.Transform(DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-		const std::vector<unsigned short> indices = {
-			0, 2, 1,  2, 3, 1,
-			1, 3, 5,  3, 7, 5,
-			2, 6, 3,  3, 6, 7,
-			4, 5, 7,  4, 7, 6,
-			0, 4, 2,  2, 4, 6,
-			0, 1, 4,  1, 5, 4,
-		};
-
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
 		auto pVertexShaderBytecode = pVertexShader->GetBytecode();
@@ -59,7 +46,7 @@ Box::Box(
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
 
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
 		struct ConstantBuffer2
 		{
@@ -69,17 +56,19 @@ Box::Box(
 				float g;
 				float b;
 				float a;
-			} face_colors[6];
+			} face_colors[8];
 		};
 		const ConstantBuffer2 cb2 =
 		{
 			{
-				{ 1.0f,0.0f,1.0f },
-				{ 1.0f,0.0f,0.0f },
-				{ 0.0f,1.0f,0.0f },
-				{ 0.0f,0.0f,1.0f },
-				{ 1.0f,1.0f,0.0f },
-				{ 0.0f,1.0f,1.0f },
+				{ 1.0f, 1.0f, 1.0f },
+				{ 1.0f, 0.0f, 0.0f },
+				{ 0.0f, 1.0f, 0.0f },
+				{ 1.0f, 1.0f, 0.0f },
+				{ 0.0f, 0.0f, 1.0f },
+				{ 1.0f, 0.0f, 1.0f },
+				{ 0.0f, 1.0f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f },
 			}
 		};
 
@@ -99,6 +88,9 @@ Box::Box(
 
 	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
 
+	DirectX::XMStoreFloat3x3(
+		&mt,
+		DirectX::XMMatrixScaling(1.0f, 1.0f, bdist(rng)));
 }
 
 void Box::Update(float dt) noexcept
@@ -113,7 +105,8 @@ void Box::Update(float dt) noexcept
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+	return DirectX::XMLoadFloat3x3(&mt) *
+		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
 		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
 		DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
