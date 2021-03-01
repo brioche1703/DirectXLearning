@@ -9,3 +9,4 @@
 #include "InputLayout.h"
 #include "TransformCBuf.h"
 #include "Box.h"
+#include "Texture.h"

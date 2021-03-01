@@ -7,6 +7,7 @@
 // The following #defines disable a bunch of unused windows stuff. If you 
 // get weird errors when trying to do some windows stuff, try removing some
 // (or all) of these defines (it will increase build time though).
+#ifndef FULL_WINTARD
 #define WIN32_LEAN_AND_MEAN
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
@@ -24,7 +25,6 @@
 #define NONLS
 #define NOMEMMGR
 #define NOMETAFILE
-#define NOMINMAX
 #define NOOPENFILE
 #define NOSCROLL
 #define NOSERVICE
@@ -41,6 +41,8 @@
 #define NOPROXYSTUB
 #define NOIMAGE
 #define NOTAPE
+#endif
+#define NOMINMAX
 
 #define STRICT
 
