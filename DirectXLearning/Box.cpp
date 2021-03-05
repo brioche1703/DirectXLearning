@@ -6,6 +6,7 @@
 #include "Cone.h"
 #include "Prism.h"
 #include "Sphere.h"
+#include "external/imgui/imgui.h"
 
 #include <DirectXMath.h>
 
@@ -17,68 +18,36 @@ Box::Box(
 	std::uniform_real_distribution<float>& ddist, 
 	std::uniform_real_distribution<float>& odist, 
 	std::uniform_real_distribution<float>& rdist,
-	std::uniform_real_distribution<float>& bdist)
+	std::uniform_real_distribution<float>& bdist,
+	DirectX::XMFLOAT3 material)
 	:
-	r(rdist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng)),
-	chi(adist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dtheta(odist(rng)),
-	dphi(odist(rng)),
-	dchi(odist(rng))
+	TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
 	if (!IsStaticInitialized()) {
 		struct Vertex {
 			DirectX::XMFLOAT3 pos;
+			DirectX::XMFLOAT3 n;
 		};
 
-		auto model = Cube::Make<Vertex>();
-		model.Transform(DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f));
+		auto model = Cube::MakeIndependent<Vertex>();
+		model.SetNormalsIndependentFlat();
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
-		auto pVertexShader = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
-		auto pVertexShaderBytecode = pVertexShader->GetBytecode();
-		AddStaticBind(std::move(pVertexShader));
+		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
+		auto pvsbc = pvs->GetBytecode();
+		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		struct ConstantBuffer2
-		{
-			struct
-			{
-				float r;
-				float g;
-				float b;
-				float a;
-			} face_colors[8];
-		};
-		const ConstantBuffer2 cb2 =
-		{
-			{
-				{ 1.0f, 1.0f, 1.0f },
-				{ 1.0f, 0.0f, 0.0f },
-				{ 0.0f, 1.0f, 0.0f },
-				{ 1.0f, 1.0f, 0.0f },
-				{ 0.0f, 0.0f, 1.0f },
-				{ 1.0f, 0.0f, 1.0f },
-				{ 0.0f, 1.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f },
-			}
-		};
-
-		AddStaticBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 			{"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		};
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pVertexShaderBytecode));
+		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
 		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
@@ -88,26 +57,49 @@ Box::Box(
 
 	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
 
+	materialConstants.color = material;
+	AddBind(std::make_unique<MaterialCBuf>(gfx, materialConstants, 1u));
+
 	DirectX::XMStoreFloat3x3(
 		&mt,
 		DirectX::XMMatrixScaling(1.0f, 1.0f, bdist(rng)));
 }
 
-void Box::Update(float dt) noexcept
-{
-	roll += droll * dt;
-	pitch += dpitch * dt;
-	yaw += dyaw * dt;
-	theta += dtheta * dt;
-	phi += dphi * dt;
-	chi += dchi * dt;
+DirectX::XMMATRIX Box::GetTransformXM() const noexcept {
+	return DirectX::XMLoadFloat3x3(&mt) *
+		TestObject::GetTransformXM();
 }
 
-DirectX::XMMATRIX Box::GetTransformXM() const noexcept
-{
-	return DirectX::XMLoadFloat3x3(&mt) *
-		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-		DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept {
+	using namespace std::string_literals;
+
+	bool dirty = false;
+	bool open = true;
+	if (ImGui::Begin(("Box"s + std::to_string(id)).c_str(), &open)) {
+		ImGui::Text("Material Properties");
+		const auto cd = ImGui::ColorEdit3("Material Color", &materialConstants.color.x);
+		const auto sid = ImGui::SliderFloat("Specular Intensity", &materialConstants.specularIntensity, 0.05f, 4.0f, "%.2f", 2);
+		const auto spd = ImGui::SliderFloat("Specular Power", &materialConstants.specularPower, 1.0f, 200.0f, "%.2f", 2);
+		dirty = cd || sid || spd;
+		ImGui::Text("Position");
+		ImGui::SliderFloat("R", &r, 0.0f, 80.0f, "%.1f");
+		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
+		ImGui::SliderAngle("Phi", &phi, -180.0f, 180.0f);
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+	}
+	ImGui::End();
+	
+	if (dirty) {
+		SyncMaterial(gfx);
+	}
+	return open;
+}
+
+void Box::SyncMaterial(Graphics& gfx) noexcept(!IS_DEBUG) {
+	auto pConstPS = QueryBindable<MaterialCBuf>();
+	assert(pConstPS != nullptr);
+	pConstPS->Update(gfx, materialConstants);
 }

@@ -40,7 +40,7 @@ Sheet::Sheet(Graphics& gfx,
 		model.vertices[3].tex = { 1.0f, 1.0f };
 
 
-		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("src/images/philipe.png")));
+		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("src/images/luc.png")));
 
 		AddStaticBind(std::make_unique<Sampler>(gfx));
 
@@ -84,6 +84,5 @@ DirectX::XMMATRIX Sheet::GetTransformXM() const noexcept
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
 		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-		dx::XMMatrixScaling(3.0f, 3.0f, 1.0f) *
-		dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+		dx::XMMatrixScaling(3.0f, 3.0f, 1.0f);
 }
