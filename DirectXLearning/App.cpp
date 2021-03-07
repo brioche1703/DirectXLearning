@@ -8,6 +8,7 @@
 #include "GDIPlusManager.h"
 #include "Cylinder.h"
 #include "ModelTest.h"
+#include "Vertex.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -134,7 +135,7 @@ int App::Go() {
 
 void App::DoFrame() {
 	auto dt = timer.Mark() * speed_factor;
-	
+
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
 
