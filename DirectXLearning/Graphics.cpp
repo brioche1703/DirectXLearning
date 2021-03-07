@@ -7,7 +7,7 @@
 #include <DirectXMath.h>
 
 #include "Bindable.h"
-#include "BindableBase.h"
+#include "BindableCommon.h"
 
 #include "external/imgui/imgui_impl_dx11.h"
 #include "external/imgui/imgui_impl_win32.h"
@@ -120,7 +120,7 @@ Graphics::Graphics(HWND hWnd) {
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
-void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG) {
+void Graphics::DrawIndexed(UINT count) noxnd {
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 

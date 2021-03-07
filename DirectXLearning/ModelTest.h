@@ -29,5 +29,5 @@ private:
 		float padding[3];
 	} materialConstants;
 
-	using MaterialCBuf = PixelConstantBuffer<PSMaterialConstant>;
+	using MaterialCBuf = Bind::PixelConstantBuffer<PSMaterialConstant>;
 };

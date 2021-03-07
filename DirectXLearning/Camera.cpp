@@ -20,7 +20,7 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept {
 void Camera::SpawnControlWindow() noexcept {
 	if (ImGui::Begin("Camera")) {
 		ImGui::Text("Position");
-		ImGui::SliderFloat("R", &r, 0.1f, 80.0f, "%.1f");
+		ImGui::SliderFloat("R", &r, 0.2f, 80.0f, "%.1f");
 		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
 		ImGui::SliderAngle("Phi", &phi, -89.0f, 89.0f);
 		ImGui::Text("Orientation");

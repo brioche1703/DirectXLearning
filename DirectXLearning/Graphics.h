@@ -3,14 +3,19 @@
 #include "IncludeWin.h"
 #include "DirectXException.h"
 #include "DxgiInfoManager.h"
+#include "ConditionalNoexcept.h"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <DirectXMath.h>
 
+namespace Bind {
+	class Bindable;
+}
+
 class Graphics {
-	friend class Bindable;
+	friend class Bind::Bindable;
 public:
 	class Exception : public DirectXException {
 		using DirectXException::DirectXException;
@@ -60,7 +65,7 @@ public:
 	void BeginFrame(float red, float green, float blue) noexcept;
 	void EndFrame();
 
-	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void DrawIndexed(UINT count) noxnd;
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 
