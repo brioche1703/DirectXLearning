@@ -2,6 +2,7 @@
 
 #include "IncludeWin.h"
 #include "DirectXException.h"
+#include "ConditionalNoexcept.h"
 
 #include <memory>
 
@@ -90,8 +91,8 @@ public:
 	~Surface();
 
 	void Clear(Color fillValue) noexcept;
-	void PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!IS_DEBUG);
-	Color GetPixel(unsigned int x, unsigned int y) const noexcept(!IS_DEBUG);
+	void PutPixel(unsigned int x, unsigned int y, Color c) noxnd;
+	Color GetPixel(unsigned int x, unsigned int y) const noxnd;
 	unsigned int GetWidth() const noexcept;
 	unsigned int GetHeight() const noexcept;
 	Color* GetBufferPtr() noexcept;
@@ -99,7 +100,7 @@ public:
 	const Color* GetBufferPtrConst() const noexcept;
 	static Surface FromFile(const std::string& filename);
 	void Save(const std::string& filename) const;
-	void Copy(const Surface& src) noexcept(!IS_DEBUG);
+	void Copy(const Surface& src) noxnd;
 
 private:
 	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;

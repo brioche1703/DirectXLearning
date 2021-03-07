@@ -1,5 +1,5 @@
 #include "ModelTest.h"
-#include "BindableBase.h"
+#include "BindableCommon.h"
 #include "Vertex.h"
 
 #include "external/imgui/imgui.h"
@@ -58,19 +58,19 @@ ModelTest::ModelTest(
 			indices.push_back(face.mIndices[2]);
 		}
 
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vbuf));
+		AddStaticBind(std::make_unique<Bind::VertexBuffer>(gfx, vbuf));
 
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+		AddStaticIndexBuffer(std::make_unique<Bind::IndexBuffer>(gfx, indices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
+		auto pvs = std::make_unique<Bind::VertexShader>(gfx, L"PhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+		AddStaticBind(std::make_unique<Bind::PixelShader>(gfx, L"PhongPS.cso"));
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+		AddStaticBind(std::make_unique<Bind::InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		AddStaticBind(std::make_unique<Bind::Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
 	else
 	{
@@ -80,7 +80,7 @@ ModelTest::ModelTest(
 	materialConstants.color = material;
 	AddBind(std::make_unique<MaterialCBuf>(gfx, materialConstants, 1u));
 
-	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
+	AddBind(std::make_unique<Bind::TransformCBuf>(gfx, *this));
 }
 
 bool ModelTest::SpawnControlWindow(int id, Graphics& gfx) noexcept {

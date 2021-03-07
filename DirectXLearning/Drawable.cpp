@@ -1,6 +1,10 @@
 #include "Drawable.h"
+#include "Bindable.h"
+#include "IndexBuffer.h"
 
-void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG) {
+using namespace Bind;
+
+void Drawable::Draw(Graphics& gfx) const noxnd {
 	for (auto& b : binds) {
 		b->Bind(gfx);
 	}
@@ -10,7 +14,7 @@ void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG) {
 	gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 
-void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG) {
+void Drawable::AddBind(std::unique_ptr<Bindable> bind) noxnd {
 	assert("Must use AddIndexBuffer to bind index buffer!" && typeid(*bind) != typeid(IndexBuffer));
 	binds.push_back(std::move(bind));
 }

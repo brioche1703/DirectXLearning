@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Drawable.h"
-#include "Bindable.h"
-#include <memory>
-#include <random>
+#include "ConditionalNoexcept.h"
 
 template<class T>
 class DrawableBase : public Drawable {
@@ -12,21 +10,21 @@ protected:
 		return !staticBinds.empty();
 	}
 
-	void AddStaticBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG) {
-		assert("Must use AddStaticIndexBuffer to bind an index buffer!" && typeid(*bind) != typeid(IndexBuffer));
+	void AddStaticBind(std::unique_ptr<Bind::Bindable> bind) noxnd {
+		assert("Must use AddStaticIndexBuffer to bind an index buffer!" && typeid(*bind) != typeid(Bind::IndexBuffer));
 		staticBinds.push_back(std::move(bind));
 	}
 
-	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> iBuffer) noexcept(!IS_DEBUG) {
+	void AddStaticIndexBuffer(std::unique_ptr<Bind::IndexBuffer> iBuffer) noxnd {
 		assert("You are adding a second index buffer!" && pIndexBuffer == nullptr);
 		pIndexBuffer = iBuffer.get();
 		staticBinds.push_back(std::move(iBuffer));
 	}
 
-	void SetIndexFromStatic() noexcept(!IS_DEBUG) {
+	void SetIndexFromStatic() noxnd {
 		assert("You are adding a second index buffer!" && pIndexBuffer == nullptr);
 		for (const auto& b : staticBinds) {
-			if (const auto p = dynamic_cast<IndexBuffer*>(b.get())) {
+			if (const auto p = dynamic_cast<Bind::IndexBuffer*>(b.get())) {
 				pIndexBuffer = p;
 				return;
 			}
@@ -35,13 +33,13 @@ protected:
 	}
 	
 private:
-	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept {
+	const std::vector<std::unique_ptr<Bind::Bindable>>& GetStaticBinds() const noexcept {
 		return staticBinds;
 	}
 
 private:
-	static std::vector<std::unique_ptr<Bindable>> staticBinds;
+	static std::vector<std::unique_ptr<Bind::Bindable>> staticBinds;
 };
 
 template<class T>
-std::vector<std::unique_ptr<Bindable>> DrawableBase<T>::staticBinds;
+std::vector<std::unique_ptr<Bind::Bindable>> DrawableBase<T>::staticBinds;

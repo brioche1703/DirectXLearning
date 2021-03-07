@@ -1,9 +1,10 @@
 #include "SolidSphere.h"
 #include "Sphere.h"
-#include "BindableBase.h"
+#include "BindableCommon.h"
 
 SolidSphere::SolidSphere(Graphics& gfx, float radius)
 {
+	using namespace Bind;
 	namespace dx = DirectX;
 
 	if (!IsStaticInitialized()) {

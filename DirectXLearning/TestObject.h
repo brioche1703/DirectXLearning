@@ -3,6 +3,8 @@
 #include "DrawableBase.h"
 #include "MathsUtils.h"
 
+#include <random>
+
 template<class T>
 class TestObject : public DrawableBase<T> {
 public:
