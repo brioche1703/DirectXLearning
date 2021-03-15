@@ -2,12 +2,25 @@
 
 #include "DrawableBase.h"
 #include "BindableCommon.h"
+#include "DirectXException.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
 #include <memory>
+#include <optional>
+
+class ModelException : public DirectXException {
+public:
+	ModelException(int line, const char* file, std::string note) noexcept;
+	const char* what() const noexcept override;
+	const char* GetType() const noexcept override;
+	const std::string& GetNote() const noexcept;
+
+private:
+	std::string note;
+};
 
 class Mesh : public DrawableBase<Mesh> {
 public:
@@ -23,26 +36,36 @@ class Node {
 	friend class Model;
 
 public:
-	Node(std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG);
+	Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG);
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
+	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
+	int GetId() const noexcept;
+	void ShowTree(Node*& pSelectedNode) const noexcept;
 
 private:
 	void AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG);
 
 private:
+	int id;
+	std::string name;
 	std::vector<std::unique_ptr<Node>> childPtrs;
 	std::vector<Mesh*> meshPtrs;
 	DirectX::XMFLOAT4X4 transform;
+	DirectX::XMFLOAT4X4 appliedTransform;
 };
 
 class Model {
 public:
 	Model(Graphics& gfx, const std::string filename);
+	~Model() noexcept;
+
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
-	std::unique_ptr<Node> ParseNode(const aiNode& node);
-	void Draw(Graphics& gfx, DirectX::FXMMATRIX transform) const;
+	std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node) noexcept;
+	void Draw(Graphics& gfx) const noxnd;
+	void ShowWindow(const char* windowName = nullptr) noexcept;
 
 private:
 	std::unique_ptr<Node> pRoot;
 	std::vector<std::unique_ptr<Mesh>> meshPtrs;
+	std::unique_ptr<class ModelWindow> pWindow;
 };

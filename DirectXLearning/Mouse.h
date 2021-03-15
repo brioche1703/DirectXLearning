@@ -2,11 +2,16 @@
 
 #include <queue>
 #include <bitset>
+#include <optional>
 
 class Mouse {
 	friend class Window;
 
 public:
+	struct RawDelta {
+		int x, y;
+	};
+
 	class Event {
 	public:
 		enum class Type {
@@ -90,6 +95,10 @@ public:
 	Mouse::Event Read() noexcept;
 	bool IsEmpty() const noexcept;
 	void Flush() noexcept;
+	std::optional<RawDelta> ReadRawDelta() noexcept;
+	void EnableRaw() noexcept;
+	void DisableRaw() noexcept;
+	bool RawEnabled() const noexcept;
 
 private:
 	void OnMouseMove(int x, int y) noexcept;
@@ -102,7 +111,9 @@ private:
 	void OnWheelUp(int x, int y) noexcept;
 	void OnWheelDown(int x, int y) noexcept;
 	void OnWheelDelta(int x, int y, int delta) noexcept;
+	void OnRawDelta(int dx, int dy) noexcept;
 	void TrimBuffer() noexcept;
+	void TrimRawInputBuffer() noexcept;
 	
 private:
 	static constexpr unsigned int bufferSize = 16u;
@@ -112,6 +123,8 @@ private:
 	bool leftIsPressed = false;
 	bool rightIsPressed = false;
 	bool isInWindow = false;
+	bool rawEnabled = false;
 	std::queue<Event> buffer;
+	std::queue<RawDelta> rawDeltaBuffer;
 };
 

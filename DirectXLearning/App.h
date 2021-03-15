@@ -19,9 +19,10 @@ public:
 
 private:
 	void DoFrame();
-	void ShowModelWindow();
+	void ShowImguiDemoWindow();
 
 private:
+	bool showDemoWindow = false;
 	ImguiManager imguiManager;
 	Camera cam;
 	Window wnd;
@@ -30,14 +31,5 @@ private:
 	PointLight light;
 	float speed_factor = 1.0f;
 
-	Model nano{ wnd.Gfx(), "src\\models\\nanosuit.obj" };
-
-	struct {
-		float roll = 0.0f;
-		float pitch = 0.0f;
-		float yaw = 0.0f;
-		float x = 0.0f;
-		float y = 0.0f;
-		float z = 0.0f;
-	} pos;
+	Model nano{ wnd.Gfx(), "src\\models\\nano_hierarchy.gltf" };
 };

@@ -14,10 +14,11 @@ GDIPlusManager gfipm;
 
 App::App()
 	:
-	wnd(1280, 1024, "DirectX Learning"),
+	wnd(1280, 720, "DirectX Learning"),
 	light(wnd.Gfx())
 {
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
+	wnd.DisableCursor();
 }
 
 App::~App()
@@ -43,33 +44,68 @@ void App::DoFrame() {
 
 	light.Bind(wnd.Gfx(), cam.GetMatrix());
 
-	const auto transform =
-		DirectX::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw)
-		* DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
-	nano.Draw(wnd.Gfx(), transform);
-
+	nano.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
+	while (const auto e = wnd.kbd.ReadKey()) {
+		if (!e->IsPress()) {
+			continue;
+		}
+		switch (e->GetCode()) {
+		case VK_TAB:
+			if (wnd.CursorEnabled()) {
+				wnd.DisableCursor();
+				wnd.mouse.EnableRaw();
+			}
+			else {
+				wnd.EnableCursor();
+				wnd.mouse.DisableRaw();
+			}
+			break;
+		case VK_F1:
+			showDemoWindow = !showDemoWindow;
+			break;
+		}
+	}
+
+	if (!wnd.CursorEnabled()) {
+		if (wnd.kbd.KeyIsPressed('W')) {
+			cam.Translate({ 0.0f, 0.0f, dt });
+		}
+		if (wnd.kbd.KeyIsPressed('S')) {
+			cam.Translate({ 0.0f, 0.0f, -dt });
+		}
+		if (wnd.kbd.KeyIsPressed('A')) {
+			cam.Translate({ -dt, 0.0f, 0.0f });
+		}
+		if (wnd.kbd.KeyIsPressed('D')) {
+			cam.Translate({ dt, 0.0f, 0.0f });
+		}
+		if (wnd.kbd.KeyIsPressed('R')) {
+			cam.Translate({ 0.0f, dt, 0.0f });
+		}
+		if (wnd.kbd.KeyIsPressed('F')) {
+			cam.Translate({ 0.0f, -dt, 0.0f });
+		}
+	}
+
+	while (const auto delta = wnd.mouse.ReadRawDelta()) {
+		if (!wnd.CursorEnabled()) {
+			cam.Rotate(delta->x, delta->y);
+		}
+	}
+
+	// IMGUI
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
-	ShowModelWindow();
+	ShowImguiDemoWindow();
+	nano.ShowWindow();
 
 	wnd.Gfx().EndFrame();
 }
 
-void App::ShowModelWindow() {
-	if (ImGui::Begin("Model")) {
-		using namespace std::string_literals;
-
-		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
-
-		ImGui::Text("Position");
-		ImGui::SliderAngle("X", &pos.x, -120.0f, 120.0f);
-		ImGui::SliderAngle("Y", &pos.y, -120.0f, 120.0f);
-		ImGui::SliderAngle("Z", &pos.z, -120.0f, 120.0f);
+void App::ShowImguiDemoWindow() {
+	if (showDemoWindow) {
+		ImGui::ShowDemoWindow(&showDemoWindow);
 	}
-	ImGui::End();
 }
