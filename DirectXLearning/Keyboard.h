@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <bitset>
+#include <optional>
 
 class Keyboard {
 	friend class Window;
@@ -20,11 +21,6 @@ public:
 		unsigned char code;
 
 	public:
-		Event() noexcept
-			: 
-			type(Type::Invalid),
-			code(0u) {}
-
 		Event(Type type, unsigned char code) noexcept
 			: 
 			type(type),
@@ -54,7 +50,7 @@ public:
 
 	// Key event
 	bool KeyIsPressed(unsigned char keycode) const noexcept;
-	Event ReadKey() noexcept;
+	std::optional<Event> ReadKey() noexcept;
 	bool KeyIsEmpty() const noexcept;
 	void FlushKey() noexcept;
 
