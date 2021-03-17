@@ -3,14 +3,22 @@
 #include "Graphics.h"
 #include "GraphicsThrowMacros.h"
 #include "Bindable.h"
+#include "Vertex.h"
+
+#include <memory>
 
 namespace Bind {
 	class InputLayout : public Bindable {
 	public:
-		InputLayout(Graphics& gfx, const std::vector<D3D11_INPUT_ELEMENT_DESC>& layout, ID3DBlob* pVertexShaderBytecode);
+		InputLayout(Graphics& gfx, const dxLearning::VertexLayout layout, ID3DBlob* pVertexShaderBytecode);
 		void Bind(Graphics& gfx) noexcept override;
 
+		static std::shared_ptr<InputLayout> Resolve(Graphics& gfx, const dxLearning::VertexLayout& layout, ID3DBlob* pVertexShaderBytecode);
+		static std::string GenerateUID(const dxLearning::VertexLayout& layout, ID3DBlob* pVertexShaderBytecode = nullptr);
+		std::string GetUID() const noexcept override;
+
 	private:
+		dxLearning::VertexLayout layout;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	};
 }

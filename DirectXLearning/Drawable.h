@@ -12,8 +12,6 @@ namespace Bind {
 }
 
 class Drawable {
-	template<class T>
-	friend class DrawableBase;
 
 public:
 	Drawable() = default;
@@ -21,9 +19,7 @@ public:
 	virtual ~Drawable() = default;
 
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
-
 	void Draw(Graphics& gfx) const noxnd;
-	virtual void Update(float dt) noexcept {};
 
 protected:
 	template<class T>
@@ -36,13 +32,9 @@ protected:
 		return nullptr;
 	}
 
-	void AddBind(std::unique_ptr<Bind::Bindable> bind) noxnd;
-	void AddIndexBuffer(std::unique_ptr<Bind::IndexBuffer> iBuffer) noexcept;
-
-private:
-	virtual const std::vector<std::unique_ptr<Bind::Bindable>>& GetStaticBinds() const noexcept = 0;
+	void AddBind(std::shared_ptr<Bind::Bindable> bind) noxnd;
 
 private:
 	const Bind::IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::unique_ptr<Bind::Bindable>> binds;
+	std::vector<std::shared_ptr<Bind::Bindable>> binds;
 };

@@ -29,21 +29,13 @@
 		return note;
 	}
 
-	Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bind::Bindable>> bindsPtr) {
-		if (!IsStaticInitialized()) {
-			AddStaticBind(std::make_unique<Bind::Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-		}
+	Mesh::Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bind::Bindable>> bindsPtr) {
+		AddBind(Bind::Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 		for (auto& pb : bindsPtr) {
-			if (auto pi = dynamic_cast<Bind::IndexBuffer*>(pb.get())) {
-				AddIndexBuffer(std::unique_ptr<Bind::IndexBuffer>{pi});
-				pb.release();
-			}
-			else {
-				AddBind(std::move(pb));
-			}
+			AddBind(std::move(pb));
 		}
-		AddBind(std::make_unique<Bind::TransformCBuf>(gfx, *this));
+		AddBind(std::make_shared<Bind::TransformCBuf>(gfx, *this));
 	}
 
 	void Mesh::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noxnd {
@@ -193,6 +185,7 @@
 	std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials) {
 		namespace dx = DirectX;
 		using dxLearning::VertexLayout;
+		using namespace Bind;
 
 		dxLearning::VertexBuffer vbuf(std::move(
 			VertexLayout{}
@@ -218,43 +211,45 @@
 			indices.push_back(face.mIndices[2]);
 		}
 
-		std::vector<std::unique_ptr<Bind::Bindable>> bindablePtrs;
+		std::vector<std::shared_ptr<Bindable>> bindablePtrs;
+		using namespace std::string_literals;
+		const auto path = "src\\models\\nano_textured\\"s;
 
 		bool hasSpecularMap = false;
 		float shininess = 35.0f;
 		if (mesh.mMaterialIndex >= 0) {
-			using namespace std::string_literals;
-			const auto path = "src\\models\\nano_textured\\"s;
 			auto& material = *pMaterials[mesh.mMaterialIndex];
 			aiString texFilename;
 			material.GetTexture(aiTextureType_DIFFUSE, 0, &texFilename);
-			bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(path + texFilename.C_Str())));
+			bindablePtrs.push_back(Texture::Resolve(gfx, path + texFilename.C_Str()));
 
 			if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFilename) == aiReturn_SUCCESS) {
-				bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile("src\\models\\nano_textured\\"s + texFilename.C_Str()), 1));
+				bindablePtrs.push_back(Texture::Resolve(gfx, path + texFilename.C_Str(), 1));
 				hasSpecularMap = true;
 			}
 			else {
 				material.Get(AI_MATKEY_SHININESS, shininess);
 			}
-			bindablePtrs.push_back(std::make_unique<Bind::Sampler>(gfx));
+			bindablePtrs.push_back(Sampler::Resolve(gfx));
 		}
 
-		bindablePtrs.push_back(std::make_unique<Bind::VertexBuffer>(gfx, vbuf));
-		bindablePtrs.push_back(std::make_unique<Bind::IndexBuffer>(gfx, indices));
+		auto meshTag = path + "%" + mesh.mName.C_Str();
 
-		auto pvs = std::make_unique<Bind::VertexShader>(gfx, L"PhongVS.cso");
-		auto pvsbc = pvs->GetBytecode();
+		bindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf));
+		bindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
+
+		auto pvs = VertexShader::Resolve(gfx, "PhongVS.cso");
+		auto pvsbc = static_cast<VertexShader&>(*pvs).GetBytecode();
 		bindablePtrs.push_back(std::move(pvs));
 
 		if (hasSpecularMap) {
-			bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"PhongSpecMapPS.cso"));
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "PhongSpecMapPS.cso"));
 		}
 		else {
-			bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"PhongPS.cso"));
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "PhongPS.cso"));
 		}
 		
-		bindablePtrs.push_back(std::make_unique<Bind::InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+		bindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pvsbc));
 
 		struct PSMaterialConstant {
 			float specularIntensity = 1.6f;
@@ -262,7 +257,7 @@
 			float padding[2];
 		} pmc;
 		pmc.specularPower = shininess;
-		bindablePtrs.push_back(std::make_unique<Bind::PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+		bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 
 		return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
 	}
