@@ -1,6 +1,8 @@
 #include "Vertex.h"
 
 namespace dxLearning {
+
+	// VertexLayout::Element
 	VertexLayout::Element::Element(ElementType type, size_t offset)
 		:
 		type(type),
@@ -46,6 +48,28 @@ namespace dxLearning {
 		return type;
 	}
 
+	const char* dxLearning::VertexLayout::Element::GetCode() const noexcept {
+		switch (type)
+		{
+		case Position2D:
+			return Map<Position2D>::code;
+		case Position3D:
+			return Map<Position3D>::code;
+		case Texture2D:
+			return Map<Texture2D>::code;
+		case Normal:
+			return Map<Normal>::code;
+		case Float3Color:
+			return Map<Float3Color>::code;
+		case Float4Color:
+			return Map<Float4Color>::code;
+		case BGRAColor:
+			return Map<BGRAColor>::code;
+		}
+		assert("Invalid element type" && false);
+		return "Invalid";
+	}
+
 	D3D11_INPUT_ELEMENT_DESC VertexLayout::Element::GetDesc() const noxnd {
 		switch (type) {
 		case Position2D:
@@ -67,6 +91,7 @@ namespace dxLearning {
 		return { "INVALID", 0, DXGI_FORMAT_UNKNOWN, 0, 0, D3D11_INPUT_PER_VERTEX_DATA };
 	}
 
+	// VertexLayout
 	const VertexLayout::Element& VertexLayout::ResolveByIndex(size_t i) const noxnd {
 		return elements[i];
 	}
@@ -93,6 +118,15 @@ namespace dxLearning {
 		return desc;
 	}
 
+	std::string VertexLayout::GetCode() const noxnd {
+		std::string code;
+		for (const auto& e : elements) {
+			code += e.GetCode();
+		}
+		return code;
+	}
+
+	// Vertex
 	Vertex::Vertex(char* pData, const VertexLayout& layout) noxnd
 		:
 	pData(pData),
@@ -101,10 +135,12 @@ namespace dxLearning {
 		assert(pData != nullptr);
 	}
 
+	// ConstVertex
 	ConstVertex::ConstVertex(const Vertex& v) noxnd
 		: vertex(v)
 	{}
 
+	// VertexBuffer
 	VertexBuffer::VertexBuffer(VertexLayout layout) noxnd
 		:
 		layout(std::move(layout))

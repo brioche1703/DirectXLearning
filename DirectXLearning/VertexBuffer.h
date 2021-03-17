@@ -5,31 +5,29 @@
 #include "Bindable.h"
 #include "Vertex.h"
 
+#include <memory>
+
 namespace Bind {
 	class VertexBuffer : public Bindable {
 	public:
-		template<class V>
-		VertexBuffer(Graphics& gfx, const std::vector<V>& vertices)
-			: stride(sizeof(V)) {
-			INFOMAN(gfx);
-
-			D3D11_BUFFER_DESC bd = {};
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.CPUAccessFlags = 0u;
-			bd.MiscFlags = 0u;
-			bd.ByteWidth = UINT(sizeof(V) * vertices.size());
-			bd.StructureByteStride = sizeof(V);
-
-			D3D11_SUBRESOURCE_DATA sd = {};
-			sd.pSysMem = vertices.data();
-			GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
-		}
-
 		VertexBuffer(Graphics& gfx, const dxLearning::VertexBuffer& vbuf);
+		VertexBuffer(Graphics& gfx, const std::string& tag, const dxLearning::VertexBuffer& vbuf);
 		void Bind(Graphics& gfx) noexcept override;
 
+		static std::shared_ptr<VertexBuffer> Resolve(Graphics& gfx, const std::string& tag, const dxLearning::VertexBuffer& vbuf);
+
+		template<typename...Ignore>
+		static std::string GenerateUID(const std::string& tag, Ignore&&...ignore) {
+			return GenerateUID_(tag);
+		}
+
+		std::string GetUID() const noexcept override;
+
 	private:
+		static std::string GenerateUID_(const std::string& tag);
+
+	private:
+		std::string tag;
 		UINT stride;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 	};

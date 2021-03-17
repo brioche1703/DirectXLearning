@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DrawableBase.h"
+#include "Drawable.h"
 #include "BindableCommon.h"
 #include "DirectXException.h"
 
@@ -22,9 +22,9 @@ private:
 	std::string note;
 };
 
-class Mesh : public DrawableBase<Mesh> {
+class Mesh : public Drawable {
 public:
-	Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bind::Bindable>> bindsPtr);
+	Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bind::Bindable>> bindsPtr);
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 

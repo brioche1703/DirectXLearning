@@ -2,6 +2,7 @@
 #include "MathsUtils.h"
 #include "Surface.h"
 #include "GDIPlusManager.h"
+#include "VertexBuffer.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -45,6 +46,7 @@ void App::DoFrame() {
 	light.Bind(wnd.Gfx(), cam.GetMatrix());
 
 	nano.Draw(wnd.Gfx());
+	nano2.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
@@ -99,7 +101,8 @@ void App::DoFrame() {
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	nano.ShowWindow();
+	nano.ShowWindow("Model 1");
+	nano2.ShowWindow("Model 2");
 
 	wnd.Gfx().EndFrame();
 }
