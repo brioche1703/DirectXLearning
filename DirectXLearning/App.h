@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "PointLight.h"
 #include "Mesh.h"
+#include "TestPlane.h"
 
 #include <set>
 
@@ -31,6 +32,7 @@ private:
 	PointLight light;
 	float speed_factor = 1.0f;
 
-	Model nano { wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj" };
-	Model nano2 { wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj" };
+	Model goblin { wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" };
+	//Model nano2 { wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj" };
+	TestPlane tp{ wnd.Gfx(),1.0 };
 };

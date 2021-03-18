@@ -33,6 +33,10 @@ namespace dxLearning {
 			return sizeof(Map<Texture2D>::SysType);
 		case Normal:
 			return sizeof(Map<Normal>::SysType);
+		case Tangent:
+			return sizeof(Map<Tangent>::SysType);
+		case Bitangent:
+			return sizeof(Map<Bitangent>::SysType);
 		case Float3Color:
 			return sizeof(Map<Float3Color>::SysType);
 		case Float4Color:
@@ -59,6 +63,10 @@ namespace dxLearning {
 			return Map<Texture2D>::code;
 		case Normal:
 			return Map<Normal>::code;
+		case Tangent:
+			return Map<Tangent>::code;
+		case Bitangent:
+			return Map<Bitangent>::code;
 		case Float3Color:
 			return Map<Float3Color>::code;
 		case Float4Color:
@@ -80,6 +88,10 @@ namespace dxLearning {
 			return GenerateDesc<Texture2D>(GetOffset());
 		case Normal:
 			return GenerateDesc<Normal>(GetOffset());
+		case Tangent:
+			return GenerateDesc<Tangent>(GetOffset());
+		case Bitangent:
+			return GenerateDesc<Bitangent>(GetOffset());
 		case Float3Color:
 			return GenerateDesc<Float3Color>(GetOffset());
 		case Float4Color:
