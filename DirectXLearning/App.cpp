@@ -3,6 +3,7 @@
 #include "Surface.h"
 #include "GDIPlusManager.h"
 #include "VertexBuffer.h"
+#include "NormalMapTwerker.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -10,14 +11,31 @@
 
 #include <sstream>
 #include <iomanip>
+#include <shellapi.h>
 
 GDIPlusManager gfipm;
 
-App::App()
+App::App(const std::string& commandLine)
 	:
+	commandLine(commandLine),
 	wnd(1280, 720, "DirectX Learning"),
 	light(wnd.Gfx())
 {
+	if (this->commandLine != "") {
+		int nArgs;
+		const auto pLineW = GetCommandLineW();
+		const auto pArgs = CommandLineToArgvW(pLineW, &nArgs);
+		if (nArgs >= 4 && std::wstring(pArgs[1]) == L"--ntwerk-rotx180") {
+			const std::wstring pathInWide = pArgs[2];
+			const std::wstring pathOutWide = pArgs[3];
+			NormalMapTwerker::RotateXAxis180(
+				std::string(pathInWide.begin(), pathInWide.end()),
+				std::string(pathOutWide.begin(), pathOutWide.end())
+			);
+			throw std::runtime_error("Normal map processed successfully.");
+		}
+	}
+
 	wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	tp.SetPos({ 12.0f,0.0f,0.0f });
 	goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
@@ -109,7 +127,7 @@ void App::DoFrame() {
 	ShowImguiDemoWindow();
 	goblin.ShowWindow(wnd.Gfx(), "Goblin");
 	nano.ShowWindow(wnd.Gfx(), "Nanosuit");
-	wall.ShowWindow(wnd.Gfx(), "Nanosuit");
+	wall.ShowWindow(wnd.Gfx(), "Wall");
 	tp.SpawnControlWindow(wnd.Gfx());
 
 	wnd.Gfx().EndFrame();
