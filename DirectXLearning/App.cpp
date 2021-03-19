@@ -18,8 +18,11 @@ App::App()
 	wnd(1280, 720, "DirectX Learning"),
 	light(wnd.Gfx())
 {
-	goblin.SetRootTransform(DirectX::XMMatrixTranslation(-1.5f, 0.0f, 0.0f));
-	tp.SetPos({ 1.5f, 0.0f, 0.0f });
+	wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
+	tp.SetPos({ 12.0f,0.0f,0.0f });
+	goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
+	nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
+
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
 }
 
@@ -47,6 +50,8 @@ void App::DoFrame() {
 	light.Bind(wnd.Gfx(), cam.GetMatrix());
 
 	goblin.Draw(wnd.Gfx());
+	nano.Draw(wnd.Gfx());
+	wall.Draw(wnd.Gfx());
 	tp.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
@@ -103,6 +108,8 @@ void App::DoFrame() {
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
 	goblin.ShowWindow(wnd.Gfx(), "Goblin");
+	nano.ShowWindow(wnd.Gfx(), "Nanosuit");
+	wall.ShowWindow(wnd.Gfx(), "Nanosuit");
 	tp.SpawnControlWindow(wnd.Gfx());
 
 	wnd.Gfx().EndFrame();

@@ -13,6 +13,7 @@
 #include <memory>
 #include <optional>
 #include <type_traits>
+#include <filesystem>
 
 class ModelException : public DirectXException {
 public:
@@ -125,7 +126,7 @@ public:
 
 	class Model {
 	public:
-		Model(Graphics& gfx, const std::string filename);
+		Model(Graphics& gfx, const std::string& pathString, const float scale = 1.0f);
 		~Model() noexcept;
 
 		void Draw(Graphics& gfx) const noxnd;
@@ -133,7 +134,7 @@ public:
 		void SetRootTransform(DirectX::FXMMATRIX tf) noexcept;
 
 	private:
-		static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials);
+		static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials, const std::filesystem::path& path, float scale);
 		std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node) noexcept;
 
 	private:

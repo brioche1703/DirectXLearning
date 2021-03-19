@@ -386,5 +386,11 @@
     <FxCompile Include="PhongSpecNormalMapPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ShaderOps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PointLight.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

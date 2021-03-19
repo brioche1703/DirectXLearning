@@ -19,8 +19,9 @@ cbuffer ObjectCBuf
 Texture2D tex;
 SamplerState samplerState;
 
-float4 main(float3 viewPos : Position, float3 n : Normal, float2 tc : TexCoord) : SV_Target
+float4 main(float3 viewPos : Position, float3 viewNormal : Normal, float2 tc : TexCoord) : SV_Target
 {
+    viewNormal = normalize(viewNormal);
 	// Fragment to light vector data
 	const float3 vTol = lightPos - viewPos;
 	const float distToL = length(vTol);
@@ -30,11 +31,11 @@ float4 main(float3 viewPos : Position, float3 n : Normal, float2 tc : TexCoord) 
     const float att = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
 	
 	// Diffuse intensity
-	const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, n));
+	const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, viewNormal));
 	
 	// Specular
 	// reflected light vector
-    const float3 w = n * dot(vTol, n);
+    const float3 w = viewNormal * dot(vTol, viewNormal);
     const float3 r = w * 2.0f - vTol;
 	// calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
     const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(viewPos))), specularPower);

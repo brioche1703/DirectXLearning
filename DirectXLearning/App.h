@@ -32,7 +32,8 @@ private:
 	PointLight light;
 	float speed_factor = 1.0f;
 
-	Model goblin { wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" };
-	//Model nano2 { wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj" };
-	TestPlane tp{ wnd.Gfx(),1.0 };
+	Model goblin{ wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" , 6.0f };
+	Model nano{ wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj", 6.0f };
+	TestPlane tp{ wnd.Gfx(), 6.0 };
+	Model wall{ wnd.Gfx(), "src\\models\\brick_wall\\brick_wall.obj", 2.0f };
 };
