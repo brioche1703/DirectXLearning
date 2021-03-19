@@ -13,7 +13,7 @@
 
 class App {
 public:
-	App();
+	App(const std::string& commandLine = "");
 	~App();
 
 	int Go();
@@ -23,6 +23,7 @@ private:
 	void ShowImguiDemoWindow();
 
 private:
+	std::string commandLine;
 	bool showDemoWindow = false;
 	ImguiManager imguiManager;
 	Camera cam;
@@ -33,7 +34,7 @@ private:
 	float speed_factor = 1.0f;
 
 	Model goblin{ wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" , 6.0f };
-	Model nano{ wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj", 6.0f };
+	Model nano{ wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj", 2.0f };
 	TestPlane tp{ wnd.Gfx(), 6.0 };
 	Model wall{ wnd.Gfx(), "src\\models\\brick_wall\\brick_wall.obj", 2.0f };
 };

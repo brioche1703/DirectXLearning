@@ -7,7 +7,7 @@ int CALLBACK WinMain(
 	int nCmdShow)
 {
 	try {
-		return App{}.Go();
+		return App{ lpCmdLine }.Go();
 	}
 	catch (const DirectXException& e) {
 		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
