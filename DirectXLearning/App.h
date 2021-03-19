@@ -37,4 +37,5 @@ private:
 	Model nano{ wnd.Gfx(), "src\\models\\nano_textured\\nanosuit.obj", 2.0f };
 	TestPlane tp{ wnd.Gfx(), 6.0 };
 	Model wall{ wnd.Gfx(), "src\\models\\brick_wall\\brick_wall.obj", 2.0f };
+	Model sponza{ wnd.Gfx(), "src\\models\\Sponza\\sponza.obj", 1.0f / 20.0f };
 };

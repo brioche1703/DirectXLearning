@@ -18,7 +18,7 @@ GDIPlusManager gfipm;
 App::App(const std::string& commandLine)
 	:
 	commandLine(commandLine),
-	wnd(1280, 720, "DirectX Learning"),
+	wnd(1920, 1080, "DirectX Learning"),
 	light(wnd.Gfx())
 {
 	if (this->commandLine != "") {
@@ -41,7 +41,7 @@ App::App(const std::string& commandLine)
 	goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
 	nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 }
 
 App::~App()
@@ -71,6 +71,7 @@ void App::DoFrame() {
 	nano.Draw(wnd.Gfx());
 	wall.Draw(wnd.Gfx());
 	tp.Draw(wnd.Gfx());
+	sponza.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
@@ -128,6 +129,7 @@ void App::DoFrame() {
 	goblin.ShowWindow(wnd.Gfx(), "Goblin");
 	nano.ShowWindow(wnd.Gfx(), "Nanosuit");
 	wall.ShowWindow(wnd.Gfx(), "Wall");
+	sponza.ShowWindow(wnd.Gfx(), "Sponza");
 	tp.SpawnControlWindow(wnd.Gfx());
 
 	wnd.Gfx().EndFrame();
