@@ -36,10 +36,11 @@ App::App(const std::string& commandLine)
 		}
 	}
 
-	wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
-	tp.SetPos({ 12.0f,0.0f,0.0f });
-	goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
-	nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
+	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
+	bluePlane.SetPos(cam.GetPos());
+	redPlane.SetPos(cam.GetPos());
+	//goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
+	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 }
@@ -67,12 +68,13 @@ void App::DoFrame() {
 
 	light.Bind(wnd.Gfx(), cam.GetMatrix());
 
-	goblin.Draw(wnd.Gfx());
-	nano.Draw(wnd.Gfx());
-	wall.Draw(wnd.Gfx());
-	tp.Draw(wnd.Gfx());
-	sponza.Draw(wnd.Gfx());
+	//goblin.Draw(wnd.Gfx());
+	//nano.Draw(wnd.Gfx());
+	//wall.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
+	sponza.Draw(wnd.Gfx());
+	bluePlane.Draw(wnd.Gfx());
+	redPlane.Draw(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
 		if (!e->IsPress()) {
@@ -126,11 +128,14 @@ void App::DoFrame() {
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	goblin.ShowWindow(wnd.Gfx(), "Goblin");
-	nano.ShowWindow(wnd.Gfx(), "Nanosuit");
-	wall.ShowWindow(wnd.Gfx(), "Wall");
+
+	//goblin.ShowWindow(wnd.Gfx(), "Goblin");
+	//nano.ShowWindow(wnd.Gfx(), "Nanosuit");
+	//wall.ShowWindow(wnd.Gfx(), "Wall");
+	bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
+	redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
+
 	sponza.ShowWindow(wnd.Gfx(), "Sponza");
-	tp.SpawnControlWindow(wnd.Gfx());
 
 	wnd.Gfx().EndFrame();
 }
