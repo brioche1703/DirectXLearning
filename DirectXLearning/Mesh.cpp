@@ -224,6 +224,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 	bool hasSpecularMap = false;
 	bool hasNormalMap = false;
 	bool hasDiffuseMap = false;
+	bool hasAlphaDiffuse = false;
 	bool hasAlphaGloss = false;
 	float shininess = 2.0f;
 	dx::XMFLOAT4 specularColor = { 0.18f, 0.18f, 0.18f, 1.0f };
@@ -233,7 +234,9 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 		aiString texFilename;
 
 		if (material.GetTexture(aiTextureType_DIFFUSE, 0, &texFilename) == aiReturn_SUCCESS) {
-			bindablePtrs.push_back(Texture::Resolve(gfx, rootPath + texFilename.C_Str()));
+			auto tex = Texture::Resolve(gfx, rootPath + texFilename.C_Str());
+			hasAlphaDiffuse = tex->HasAlpha();
+			bindablePtrs.push_back(std::move(tex));
 			hasDiffuseMap = true;
 		}
 		else {
@@ -304,7 +307,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 		auto pvsbc = static_cast<VertexShader&>(*pvs).GetBytecode();
 		bindablePtrs.push_back(std::move(pvs));
 
-		bindablePtrs.push_back(PixelShader::Resolve(gfx, "PhongSpecNormalMapPS.cso"));
+		bindablePtrs.push_back(PixelShader::Resolve(gfx, 
+			hasAlphaDiffuse ? "PhongSpecNormalMaskPS.cso" : "PhongSpecNormalMapPS.cso"));
 
 		Node::PSMaterialConstantFullmonte pmc;
 		pmc.specularPower = shininess;
@@ -521,6 +525,9 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 	{
 		throw std::runtime_error("Terrible combination of textures in material smh");
 	}
+
+	bindablePtrs.push_back(Rasterizer::Resolve(gfx, hasAlphaDiffuse));
+	bindablePtrs.push_back(Blender::Resolve(gfx, false));
 
 	return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
 }

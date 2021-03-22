@@ -162,6 +162,12 @@
     <ClCompile Include="XMUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Blender.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterizer.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -335,6 +341,12 @@
     <ClInclude Include="XMUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Blender.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Rasterizer.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -408,6 +420,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PhongSpecPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongSpecNormalMaskPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

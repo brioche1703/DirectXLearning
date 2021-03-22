@@ -7,11 +7,11 @@ namespace Bind {
 	{
 		INFOMAN(gfx);
 
-		D3D11_SAMPLER_DESC samplerDesc = {};
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		D3D11_SAMPLER_DESC samplerDesc = CD3D11_SAMPLER_DESC{ CD3D11_DEFAULT{} };
+		samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 
 		GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(
 			&samplerDesc, &pSampler));

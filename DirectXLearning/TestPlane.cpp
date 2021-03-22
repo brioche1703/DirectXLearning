@@ -4,7 +4,10 @@
 
 #include "external/imgui/imgui.h"
 
-TestPlane::TestPlane(Graphics& gfx, float size) {
+TestPlane::TestPlane(Graphics& gfx, float size, DirectX::XMFLOAT4 color) 
+	:
+	pmc({ color })
+{
 	using namespace Bind;
 	namespace dx = DirectX;
 
@@ -14,22 +17,22 @@ TestPlane::TestPlane(Graphics& gfx, float size) {
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "src\\images\\brickwall.jpg"));
-	AddBind(Texture::Resolve(gfx, "src\\images\\brickwall_normal_obj.png", 2u));
-
-	auto pvs = VertexShader::Resolve(gfx, "PhongVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "SolidVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "PhongNormalMapObjectPS.cso"));
+	AddBind(PixelShader::Resolve(gfx, "SolidPS.cso"));
 
-	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
+	AddBind(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 
 	AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-	AddBind(std::make_shared<TransformCBufDouble>(gfx, *this, 0u, 2u));
+	AddBind(std::make_shared<TransformCBuf>(gfx, *this, 0u));
+
+	AddBind(Blender::Resolve(gfx, true, 0.5f));
+	AddBind(Rasterizer::Resolve(gfx, true));
 }
 
 void TestPlane::SetPos(DirectX::XMFLOAT3 pos) noexcept {
@@ -48,8 +51,8 @@ DirectX::XMMATRIX TestPlane::GetTransformXM() const noexcept
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
-void TestPlane::SpawnControlWindow(Graphics& gfx) noexcept {
-	if (ImGui::Begin("Plane")) {
+void TestPlane::SpawnControlWindow(Graphics& gfx, const std::string& title) noexcept {
+	if (ImGui::Begin(title.c_str())) {
 		ImGui::Text("Position");
 		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f);
 		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f);
@@ -58,15 +61,11 @@ void TestPlane::SpawnControlWindow(Graphics& gfx) noexcept {
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
-		bool changed0 = ImGui::SliderFloat("Spec. Int.", &pmc.specularIntensity, 0.0f, 1.0f);
-		bool changed1 = ImGui::SliderFloat("Spec. Power", &pmc.specularPower, 0.0f, 100.0f);
-		bool checkState = pmc.normalMappingEnabled == TRUE;
-		bool changed2 = ImGui::Checkbox("Enable Normal Map", &checkState);
-		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
-		if (changed0 || changed1 || changed2)
-		{
-			QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
-		}
+		ImGui::Text("Shading");
+		auto pBlender = QueryBindable<Bind::Blender>();
+		float factor = pBlender->GetFactor();
+		ImGui::SliderFloat("Translucensy", &factor, 0.0f, 1.0f);
+		pBlender->SetFactor(factor);
 	}
 	ImGui::End();
 }
