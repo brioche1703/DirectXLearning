@@ -1,5 +1,7 @@
 #include "Bindable.h"
 
+#include <stdexcept>
+
 namespace Bind {
 	ID3D11DeviceContext* Bindable::GetContext(Graphics& gfx) noexcept
 	{
@@ -16,7 +18,7 @@ namespace Bind {
 #ifndef NDEBUG
 		return gfx.infoManager;
 #else
-		throw std::logic_error("You're not in debug and still trying to access gfx.infoManager in release!"));
+		throw std::logic_error("You're not in debug and still trying to access gfx.infoManager in release!");
 #endif // !NDEBUG
 
 	}

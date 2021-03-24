@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include <fstream>
+
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,

@@ -4,7 +4,9 @@
 #include "DirectXException.h"
 #include "ConditionalNoexcept.h"
 
-#include <memory>
+#include <optional>
+
+#include <dxtex/DirectXTex.h>
 
 class Surface {
 public:
@@ -25,7 +27,7 @@ public:
 		{}
 		constexpr Color(unsigned char r, unsigned char g, unsigned char b) noexcept
 			:
-			dword((r << 16u) | (g << 8u) | b) 
+			dword((255u << 24u) | (r << 16u) | (g << 8u) | b) 
 		{}
 		constexpr Color(Color color, unsigned char x) noexcept
 			:
@@ -73,22 +75,23 @@ public:
 public:
 	class Exception : public DirectXException {
 	public:
-		Exception(int line, const char* file, std::string note) noexcept;
+		Exception(int line, const char* file, std::string note, std::optional<HRESULT> hr = {}) noexcept;
+		Exception(int line, const char* file, std::string filename, std::string note, std::optional<HRESULT> hr = {}) noexcept;
 		const char* what() const noexcept override;
 		const char* GetType() const noexcept override;
 		const std::string& GetNote() const noexcept;
 	private:
+		std::optional<HRESULT> hr;
 		std::string note;
 	};
 
 public:
-	Surface(unsigned int width, unsigned int height, unsigned int pitch) noexcept;
-	Surface(unsigned int width, unsigned int height) noexcept;
-	Surface(Surface&& source) noexcept;
+	Surface(unsigned int width, unsigned int height);
+	Surface(Surface&& source) noexcept = default;
 	Surface(Surface& surface) = delete;
-	Surface& operator=(Surface&& donor) noexcept;
+	Surface& operator=(Surface&& donor) noexcept = default;
 	Surface& operator=(const Surface&) = delete;
-	~Surface();
+	~Surface() = default;
 
 	void Clear(Color fillValue) noexcept;
 	void PutPixel(unsigned int x, unsigned int y, Color c) noxnd;
@@ -104,11 +107,9 @@ public:
 	bool AlphaLoaded() const noexcept;
 
 private:
-	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam, bool alphaLoaded = false) noexcept;
+	Surface(DirectX::ScratchImage scratch) noexcept;
 	
 private:
-	std::unique_ptr<Color[]> pBuffer;
-	unsigned int width;
-	unsigned int height;
-	bool alphaLoaded = false;
+	static constexpr DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM;
+	DirectX::ScratchImage scratch;
 };

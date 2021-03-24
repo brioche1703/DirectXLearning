@@ -1,9 +1,9 @@
 #include "App.h"
 #include "MathsUtils.h"
 #include "Surface.h"
-#include "GDIPlusManager.h"
 #include "VertexBuffer.h"
 #include "NormalMapTwerker.h"
+#include "Utils.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -12,30 +12,15 @@
 #include <sstream>
 #include <iomanip>
 #include <shellapi.h>
-
-GDIPlusManager gfipm;
+#include <dxtex/DirectXTex.h>
 
 App::App(const std::string& commandLine)
 	:
 	commandLine(commandLine),
 	wnd(1920, 1080, "DirectX Learning"),
+	scriptCommander(TokenizeQuoted(commandLine)),
 	light(wnd.Gfx())
 {
-	if (this->commandLine != "") {
-		int nArgs;
-		const auto pLineW = GetCommandLineW();
-		const auto pArgs = CommandLineToArgvW(pLineW, &nArgs);
-		if (nArgs >= 4 && std::wstring(pArgs[1]) == L"--ntwerk-rotx180") {
-			const std::wstring pathInWide = pArgs[2];
-			const std::wstring pathOutWide = pArgs[3];
-			NormalMapTwerker::RotateXAxis180(
-				std::string(pathInWide.begin(), pathInWide.end()),
-				std::string(pathOutWide.begin(), pathOutWide.end())
-			);
-			throw std::runtime_error("Normal map processed successfully.");
-		}
-	}
-
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	bluePlane.SetPos(cam.GetPos());
 	redPlane.SetPos(cam.GetPos());

@@ -6,7 +6,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
-#include <assert.h>
+#include <cassert>
 #include <vector>
 #include <dxgiformat.h>
 #include <string>
