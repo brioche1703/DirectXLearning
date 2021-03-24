@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "commands": [
+    {
+      "command": "make-stripes",
+      "params": {
+        "dest": "src\\images\\stripes.png",
+        "size": 256,
+        "stripeWidth": 4
+      }
+    }
+  ]
+}

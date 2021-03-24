@@ -54,9 +54,9 @@ DirectX::XMMATRIX TestPlane::GetTransformXM() const noexcept
 void TestPlane::SpawnControlWindow(Graphics& gfx, const std::string& title) noexcept {
 	if (ImGui::Begin(title.c_str())) {
 		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f);
-		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f);
-		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f);
+		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
+		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
+		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
 		ImGui::Text("Orientation");
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);

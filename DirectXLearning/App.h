@@ -8,6 +8,7 @@
 #include "PointLight.h"
 #include "Mesh.h"
 #include "TestPlane.h"
+#include "ScriptCommander.h"
 
 #include <set>
 
@@ -29,6 +30,7 @@ private:
 	Camera cam;
 	Window wnd;
 	Timer timer;
+	ScriptCommander scriptCommander;
 
 	PointLight light;
 	float speed_factor = 1.0f;
