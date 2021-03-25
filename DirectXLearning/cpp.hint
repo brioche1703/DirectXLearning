@@ -1,0 +1,4 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define LEAF_ELEMENT(eltype, systype) class eltype : public LayoutElement { public: using LayoutElement::LayoutElement size_t Resolve##eltype() const noxnd override final { return GetOffsetBegin(); } size_t GetOffsetEnd() const noxnd override final { return GetOffsetBegin() + sizeof(systype); } };

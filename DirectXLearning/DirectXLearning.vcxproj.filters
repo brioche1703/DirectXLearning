@@ -368,6 +368,12 @@
     <ClInclude Include="TexturePreprocessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicConstant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffersEX.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -393,6 +399,7 @@
     <None Include="process.json">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorIndexPS.hlsl">
