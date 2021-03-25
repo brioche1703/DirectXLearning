@@ -4,6 +4,7 @@
 #include "VertexBuffer.h"
 #include "NormalMapTwerker.h"
 #include "Utils.h"
+#include "DynamicConstant.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -11,8 +12,12 @@
 
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 #include <shellapi.h>
 #include <dxtex/DirectXTex.h>
+#include <memory>
+
+namespace dx = DirectX;
 
 App::App(const std::string& commandLine)
 	:
@@ -21,6 +26,8 @@ App::App(const std::string& commandLine)
 	scriptCommander(TokenizeQuoted(commandLine)),
 	light(wnd.Gfx())
 {
+
+
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	bluePlane.SetPos(cam.GetPos());
 	redPlane.SetPos(cam.GetPos());

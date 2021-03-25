@@ -3,6 +3,8 @@
 #include "Sampler.h"
 #include "ConditionalNoexcept.h"
 #include "XMUtils.h"
+#include "DynamicConstant.h"
+#include "ConstantBuffersEX.h"
 
 #include "external/imgui/imgui.h"
 
@@ -362,16 +364,16 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 
 		bindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pvsbc));
 
-		struct PSMaterialConstantDiffnorm
-		{
-			float specularIntensity;
-			float specularPower;
-			BOOL  normalMapEnabled = TRUE;
-			float padding[1];
-		} pmc;
-		pmc.specularPower = shininess;
-		pmc.specularIntensity = (specularColor.x + specularColor.y + specularColor.y) / 3.0f;
-		bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstantDiffnorm>::Resolve(gfx, pmc, 1u));
+		auto layout = std::make_shared<Dcb::Struct>(0);
+		layout->Add<Dcb::Float>("specularIntensity");
+		layout->Add<Dcb::Float>("specularPower");
+		layout->Add<Dcb::Bool>("normalMapEnabled");
+		layout->Add<Dcb::Float>("padding");
+		Dcb::Buffer cbuf(layout);
+		cbuf["specularPower"] = shininess;
+		cbuf["specularIntensity"] = (specularColor.x + specularColor.y + specularColor.y) / 3.0f;
+		cbuf["normalMapEnabled"] = TRUE;
+		bindablePtrs.push_back(std::make_shared<PixelConstantBufferEX>(gfx, cbuf, 1u));
 	}
 	else if (hasDiffuseMap && !hasNormalMap && hasSpecularMap) {
 		dxLearning::VertexBuffer vbuf(std::move(
