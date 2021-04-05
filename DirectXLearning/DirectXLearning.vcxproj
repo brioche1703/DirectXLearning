@@ -217,6 +217,7 @@
     <ClCompile Include="ScriptCommander.cpp" />
     <ClCompile Include="SolidSphere.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="TestCube.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestPlane.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -285,7 +286,9 @@
     <ClInclude Include="ScriptCommander.h" />
     <ClInclude Include="SolidSphere.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Stencil.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="TestCube.h" />
     <ClInclude Include="Testing.h" />
     <ClInclude Include="TestPlane.h" />
     <ClInclude Include="Texture.h" />

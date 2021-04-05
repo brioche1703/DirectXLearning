@@ -30,8 +30,8 @@ App::App(const std::string& commandLine)
 	//TestDynamicConstant();
 
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
-	bluePlane.SetPos(cam.GetPos());
-	redPlane.SetPos(cam.GetPos());
+	//bluePlane.SetPos(cam.GetPos());
+	//redPlane.SetPos(cam.GetPos());
 	//goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
 	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
@@ -65,9 +65,12 @@ void App::DoFrame() {
 	//nano.Draw(wnd.Gfx());
 	//wall.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
-	sponza.Draw(wnd.Gfx());
-	bluePlane.Draw(wnd.Gfx());
-	redPlane.Draw(wnd.Gfx());
+	//sponza.Draw(wnd.Gfx());
+	//bluePlane.Draw(wnd.Gfx());
+	//redPlane.Draw(wnd.Gfx());
+	tc1.Draw(wnd.Gfx());
+	tc1.DrawOutline(wnd.Gfx());
+	//tc1.DrawOutline(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
 		if (!e->IsPress()) {
@@ -120,15 +123,16 @@ void App::DoFrame() {
 	// IMGUI
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
+	tc1.SpawnControlWindow(wnd.Gfx(), "Cube");
 	ShowImguiDemoWindow();
 
 	//goblin.ShowWindow(wnd.Gfx(), "Goblin");
 	//nano.ShowWindow(wnd.Gfx(), "Nanosuit");
 	//wall.ShowWindow(wnd.Gfx(), "Wall");
-	bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
-	redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
+	//bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
+	//redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
 
-	sponza.ShowWindow(wnd.Gfx(), "Sponza");
+	//sponza.ShowWindow(wnd.Gfx(), "Sponza");
 
 	wnd.Gfx().EndFrame();
 }
