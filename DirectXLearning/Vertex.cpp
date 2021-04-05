@@ -153,10 +153,12 @@ namespace dxLearning {
 	{}
 
 	// VertexBuffer
-	VertexBuffer::VertexBuffer(VertexLayout layout) noxnd
+	VertexBuffer::VertexBuffer(VertexLayout layout, size_t size) noxnd
 		:
 		layout(std::move(layout))
-	{}
+	{
+		Resize(size);
+	}
 
 	const char* VertexBuffer::GetData() const noxnd {
 		return buffer.data();
@@ -164,6 +166,13 @@ namespace dxLearning {
 
 	const VertexLayout& VertexBuffer::GetLayout() const noexcept {
 		return layout;
+	}
+
+	void VertexBuffer::Resize(size_t newSize) noxnd {
+		const auto size = Size();
+		if (size < newSize) {
+			buffer.resize(buffer.size() + layout.Size() * (newSize - size));
+		}
 	}
 
 	size_t VertexBuffer::Size() const noxnd {
