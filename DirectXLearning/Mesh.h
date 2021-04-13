@@ -4,6 +4,7 @@
 #include "BindableCommon.h"
 #include "DirectXException.h"
 #include "DynamicConstant.h"
+#include "FrameCommander.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -29,8 +30,9 @@ private:
 
 class Mesh : public Drawable {
 public:
-	Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bind::Bindable>> bindsPtr);
-	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
+	using Drawable::Drawable;
+
+	void Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
 private:
@@ -42,18 +44,17 @@ class Node {
 
 public:
 	public:
-	Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG);
-	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
+	Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noxnd;
+	void Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
 	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 	const DirectX::XMFLOAT4X4 GetAppliedTransform() const noexcept;
 	int GetId() const noexcept;
 	void ShowTree(Node*& pSelectedNode) const noexcept;
-	const Dcb::Buffer* GetMaterialConstants() const noxnd;
-	void SetMaterialConstants(const Dcb::Buffer& buf_in) noxnd;
+	//const Dcb::Buffer* GetMaterialConstants() const noxnd;
+	//void SetMaterialConstants(const Dcb::Buffer& buf_in) noxnd;
 
 	private:
-		void AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG);
-
+		void AddChild(std::unique_ptr<Node> pChild) noxnd;
 	private:
 		int id;
 		std::string name;
@@ -68,7 +69,7 @@ public:
 		Model(Graphics& gfx, const std::string& pathString, const float scale = 1.0f);
 		~Model() noexcept;
 
-		void Draw(Graphics& gfx) const noxnd;
+		void Submit(FrameCommander& frame) const noxnd;
 		void ShowWindow(Graphics& gfx, const char* windowName = nullptr) noexcept;
 		void SetRootTransform(DirectX::FXMMATRIX tf) noexcept;
 

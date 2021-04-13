@@ -16,8 +16,10 @@ namespace Bind {
 		};
 
 	public:
-		TransformCBuf(Graphics& gfx, const Drawable& parent, UINT slot = 0u);
+		TransformCBuf(Graphics& gfx, UINT slot = 0u);
 		void Bind(Graphics& gfx) noexcept override;
+
+		void InitializeParentReference(const Drawable& parent) noexcept override;
 
 	protected:
 		void UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept;
@@ -25,6 +27,6 @@ namespace Bind {
 
 	private:
 		static std::unique_ptr<VertexConstantBuffer<Transforms>> pvcBuffer;
-		const Drawable& parent;
+		const Drawable* pParent = nullptr;
 	};
 }
