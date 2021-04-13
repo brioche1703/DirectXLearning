@@ -2,13 +2,19 @@
 
 #include "Graphics.h"
 #include "ConditionalNoexcept.h"
+#include "Technique.h"
 
 #include <DirectXMath.h>
 #include <memory>
+#include <vector>
+
+class TechniqueProbe;
 
 namespace Bind {
-	class Bindable;
 	class IndexBuffer;
+	class VertexBuffer;
+	class Topology;
+	class InputLayout;
 }
 
 class Drawable {
@@ -16,25 +22,21 @@ class Drawable {
 public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
-	virtual ~Drawable() = default;
+
+	virtual ~Drawable();
 
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
-	void Draw(Graphics& gfx) const noxnd;
 
-	template<class T>
-	T* QueryBindable() noexcept {
-		for (auto& pb : binds) {
-			if (auto pt = dynamic_cast<T*>(pb.get())) {
-				return pt;
-			}
-		}
-		return nullptr;
-	}
+	void Submit(class FrameCommander& frame) const noexcept;
+	void AddTechnique(Technique tech_in) noexcept;
+	void Bind(Graphics& gfx) const noexcept;
+	void Accept(TechniqueProbe& probe);
+	UINT GetIndexCount() const noxnd;
+
 
 protected:
-	void AddBind(std::shared_ptr<Bind::Bindable> bind) noxnd;
-
-private:
-	const Bind::IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::shared_ptr<Bind::Bindable>> binds;
+	std::shared_ptr<Bind::IndexBuffer> pIndices;
+	std::shared_ptr<Bind::VertexBuffer> pVertices;
+	std::shared_ptr<Bind::Topology> pTopology;
+	std::vector<Technique> techniques;
 };

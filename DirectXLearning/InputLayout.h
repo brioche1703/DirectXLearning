@@ -13,6 +13,7 @@ namespace Bind {
 		InputLayout(Graphics& gfx, const dxLearning::VertexLayout layout, ID3DBlob* pVertexShaderBytecode);
 		void Bind(Graphics& gfx) noexcept override;
 
+		const dxLearning::VertexLayout GetLayout() const noexcept;
 		static std::shared_ptr<InputLayout> Resolve(Graphics& gfx, const dxLearning::VertexLayout& layout, ID3DBlob* pVertexShaderBytecode);
 		static std::string GenerateUID(const dxLearning::VertexLayout& layout, ID3DBlob* pVertexShaderBytecode = nullptr);
 		std::string GetUID() const noexcept override;

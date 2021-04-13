@@ -1,9 +1,7 @@
 #include "TransformCBuf.h"
 
 namespace Bind {
-	TransformCBuf::TransformCBuf(Graphics& gfx, const Drawable& parent, UINT slot)
-		:
-		parent(parent)
+	TransformCBuf::TransformCBuf(Graphics& gfx, UINT slot)
 	{
 		if (!pvcBuffer) {
 			pvcBuffer = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
@@ -14,13 +12,19 @@ namespace Bind {
 		UpdateBindImpl(gfx, GetTransforms(gfx));
 	}
 
+	void TransformCBuf::InitializeParentReference(const Drawable& parent) noexcept {
+		pParent = &parent;
+	}
+
 	void TransformCBuf::UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept {		
+		assert(pParent != nullptr);
 		pvcBuffer->Update(gfx, tf);
 		pvcBuffer->Bind(gfx);
 	}
 
 	TransformCBuf::Transforms TransformCBuf::GetTransforms(Graphics& gfx) noexcept {
-		const auto modelView = parent.GetTransformXM() * gfx.GetCamera();
+		assert(pParent != nullptr);
+		const auto modelView = pParent->GetTransformXM() * gfx.GetCamera();
 		return {
 			DirectX::XMMatrixTranspose(modelView),
 			DirectX::XMMatrixTranspose(

@@ -10,6 +10,7 @@
 #include "TestPlane.h"
 #include "TestCube.h"
 #include "ScriptCommander.h"
+#include "FrameCommander.h"
 
 #include <set>
 
@@ -44,6 +45,8 @@ private:
 	//TestPlane bluePlane{ wnd.Gfx(), 6.0 , {0.3f, 0.3f, 1.0f, 0.5f}};
 	//TestPlane redPlane{ wnd.Gfx(), 6.0 , {1.0f, 0.3f, 0.3f, 0.5f}};
 
+	FrameCommander fc;
 	TestCube tc1{ wnd.Gfx(), 4.0f };
+	TestCube tc2{ wnd.Gfx(), 4.0f };
 
 };

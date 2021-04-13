@@ -27,6 +27,8 @@ App::App(const std::string& commandLine)
 	scriptCommander(TokenizeQuoted(commandLine)),
 	light(wnd.Gfx())
 {
+	tc1.SetPos({ 4.0f, 0.0f, 0.0f });
+	tc1.SetPos({ 0.0f, 4.0f, 0.0f });
 	//TestDynamicConstant();
 
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
@@ -64,13 +66,14 @@ void App::DoFrame() {
 	//goblin.Draw(wnd.Gfx());
 	//nano.Draw(wnd.Gfx());
 	//wall.Draw(wnd.Gfx());
-	light.Draw(wnd.Gfx());
+	light.Submit(fc);
 	//sponza.Draw(wnd.Gfx());
 	//bluePlane.Draw(wnd.Gfx());
 	//redPlane.Draw(wnd.Gfx());
-	tc1.Draw(wnd.Gfx());
-	tc1.DrawOutline(wnd.Gfx());
-	//tc1.DrawOutline(wnd.Gfx());
+	tc1.Submit(fc);
+	tc2.Submit(fc);
+
+	fc.Execute(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
 		if (!e->IsPress()) {
@@ -123,7 +126,8 @@ void App::DoFrame() {
 	// IMGUI
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
-	tc1.SpawnControlWindow(wnd.Gfx(), "Cube");
+	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
+	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	ShowImguiDemoWindow();
 
 	//goblin.ShowWindow(wnd.Gfx(), "Goblin");
@@ -135,6 +139,7 @@ void App::DoFrame() {
 	//sponza.ShowWindow(wnd.Gfx(), "Sponza");
 
 	wnd.Gfx().EndFrame();
+	fc.Reset();
 }
 
 void App::ShowImguiDemoWindow() {
