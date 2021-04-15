@@ -9,6 +9,8 @@
 #include <vector>
 
 class TechniqueProbe;
+class Material;
+struct aiMesh;
 
 namespace Bind {
 	class IndexBuffer;
@@ -20,6 +22,7 @@ namespace Bind {
 class Drawable {
 
 public:
+	Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh) noexcept;
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
 

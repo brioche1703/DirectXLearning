@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 
 namespace Bind {
-	class TransformCBuf : public Bindable {
+	class TransformCBuf : public CloningBindable {
 	protected:
 		struct Transforms {
 			DirectX::XMMATRIX modelView;
@@ -20,6 +20,8 @@ namespace Bind {
 		void Bind(Graphics& gfx) noexcept override;
 
 		void InitializeParentReference(const Drawable& parent) noexcept override;
+
+		std::unique_ptr<CloningBindable> Clone() const noexcept override;
 
 	protected:
 		void UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept;

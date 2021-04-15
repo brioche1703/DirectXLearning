@@ -34,6 +34,11 @@ const std::string& ModelException::GetNote() const noexcept {
 	return note;
 }
 
+Mesh::Mesh(Graphics& gfx, const Material& mat, const aiMesh& mesh) noxnd 
+	:
+	Drawable(gfx, mat, mesh)
+{}
+
 void Mesh::Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const noxnd {
 	DirectX::XMStoreFloat4x4(&transform, accumulatedTransform);
 	Drawable::Submit(frame);

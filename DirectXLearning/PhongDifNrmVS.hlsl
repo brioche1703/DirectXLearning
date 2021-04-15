@@ -10,7 +10,7 @@ struct VSOut
     float4 pos : SV_Position;
 };
 
-VSOut main(float3 viewPos : Position, float3 viewNormal : Normal, float3 viewTan : Tangent, float3 viewBitan : Bitangent, float2 tc : Texcoord)
+VSOut main(float3 viewPos : Position, float3 viewNormal : Normal, float2 tc : Texcoord, float3 viewTan : Tangent, float3 viewBitan : Bitangent)
 {
     VSOut vso;
     vso.viewPos = (float3) mul(float4(viewPos, 1.0f), modelView);

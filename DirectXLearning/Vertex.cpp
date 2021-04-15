@@ -1,3 +1,5 @@
+#define DXLG_SOURCE_FILE
+
 #include "Vertex.h"
 
 namespace dxLearning {
@@ -21,86 +23,46 @@ namespace dxLearning {
 		return SizeOf(type);
 	}
 
-	constexpr size_t VertexLayout::Element::SizeOf(ElementType type) noxnd {
-		using namespace DirectX;
-		switch (type)
-		{
-		case Position2D:
-			return sizeof(Map<Position2D>::SysType);
-		case Position3D:
-			return sizeof(Map<Position3D>::SysType);
-		case Texture2D:
-			return sizeof(Map<Texture2D>::SysType);
-		case Normal:
-			return sizeof(Map<Normal>::SysType);
-		case Tangent:
-			return sizeof(Map<Tangent>::SysType);
-		case Bitangent:
-			return sizeof(Map<Bitangent>::SysType);
-		case Float3Color:
-			return sizeof(Map<Float3Color>::SysType);
-		case Float4Color:
-			return sizeof(Map<Float4Color>::SysType);
-		case BGRAColor:
-			return sizeof(Map<BGRAColor>::SysType);
-		}
-		assert("Invalid element type" && false);
-		return 0u;
-	}
-
 	VertexLayout::ElementType VertexLayout::Element::GetType() const noexcept {
 		return type;
 	}
 
-	const char* dxLearning::VertexLayout::Element::GetCode() const noexcept {
-		switch (type)
-		{
-		case Position2D:
-			return Map<Position2D>::code;
-		case Position3D:
-			return Map<Position3D>::code;
-		case Texture2D:
-			return Map<Texture2D>::code;
-		case Normal:
-			return Map<Normal>::code;
-		case Tangent:
-			return Map<Tangent>::code;
-		case Bitangent:
-			return Map<Bitangent>::code;
-		case Float3Color:
-			return Map<Float3Color>::code;
-		case Float4Color:
-			return Map<Float4Color>::code;
-		case BGRAColor:
-			return Map<BGRAColor>::code;
+	template<VertexLayout::ElementType type>
+	struct SysSizeLookup
+	{
+		static constexpr auto Exec() noexcept {
+			return sizeof(VertexLayout::Map<type>::SysType);
 		}
-		assert("Invalid element type" && false);
-		return "Invalid";
+	};
+
+	constexpr size_t VertexLayout::Element::SizeOf(ElementType type) noxnd {
+		return Bridge<SysSizeLookup>(type);
 	}
 
-	D3D11_INPUT_ELEMENT_DESC VertexLayout::Element::GetDesc() const noxnd {
-		switch (type) {
-		case Position2D:
-			return GenerateDesc<Position2D>(GetOffset());
-		case Position3D:
-			return GenerateDesc<Position3D>(GetOffset());
-		case Texture2D:
-			return GenerateDesc<Texture2D>(GetOffset());
-		case Normal:
-			return GenerateDesc<Normal>(GetOffset());
-		case Tangent:
-			return GenerateDesc<Tangent>(GetOffset());
-		case Bitangent:
-			return GenerateDesc<Bitangent>(GetOffset());
-		case Float3Color:
-			return GenerateDesc<Float3Color>(GetOffset());
-		case Float4Color:
-			return GenerateDesc<Float4Color>(GetOffset());
-		case BGRAColor:
-			return GenerateDesc<BGRAColor>(GetOffset());
+	template<VertexLayout::ElementType type>
+	struct CodeLookup
+	{
+		static constexpr auto Exec() noexcept {
+			return VertexLayout::Map<type>::code;
 		}
-		assert("Invalid element type" && false);
-		return { "INVALID", 0, DXGI_FORMAT_UNKNOWN, 0, 0, D3D11_INPUT_PER_VERTEX_DATA };
+	};
+
+	const char* dxLearning::VertexLayout::Element::GetCode() const noexcept {
+		return Bridge<CodeLookup>(type);
+	}
+
+	template<VertexLayout::ElementType type> struct DescGenerate {
+		static constexpr D3D11_INPUT_ELEMENT_DESC Exec(size_t offset) noexcept {
+			return {
+				VertexLayout::Map<type>::semantic, 0,
+				VertexLayout::Map<type>::dxgiFormat, 0,
+				(UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0
+			};
+		}
+	};
+
+	D3D11_INPUT_ELEMENT_DESC VertexLayout::Element::GetDesc() const noxnd {
+		return Bridge<DescGenerate>(type, GetOffset());
 	}
 
 	// VertexLayout
@@ -109,7 +71,9 @@ namespace dxLearning {
 	}
 
 	VertexLayout& VertexLayout::Append(ElementType type) noxnd {
-		elements.emplace_back(type, Size());
+		if (!Has(type)) {
+			elements.emplace_back(type, Size());
+		}
 		return *this;
 	}
 
@@ -138,6 +102,16 @@ namespace dxLearning {
 		return code;
 	}
 
+	bool VertexLayout::Has(ElementType type) const noexcept
+	{
+		for (auto& e : elements) {
+			if (e.GetType() == type) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// Vertex
 	Vertex::Vertex(char* pData, const VertexLayout& layout) noxnd
 		:
@@ -158,6 +132,25 @@ namespace dxLearning {
 		layout(std::move(layout))
 	{
 		Resize(size);
+	}
+
+	template<VertexLayout::ElementType type>
+	struct AttributeAiMeshFill {
+		static constexpr void Exec(VertexBuffer* pBuf, const aiMesh& mesh) noxnd {
+			for (auto end = mesh.mNumVertices, i = 0u; i < end; i++) {
+				(*pBuf)[i].Attr<type>() = VertexLayout::Map<type>::Exctract(mesh, i);
+			}
+		}
+	};
+
+	VertexBuffer::VertexBuffer(VertexLayout layout_in, const aiMesh& mesh) 
+		:
+		layout(std::move(layout_in))
+	{
+		Resize(mesh.mNumVertices);
+		for (size_t i = 0, end = layout.GetElementCount(); i < end; i++) {
+			VertexLayout::Bridge<AttributeAiMeshFill>(layout.ResolveByIndex(i).GetType(), this, mesh);
+		}
 	}
 
 	const char* VertexBuffer::GetData() const noxnd {

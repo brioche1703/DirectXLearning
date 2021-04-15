@@ -5,27 +5,41 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <assimp/scene.h>
 
 #include <cassert>
 #include <vector>
-#include <dxgiformat.h>
 #include <string>
+
+#include <cassert>
+#include <vector>
+#include <string>
+#include <utility>
+#include <type_traits>
+
+#define DXLG_ELEMENT_AI_EXTRACTOR(member) static SysType Exctract(const aiMesh& mesh, size_t i) noexcept { return *reinterpret_cast<const SysType*>(&mesh.member[i]); }
+
+#define LAYOUT_ELEMENT_TYPES	\
+	X(Position2D)	\
+	X(Position3D)	\
+	X(Texture2D)	\
+	X(Normal)	\
+	X(Tangent)	\
+	X(Bitangent)	\
+	X(Float3Color)	\
+	X(Float4Color)	\
+	X(BGRAColor)	\
+	X(Count)
+
 
 namespace dxLearning {
 
 	class VertexLayout {
 	public:
 		enum ElementType {
-			Position2D,
-			Position3D,
-			Texture2D,
-			Normal,
-			Tangent,
-			Bitangent,
-			Float3Color,
-			Float4Color,
-			BGRAColor,
-			Count,
+			#define X(el) el,
+			LAYOUT_ELEMENT_TYPES
+			#undef X
 		};
 
 		template<ElementType> struct Map;
@@ -34,24 +48,28 @@ namespace dxLearning {
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
+			DXLG_ELEMENT_AI_EXTRACTOR(mVertices)
 		};
 		template<> struct Map<Position3D> {
 			using SysType = DirectX::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
+			DXLG_ELEMENT_AI_EXTRACTOR(mVertices)
 		};
 		template<> struct Map<Texture2D> {
 			using SysType = DirectX::XMFLOAT2;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "T2";
+			DXLG_ELEMENT_AI_EXTRACTOR(mTextureCoords[0])
 		};
 		template<> struct Map<Normal> {
 			using SysType = DirectX::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
+			DXLG_ELEMENT_AI_EXTRACTOR(mNormals)
 		};
 		template<> struct Map<Tangent>
 		{
@@ -59,6 +77,7 @@ namespace dxLearning {
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "Nt";
+			DXLG_ELEMENT_AI_EXTRACTOR(mTangents)
 		};
 		template<> struct Map<Bitangent>
 		{
@@ -66,25 +85,47 @@ namespace dxLearning {
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Bitangent";
 			static constexpr const char* code = "Nb";
+			DXLG_ELEMENT_AI_EXTRACTOR(mBitangents)
 		};
 		template<> struct Map<Float3Color> {
 			using SysType = DirectX::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "C3";
+			DXLG_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
 		template<> struct Map<Float4Color> {
 			using SysType = DirectX::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "C4";
+			DXLG_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
 		template<> struct Map<BGRAColor> {
 			using SysType = ::BGRAColor;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "C8";
+			DXLG_ELEMENT_AI_EXTRACTOR(mColors[0])
 		};
+		template<> struct Map<Count> {
+			using SysType = long double;
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_UNKNOWN;
+			static constexpr const char* semantic = "!INVALID!";
+			static constexpr const char* code = "!INV!";
+			DXLG_ELEMENT_AI_EXTRACTOR(mFaces);
+		};
+
+		template<template<VertexLayout::ElementType> class F, typename... Args>
+		static constexpr auto Bridge(VertexLayout::ElementType type, Args&&... args) noxnd {
+			switch (type) {
+				#define X(el) case VertexLayout::el: return F<VertexLayout::el>::Exec(std::forward<Args>(args)...);
+				LAYOUT_ELEMENT_TYPES
+				#undef X
+			}
+			assert("Invalid element type" && false);
+			return F<VertexLayout::Count>::Exec(std::forward<Args>(args)...);
+		}
 
 		class Element {
 		public:
@@ -96,12 +137,6 @@ namespace dxLearning {
 			ElementType GetType() const noexcept;
 			D3D11_INPUT_ELEMENT_DESC GetDesc() const noxnd;
 			const char* GetCode() const noexcept;
-					
-		private:
-			template<ElementType type> 
-			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset) noexcept {
-				return { Map<type>::semantic, 0, Map<type>::dxgiFormat, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			}
 
 		private:
 			ElementType type;
@@ -126,6 +161,7 @@ namespace dxLearning {
 		size_t GetElementCount() const noexcept;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noxnd;
 		std::string GetCode() const noxnd;
+		bool Has(ElementType type) const noexcept;
 
 	private:
 		std::vector<Element> elements;
@@ -135,6 +171,14 @@ namespace dxLearning {
 		friend class VertexBuffer;
 
 	public:
+		template<VertexLayout::ElementType type>
+		struct AttributeSetting {
+			template<typename T>
+			static constexpr auto Exec(Vertex* pVertex, char* pAttribute, T&& val) noxnd {
+				return pVertex->SetAttribute<type>(pAttribute, std::forward<T>(val));
+			}
+		};
+
 		template<VertexLayout::ElementType Type>
 		auto& Attr() noxnd {
 			auto pAttribute = pData + layout.Resolve<Type>().GetOffset();
@@ -146,40 +190,12 @@ namespace dxLearning {
 			using namespace DirectX;
 			const auto& element = layout.ResolveByIndex(i);
 			auto pAttribute = pData + element.GetOffset();
-			switch (element.GetType())
-			{
-			case VertexLayout::Position2D:
-				SetAttribute<VertexLayout::Position2D>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Position3D:
-				SetAttribute<VertexLayout::Position3D>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Texture2D:
-				SetAttribute<VertexLayout::Texture2D>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Normal:
-				SetAttribute<VertexLayout::Normal>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Tangent:
-				SetAttribute<VertexLayout::Tangent>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Bitangent:
-				SetAttribute<VertexLayout::Bitangent>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Float3Color:
-				SetAttribute<VertexLayout::Float3Color>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::Float4Color:
-				SetAttribute<VertexLayout::Float4Color>(pAttribute, std::forward<T>(val));
-				break;
-			case VertexLayout::BGRAColor:
-				SetAttribute<VertexLayout::BGRAColor>(pAttribute, std::forward<T>(val));
-				break;
-			default:
-				assert("Bad element type" && false);
-			}
-		}
 
+			VertexLayout::Bridge<AttributeSetting>(
+				element.GetType(), this, pAttribute, std::forward<T>(val)
+				);
+		}
+		
 	protected:
 		Vertex(char* pData, const VertexLayout& layout) noxnd;
 
@@ -223,6 +239,7 @@ namespace dxLearning {
 	class VertexBuffer {
 	public:
 		VertexBuffer(VertexLayout layout, size_t size = 0u) noxnd;
+		VertexBuffer(VertexLayout layout, const aiMesh& mesh);
 
 		const char* GetData() const noxnd;
 		const VertexLayout& GetLayout() const noexcept;
@@ -249,3 +266,8 @@ namespace dxLearning {
 		VertexLayout layout;
 	};
 }
+
+#undef DXLG_ELEMENT_AI_EXTRACTOR
+#ifndef DXLG_SOURCE_FILE
+#undef LAYOUT_ELEMENT_TYPES
+#endif

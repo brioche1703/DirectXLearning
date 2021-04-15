@@ -1,3 +1,11 @@
+#include "Testing.h"
+#include "Vertex.h"
+#include "Material.h"
+#include "Mesh.h"
+
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 //#include "DynamicConstant.h"
 //#include "LayoutCodex.h"
 //#include <cstring>
@@ -223,3 +231,22 @@
 //		assert(buf.GetSizeInBytes() == 32u);
 //	}
 //}
+
+void TestDynamicMeshLoading(Graphics& gfx) {
+	using namespace dxLearning;
+	Assimp::Importer imp;
+	
+	std::string path = "src\\models\\brick_wall\\brick_wall.obj";
+
+	const auto pScene = imp.ReadFile(
+		path,
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_ConvertToLeftHanded |
+		aiProcess_GenNormals |
+		aiProcess_CalcTangentSpace);
+
+	Material mat{ gfx, *pScene->mMaterials[1], path };
+	Mesh mesh{ gfx, mat,*pScene->mMeshes[0] };
+
+}

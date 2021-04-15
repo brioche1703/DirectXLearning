@@ -1,3 +1,4 @@
+#include "IncludeWin.h"
 #include "App.h"
 
 #include <fstream>
