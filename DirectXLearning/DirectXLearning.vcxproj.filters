@@ -52,6 +52,9 @@
     <Filter Include="Header Files\Misc">
       <UniqueIdentifier>{2c1baefb-cacb-4b55-b021-9d909441a00f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{29e87e3f-f060-4be0-8bc2-71a1693ad0f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -209,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="Step.cpp">
       <Filter>Source Files\Jobber</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +449,9 @@
     <ClInclude Include="TechniqueProbe.h">
       <Filter>Header Files\Jobber</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -489,10 +498,10 @@
     <FxCompile Include="SolidPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="PhongNormalMapPS.hlsl">
+    <FxCompile Include="PhongDifNrmPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="PhongNormalMapVS.hlsl">
+    <FxCompile Include="PhongDifNrmVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PhongNormalMapObjectPS.hlsl">

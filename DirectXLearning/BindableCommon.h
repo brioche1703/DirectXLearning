@@ -13,4 +13,5 @@
 #include "Blender.h"
 #include "Rasterizer.h"
 #include "Stencil.h"
+#include "Sampler.h"
 #include "NullPixelShader.h"

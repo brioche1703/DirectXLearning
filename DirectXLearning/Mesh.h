@@ -17,6 +17,8 @@
 #include <type_traits>
 #include <filesystem>
 
+class Material;
+
 class ModelException : public DirectXException {
 public:
 	ModelException(int line, const char* file, std::string note) noexcept;
@@ -30,8 +32,7 @@ private:
 
 class Mesh : public Drawable {
 public:
-	using Drawable::Drawable;
-
+	Mesh(Graphics& gfx, const Material& mat, const aiMesh& mesh) noxnd;
 	void Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 

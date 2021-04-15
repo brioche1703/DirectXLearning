@@ -2,6 +2,9 @@
 #include "Bindable.h"
 #include "IndexBuffer.h"
 #include "FrameCommander.h"
+#include "Material.h"
+
+#include "assimp/scene.h"
 
 using namespace Bind;
 
@@ -30,6 +33,16 @@ void Drawable::Accept(TechniqueProbe& probe) {
 
 UINT Drawable::GetIndexCount() const noxnd {
 	return pIndices->GetCount();
+}
+
+Drawable::Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh) noexcept {
+	pVertices = mat.MakeVertexBindable(gfx, mesh);
+	pIndices = mat.MakeIndexBindable(gfx, mesh);
+	pTopology = Bind::Topology::Resolve(gfx);
+
+	for (auto& t : mat.GetTechniques()) {
+		AddTechnique(std::move(t));
+	}
 }
 
 Drawable::~Drawable() {}

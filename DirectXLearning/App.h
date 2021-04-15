@@ -11,6 +11,7 @@
 #include "TestCube.h"
 #include "ScriptCommander.h"
 #include "FrameCommander.h"
+#include "Material.h"
 
 #include <set>
 
@@ -48,5 +49,7 @@ private:
 	FrameCommander fc;
 	TestCube tc1{ wnd.Gfx(), 4.0f };
 	TestCube tc2{ wnd.Gfx(), 4.0f };
+
+	std::unique_ptr<Mesh> pLoaded;
 
 };
