@@ -10,12 +10,14 @@
 #include <wrl.h>
 #include <DirectXMath.h>
 
+class DepthStencil;
+
 namespace Bind {
 	class Bindable;
 }
 
 class Graphics {
-	friend class Bind::Bindable;
+	friend class GraphicsResource;
 public:
 	class Exception : public DirectXException {
 		using DirectXException::DirectXException;
@@ -65,6 +67,9 @@ public:
 	void BeginFrame(float red, float green, float blue) noexcept;
 	void EndFrame();
 
+	void BindSwapBuffer() noexcept;
+	void BindSwapBuffer(const DepthStencil& ds) noexcept;
+
 	void DrawIndexed(UINT count) noxnd;
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
@@ -76,7 +81,12 @@ public:
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
 
+	UINT GetWidth() const noexcept;
+	UINT GetHeight() const noexcept;
+
 private:
+	UINT width;
+	UINT height;
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;

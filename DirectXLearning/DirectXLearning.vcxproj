@@ -194,9 +194,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Blender.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="DirectXException.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="dxerr.cpp" />
@@ -209,6 +209,7 @@
     <ClCompile Include="external\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="external\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="GraphicsResource.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ScriptCommander.cpp" />
     <ClCompile Include="SolidSphere.cpp" />
@@ -262,6 +264,7 @@
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="ConstantBuffersEX.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="DepthStencil.h" />
     <ClInclude Include="DirectXException.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="dxerr.h" />
@@ -277,6 +280,7 @@
     <ClInclude Include="external\imgui\imstb_truetype.h" />
     <ClInclude Include="FrameCommander.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="IncludeWin.h" />
@@ -304,6 +308,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Prism.h" />
     <ClInclude Include="Rasterizer.h" />
+    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="ScriptCommander.h" />
@@ -347,6 +352,21 @@
     <None Include="process.json" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+=======
+    <FxCompile Include="Fullscreen_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Funk_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+>>>>>>> master
     <FxCompile Include="LightVectorData.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
