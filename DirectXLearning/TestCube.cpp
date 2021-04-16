@@ -33,19 +33,21 @@ TestCube::TestCube(Graphics& gfx, float size)
 			only.AddBindable(Texture::Resolve(gfx, "src\\images\\brickwall.jpg"));
 			only.AddBindable(Sampler::Resolve(gfx));
 
-			auto pvs = VertexShader::Resolve(gfx, "PhongVS.cso");
+			auto pvs = VertexShader::Resolve(gfx, "PhongDif_VS.cso");
 			auto pvsbc = pvs->GetBytecode();
 			only.AddBindable(std::move(pvs));
 
-			only.AddBindable(PixelShader::Resolve(gfx, "PhongPS.cso"));
+			only.AddBindable(PixelShader::Resolve(gfx, "PhongDif_PS.cso"));
 
 			Dcb::RawLayout lay;
-			lay.Add<Dcb::Float>("specularIntensity");
-			lay.Add<Dcb::Float>("specularPower");
+			lay.Add<Dcb::Float3>("specularColor");
+			lay.Add<Dcb::Float>("specularWeight");
+			lay.Add<Dcb::Float>("specularGloss");
 			auto buf = Dcb::Buffer(std::move(lay));
-			buf["specularIntensity"] = 0.1f;
-			buf["specularPower"] = 20.0f;
-			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEX>(gfx, buf, 1u));
+			buf["specularColor"] = dx::XMFLOAT3{ 1.0f, 1.0f, 1.0f };
+			buf["specularWeight"] = 0.1f;
+			buf["specularGloss"] = 20.0f;
+			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
 
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
@@ -61,7 +63,7 @@ TestCube::TestCube(Graphics& gfx, float size)
 		{
 			Step mask(1);
 
-			auto pvs = VertexShader::Resolve(gfx, "SolidVS.cso");
+			auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
 			auto pvsbc = pvs->GetBytecode();
 			mask.AddBindable(std::move(pvs));
 
@@ -73,17 +75,17 @@ TestCube::TestCube(Graphics& gfx, float size)
 		}
 		{
 			Step draw(2);
-			auto pvs = VertexShader::Resolve(gfx, "SolidVS.cso");
+			auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
 			auto pvsbc = pvs->GetBytecode();
 			draw.AddBindable(std::move(pvs));
 
-			draw.AddBindable(PixelShader::Resolve(gfx, "SolidPS.cso"));
+			draw.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
 
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Float4>("color");
 			auto buf = Dcb::Buffer(std::move(lay));
 			buf["color"] = DirectX::XMFLOAT4{ 1.0f, 0.4f, 0.4f, 1.0f };
-			draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEX>(gfx, buf, 1u));
+			draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
 
 			draw.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
