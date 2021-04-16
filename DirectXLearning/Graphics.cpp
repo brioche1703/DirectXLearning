@@ -75,33 +75,6 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 		nullptr,
 		&pTarget));
 
-	// Depth stencil texture
-	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
-	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = width;
-	descDepth.Height = height;
-	descDepth.MipLevels = 1u;
-	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1u;
-	descDepth.SampleDesc.Quality = 0u;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
-
-	// Depth stencil texture view
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView = {};
-	descDSView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSView.Texture2D.MipSlice = 0u;
-	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
-		pDepthStencil.Get(),
-		&descDSView,
-		&pDSView));
-
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSView.Get());
-
 	// Set viewport
 	D3D11_VIEWPORT vp;
 	vp.Width = (float)width;
@@ -165,7 +138,6 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 	}
 	const float color[] = { red, green, blue, 1.0f};
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
-	pContext->ClearDepthStencilView(pDSView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }
 
 void Graphics::EndFrame()
