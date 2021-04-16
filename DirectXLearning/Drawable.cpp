@@ -35,8 +35,8 @@ UINT Drawable::GetIndexCount() const noxnd {
 	return pIndices->GetCount();
 }
 
-Drawable::Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh) noexcept {
-	pVertices = mat.MakeVertexBindable(gfx, mesh);
+Drawable::Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh, float scale) noexcept {
+	pVertices = mat.MakeVertexBindable(gfx, mesh, scale);
 	pIndices = mat.MakeIndexBindable(gfx, mesh);
 	pTopology = Bind::Topology::Resolve(gfx);
 

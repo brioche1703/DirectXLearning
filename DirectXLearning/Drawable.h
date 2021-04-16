@@ -22,7 +22,7 @@ namespace Bind {
 class Drawable {
 
 public:
-	Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh) noexcept;
+	Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh, float scale = 1.0f) noexcept;
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
 

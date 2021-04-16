@@ -1,15 +1,17 @@
 #include "ShaderOps.hlsl"
 #include "LightVectorData.hlsl"
+
 #include "PointLight.hlsl"
 
 cbuffer ObjectCBuf
 {
-    bool normalMapEnabled;
-    bool specularMapEnabled;
-    bool hasGloss;
-    float specularPowerConst;
+    bool useGlossAlpha;
+    bool useSpecularMap;
     float3 specularColor;
-    float specularMapWeight;
+    float specularWeight;
+    float specularGloss;
+    bool useNormalMap;
+    float normalMapWeight;
 };
 
 Texture2D tex;
@@ -34,29 +36,32 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
 
     viewNormal = normalize(viewNormal);
     // replace normal with mapped if normal mapping enabled
-    if (normalMapEnabled)
+    if (useNormalMap)
     {
-        viewNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
+        const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
+        viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
     }
    
     // fragment to light vector data
     const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
     
     // specular parameter determination (mapped or uniform)
+    float specularPower = specularGloss;
+    const float4 specularSample = spec.Sample(splr, tc);
+    
     float3 specularReflectionColor;
-    float specularPower = specularPowerConst;
-    if (specularMapEnabled)
+    if (useSpecularMap)
     {
-        const float4 specularSample = spec.Sample(splr, tc);
-        specularReflectionColor = specularSample.rgb * specularMapWeight;
-        if (hasGloss)
-        {
-            specularPower = pow(2.0f, specularSample.a * 13.0f);
-        }
+        specularReflectionColor = specularSample.rgb;
     }
     else
     {
         specularReflectionColor = specularColor;
+    }
+
+    if (useGlossAlpha)
+    {
+        specularPower = pow(2.0f, specularSample.a * 13.0f);
     }
     
     // attenuation
@@ -66,10 +71,10 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
 
     // specular reflected
     const float3 specularReflected = Speculate(
-        specularReflectionColor, 1.0f, viewNormal,
+        diffuseColor * diffuseIntensity * specularReflectionColor, specularWeight, viewNormal,
         lv.vToL, viewFragPos, att, specularPower
     );
     
 	// final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-    return float4(saturate((diffuse + ambient) * dtex.rgb + specularReflected), dtex.a);
+    return float4(saturate((diffuse + ambient) * dtex.rgb + specularReflected), 1.0f);
 }
