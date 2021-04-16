@@ -35,7 +35,7 @@ private:
 	Timer timer;
 	float speed_factor = 1.0f;
 	Camera cam;
-	FrameCommander fc;
+	FrameCommander fc{ wnd.Gfx() };
 
 	PointLight light;
 	Model goblin{ wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" , 6.0f };

@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "dxerr.h"
 #include "GraphicsThrowMacros.h"
+#include "DepthStencil.h"
 
 #include <sstream>
 #include <d3dcompiler.h>
@@ -20,7 +21,11 @@ namespace dx = DirectX;
 
 
 
-Graphics::Graphics(HWND hWnd, int width, int height) {
+Graphics::Graphics(HWND hWnd, int width, int height) 
+	:
+	width(width),
+	height(height)
+{
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
@@ -143,6 +148,13 @@ bool Graphics::IsImguiEnabled() const noexcept {
 	return imguiEnabled;
 }
 
+UINT Graphics::GetWidth() const noexcept {
+	return width;
+}
+UINT Graphics::GetHeight() const noexcept {
+	return height;
+}
+
 void Graphics::BeginFrame(float red, float green, float blue) noexcept
 {
 	if (imguiEnabled)
@@ -177,6 +189,14 @@ void Graphics::EndFrame()
 		}
 	}
 	pSwapChain->Present(1u, 0u);
+}
+
+void Graphics::BindSwapBuffer() noexcept {
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+}
+
+void Graphics::BindSwapBuffer(const DepthStencil& ds) noexcept {
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), ds.pDepthStencilView.Get());
 }
 
 
