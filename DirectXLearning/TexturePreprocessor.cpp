@@ -1,5 +1,8 @@
 #include "TexturePreprocessor.h"
-#include "Mesh.h"
+#include "ModelException.h"
+
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
 
 #include <filesystem>
 #include <sstream>
