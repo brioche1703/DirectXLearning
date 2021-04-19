@@ -89,41 +89,7 @@ TestCube::TestCube(Graphics& gfx, float size)
 
 			draw.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
-			class TransformCBufScaling : public TransformCBuf {
-			public:
-				TransformCBufScaling(Graphics& gfx, float scale = 1.04f)
-					:
-					TransformCBuf(gfx),
-					buf(MakeLayout())
-				{
-					buf["scale"] = scale;
-				}
-
-				void Accept(TechniqueProbe& probe) override {
-					probe.VisitBuffer(buf);
-				}
-
-				void Bind(Graphics& gfx) noexcept override {
-					const auto scale = buf["scale"];
-					const auto scaleMatrix = dx::XMMatrixScaling(scale, scale, scale);
-					auto xf = GetTransforms(gfx);
-					xf.modelView = xf.modelView * scaleMatrix;
-					xf.modelViewProj = xf.modelViewProj * scaleMatrix;
-					UpdateBindImpl(gfx, xf);
-				}
-
-			private:
-				static Dcb::RawLayout MakeLayout() {
-					Dcb::RawLayout lay;
-					lay.Add<Dcb::Float>("scale");
-					return lay;
-				}
-
-			private:
-				Dcb::Buffer buf;
-			};
-
-			draw.AddBindable(std::make_shared<TransformCBufScaling>(gfx));
+			draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
 			outline.AddStep(std::move(draw));
 		}
 

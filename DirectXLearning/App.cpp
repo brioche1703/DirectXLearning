@@ -45,7 +45,7 @@ App::App(const std::string& commandLine)
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	//bluePlane.SetPos(cam.GetPos());
 	//redPlane.SetPos(cam.GetPos());
-	goblin.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
+	goblin.SetRootTransform(DirectX::XMMatrixRotationY(-146.0f) * DirectX::XMMatrixTranslation(-10.0f, 8.4f, -4.0f));
 	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
@@ -311,13 +311,13 @@ void App::DoFrame() {
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	ShowImguiDemoWindow();
 
-	//goblin.ShowWindow(wnd.Gfx(), "Goblin");
+	modelProbe.SpawnWindow(goblin);
 	//nano.ShowWindow(wnd.Gfx(), "Nanosuit");
 	//wall.ShowWindow(wnd.Gfx(), "Wall");
 	//bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
 	//redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
 
-	//sponza.ShowWindow(wnd.Gfx(), "Sponza");
+	fc.ShowWindow(wnd.Gfx());
 
 	wnd.Gfx().EndFrame();
 	fc.Reset();

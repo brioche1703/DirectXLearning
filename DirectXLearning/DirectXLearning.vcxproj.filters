@@ -488,6 +488,9 @@
     <ClInclude Include="RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BlurPack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -552,19 +555,44 @@
     <FxCompile Include="Fullscreen_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Funk_PS.hlsl">
+    <FxCompile Include="Blur_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="PhongNormalMapObjectPS.hlsl" />
-    <FxCompile Include="PhongDifNrmPS.hlsl" />
-    <FxCompile Include="PhongDifNrmVS.hlsl" />
-    <FxCompile Include="PhongNotexPS.hlsl" />
-    <FxCompile Include="PhongNotexVS.hlsl" />
-    <FxCompile Include="PhongPS.hlsl" />
-    <FxCompile Include="PhongSpecNormalMapPS.hlsl" />
-    <FxCompile Include="PhongSpecNormalMaskPS.hlsl" />
-    <FxCompile Include="PhongSpecPS.hlsl" />
-    <FxCompile Include="SolidVS.hlsl" />
-    <FxCompile Include="PhongVS.hlsl" />
+    <FxCompile Include="PhongDifNrmPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifNrmVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongNormalMapObjectPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongNotexPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongNotexVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongSpecNormalMapPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongSpecNormalMaskPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongSpecPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="SolidVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="BlurOutline_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

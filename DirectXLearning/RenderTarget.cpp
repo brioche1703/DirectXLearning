@@ -6,7 +6,11 @@
 
 namespace wrl = Microsoft::WRL;
 
-RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height) {
+RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height)
+	:
+	width(width),
+	height(height)
+{
 		INFOMAN(gfx);
 
 		D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -54,10 +58,28 @@ void RenderTarget::BindAsTexture(Graphics& gfx, UINT slot) const noexcept {
 
 void RenderTarget::BindAsTarget(Graphics& gfx) const noexcept {
 	GetContext(gfx)->OMSetRenderTargets(1, pTargetView.GetAddressOf(), nullptr);
+
+	D3D11_VIEWPORT vp;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	GetContext(gfx)->RSSetViewports(1u, &vp);
 }
 
 void RenderTarget::BindAsTarget(Graphics& gfx, const DepthStencil& depthStencil) const noexcept {
 	GetContext(gfx)->OMSetRenderTargets(1, pTargetView.GetAddressOf(), depthStencil.pDepthStencilView.Get());
+
+	D3D11_VIEWPORT vp;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	GetContext(gfx)->RSSetViewports(1u, &vp);
 }
 
 void RenderTarget::Clear(Graphics& gfx, const std::array<float, 4>& color) const noexcept {
