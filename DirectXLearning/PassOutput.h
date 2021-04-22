@@ -5,8 +5,6 @@
 #include <string>
 #include <memory>
 
-class PassInput;
-
 namespace Bind {
 	class Bindable;
 	class BufferResource;

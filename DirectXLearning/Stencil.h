@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bindable.h"
+#include "BindableCodex.h"
 
 namespace Bind {
 	class Stencil : public Bindable {

@@ -26,7 +26,7 @@ public:
 	PassInput& GetInput(const std::string& registeredName) const;
 	void SetInputResource(const std::string& registeredName, const std::string& target);
 	virtual void Finalize();
-	virtual ~Pass() = default;
+	virtual ~Pass();
 
 protected:
 	void RegisterInput(std::unique_ptr<PassInput> input);

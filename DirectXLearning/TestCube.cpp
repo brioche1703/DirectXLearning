@@ -25,6 +25,7 @@ TestCube::TestCube(Graphics& gfx, float size)
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	auto tcb = std::make_shared<TransformCBuf>(gfx);
 	{
 		Technique shade("Shade");
 		{
@@ -50,51 +51,85 @@ TestCube::TestCube(Graphics& gfx, float size)
 			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
 
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
+			only.AddBindable(Rasterizer::Resolve(gfx, false));
+			only.AddBindable(tcb);
 
-			only.AddBindable(std::make_shared<TransformCBuf>(gfx));
 			shade.AddStep(std::move(only));
 		}
 		AddTechnique(std::move(shade));
 	}
 
 
-	//{
-	//	Technique outline("Outline");
-	//	{
-	//		Step mask(1);
+	{
+		Technique outline("Outline");
+		{
+			Step mask("outlineMask");
 
-	//		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
-	//		auto pvsbc = pvs->GetBytecode();
-	//		mask.AddBindable(std::move(pvs));
+			mask.AddBindable(InputLayout::Resolve(
+				gfx,
+				model.vertices.GetLayout(),
+				VertexShader::Resolve(gfx, "Solid_VS.cso")->GetBytecode())
+			);
 
-	//		mask.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
+			mask.AddBindable(std::move(tcb));
 
-	//		mask.AddBindable(std::make_shared<TransformCBuf>(gfx));
+			outline.AddStep(std::move(mask));
+		}
+		{
+			Step draw("outlineDraw");
 
-	//		outline.AddStep(std::move(mask));
-	//	}
-	//	{
-	//		Step draw(2);
-	//		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
-	//		auto pvsbc = pvs->GetBytecode();
-	//		draw.AddBindable(std::move(pvs));
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Float4>("color");
+			auto buf = Dcb::Buffer(std::move(lay));
+			buf["color"] = DirectX::XMFLOAT4{ 1.0f, 0.4f, 0.4f, 1.0f };
+			draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
 
-	//		draw.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
+			draw.AddBindable(InputLayout::Resolve(
+				gfx, 
+				model.vertices.GetLayout(), 
+				VertexShader::Resolve(gfx, "Solid_VS.cso")->GetBytecode())
+			);
 
-	//		Dcb::RawLayout lay;
-	//		lay.Add<Dcb::Float4>("color");
-	//		auto buf = Dcb::Buffer(std::move(lay));
-	//		buf["color"] = DirectX::XMFLOAT4{ 1.0f, 0.4f, 0.4f, 1.0f };
-	//		draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
+			class TransformCBufScaling : public TransformCBuf {
+			public:
+				TransformCBufScaling(Graphics& gfx, float scale = 1.4f) 
+					:
+					TransformCBuf(gfx),
+					buf(MakeLayout())
+				{
+					buf["scale"] = scale;
+				}
 
-	//		draw.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
+				void Accept(TechniqueProbe& probe) override {
+					probe.VisitBuffer(buf);
+				}
+				
+				void Bind(Graphics& gfx) noexcept override {
+					const float scale = buf["scale"];
+					const auto scaleMatrix = dx::XMMatrixScaling(scale, scale, scale);
+					auto xf = GetTransforms(gfx);
+					xf.modelView = xf.modelView * scaleMatrix;
+					xf.modelViewProj = xf.modelViewProj * scaleMatrix;
+					UpdateBindImpl(gfx, xf);
+				}
 
-	//		draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
-	//		outline.AddStep(std::move(draw));
-	//	}
+			private:
+				static Dcb::RawLayout MakeLayout() {
+					Dcb::RawLayout lay;
+					lay.Add<Dcb::Float>("scale");
+					return lay;
+				}
 
-	//	AddTechnique(std::move(outline));
-	//}
+			private:
+				Dcb::Buffer buf;
+			};
+
+			draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
+			outline.AddStep(std::move(draw));
+		}
+
+		AddTechnique(std::move(outline));
+	}
 }
 
 void TestCube::SetPos(DirectX::XMFLOAT3 pos) noexcept {

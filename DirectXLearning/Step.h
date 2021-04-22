@@ -29,6 +29,6 @@ public:
 
 private:
 	std::vector<std::shared_ptr<Bind::Bindable>> bindables;
-	RenderQueuePass* pTargetPass;
+	RenderQueuePass* pTargetPass = nullptr;
 	std::string targetPassName;
 };

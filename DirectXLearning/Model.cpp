@@ -67,7 +67,7 @@ std::unique_ptr<Node> Model::ParseNode(int& nextId, const aiNode& node, float sc
 	return pNode;
 }
 
-void Model::Submit(FrameCommander& frame) const noxnd {
+void Model::Submit() const noxnd {
 	pRoot->Submit(DirectX::XMMatrixIdentity());
 }
 
@@ -78,4 +78,10 @@ void Model::SetRootTransform(DirectX::FXMMATRIX tf) noexcept {
 
 void Model::Accept(ModelProbe& probe) {
 	pRoot->Accept(probe);
+}
+
+void Model::LinkTechniques(RenderGraph& rg) {
+	for (auto& pMesh : meshPtrs) {
+		pMesh->LinkTechniques(rg);
+	}
 }

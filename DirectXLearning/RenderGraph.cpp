@@ -14,9 +14,9 @@ RenderGraph::RenderGraph(Graphics& gfx)
 	backBufferTarget(gfx.GetTarget()),
 	masterDepth(std::make_shared<Bind::OutputOnlyDepthStencil>(gfx))
 {
-	globalSources.push_back(BufferOutput<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
-	globalSources.push_back(BufferOutput<Bind::DepthStencil>::Make("masterDepth", masterDepth));
-	globalSinks.push_back(BufferInput<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+	AddGlobalSource(BufferOutput<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+	AddGlobalSource(BufferOutput<Bind::DepthStencil>::Make("masterDepth", masterDepth));
+	AddGlobalSink(BufferInput<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
 }
 
 RenderGraph::~RenderGraph() 
@@ -37,6 +37,14 @@ void RenderGraph::SetSinkTarget(const std::string& sinkName, const std::string& 
 		throw RGC_EXCEPTION("Input target has incorrect format");
 	}
 	(*i)->SetTarget(targetSplit[0], targetSplit[1]);
+}
+
+void RenderGraph::AddGlobalSource(std::unique_ptr<PassOutput> out) {
+	globalSources.push_back(std::move(out));
+}
+
+void RenderGraph::AddGlobalSink(std::unique_ptr<PassInput> in) {
+	globalSinks.push_back(std::move(in));
 }
 
 void RenderGraph::AppendPass(std::unique_ptr<Pass> pass) {

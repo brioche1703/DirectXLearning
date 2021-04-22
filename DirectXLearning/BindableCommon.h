@@ -4,6 +4,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffers.h"
+#include "ConstantBuffersEx.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"

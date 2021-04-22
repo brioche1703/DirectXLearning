@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "DynamicConstant.h"
 #include "ConstantBuffersEX.h"
+#include "TransformCBufScaling.h"
 
 #include <memory>
 
@@ -123,47 +124,45 @@ modelPath(path.string())
 		phong.AddStep(std::move(step));
 		techniques.push_back(std::move(phong));
 	}
-	//// Outline technique
-	//{
-	//	Technique outline("Outline", false);
-	//	{
-	//		Step mask(1);
+	// Outline technique
+	{
+		Technique outline("Outline", false);
+		{
+			Step mask("outlineMask");
 
-	//		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
-	//		auto pvsbc = pvs->GetBytecode();
-	//		mask.AddBindable(std::move(pvs));
+			mask.AddBindable(InputLayout::Resolve(
+				gfx, 
+				vtxLayout, 
+				VertexShader::Resolve(gfx, "Solid_VS.cso")->GetBytecode())
+			);
 
-	//		mask.AddBindable(InputLayout::Resolve(gfx, vtxLayout, pvsbc));
+			mask.AddBindable(std::make_shared<TransformCBuf>(gfx));
 
-	//		mask.AddBindable(std::make_shared<TransformCBuf>(gfx));
+			outline.AddStep(std::move(mask));
+		}
+		{
+			Step draw("outlineDraw");
 
-	//		outline.AddStep(std::move(mask));
-	//	}
-	//	{
-	//		Step draw(2);
+			{
+				Dcb::RawLayout lay;
+				lay.Add<Dcb::Float3>("materialColor");
+				auto buf = Dcb::Buffer(std::move(lay));
+				buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,0.4f,0.4f };
+				draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
+			}
 
-	//		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
-	//		auto pvsbc = pvs->GetBytecode();
-	//		draw.AddBindable(std::move(pvs));
+			draw.AddBindable(InputLayout::Resolve(
+				gfx, 
+				vtxLayout,
+				VertexShader::Resolve(gfx, "Solid_VS.cso")->GetBytecode())
+			);
 
-	//		draw.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
+			draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
 
-	//		{
-	//			Dcb::RawLayout lay;
-	//			lay.Add<Dcb::Float3>("materialColor");
-	//			auto buf = Dcb::Buffer(std::move(lay));
-	//			buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,0.4f,0.4f };
-	//			draw.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
-	//		}
-
-	//		draw.AddBindable(InputLayout::Resolve(gfx, vtxLayout, pvsbc));
-
-	//		draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
-
-	//		outline.AddStep(std::move(draw));
-	//	}
-	//	techniques.push_back(std::move(outline));
-	//}
+			outline.AddStep(std::move(draw));
+		}
+		techniques.push_back(std::move(outline));
+	}
 
 }
 

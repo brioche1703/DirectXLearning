@@ -17,3 +17,10 @@ void BindingPass::BindAll(Graphics& gfx) const noexcept {
 	}
 	BindBufferResources(gfx);
 }
+
+void BindingPass::Finalize() {
+	Pass::Finalize();
+	if (!renderTarget && !depthStencil) {
+		throw RGC_EXCEPTION("BindingPass [" + GetName() + "] needs at least one of a renderTarget or depthStencil");
+	}
+}

@@ -63,6 +63,9 @@ void Pass::Finalize() {
 	}
 }
 
+Pass::~Pass()
+{}
+
 void Pass::RegisterInput(std::unique_ptr<PassInput> input) {
 	for (auto& in : inputs) {
 		if (in->GetRegisteredName() == input->GetRegisteredName()) {
