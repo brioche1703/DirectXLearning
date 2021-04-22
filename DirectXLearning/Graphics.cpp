@@ -1,15 +1,17 @@
 #include "Graphics.h"
-#include "dxerr.h"
 #include "GraphicsThrowMacros.h"
 #include "DepthStencil.h"
+#include "Bindable.h"
+#include "BindableCommon.h"
+#include "RenderTarget.h"
+
 
 #include <sstream>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <array>
 
-#include "Bindable.h"
-#include "BindableCommon.h"
-
+#include "dxerr.h"
 #include "external/imgui/imgui_impl_dx11.h"
 #include "external/imgui/imgui_impl_win32.h"
 
@@ -64,16 +66,18 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 		&pContext));
 
 	// Get access to texture subresource in swap chain (back buffer)
-	wrl::ComPtr<ID3D11Resource> pBackBuffer;
-	GFX_THROW_INFO(pSwapChain->GetBuffer(
-		0, 
-		__uuidof(ID3D11Resource), 
-		&pBackBuffer));
+	wrl::ComPtr<ID3D11Texture2D> pBackBuffer;
+	GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer));
+	pTarget = std::shared_ptr<Bind::RenderTarget>{ new Bind::OutputOnlyRenderTarget(*this, pBackBuffer.Get()) };
 
-	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
-		pBackBuffer.Get(),
-		nullptr,
-		&pTarget));
+	D3D11_VIEWPORT vp;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	pContext->RSSetViewports(1u, &vp);
 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
@@ -118,6 +122,10 @@ UINT Graphics::GetHeight() const noexcept {
 	return height;
 }
 
+std::shared_ptr<Bind::RenderTarget> Graphics::GetTarget() {
+	return pTarget;
+}
+
 void Graphics::BeginFrame(float red, float green, float blue) noexcept
 {
 	if (imguiEnabled)
@@ -126,8 +134,6 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 	}
-	const float color[] = { red, green, blue, 1.0f};
-	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
 void Graphics::EndFrame()
@@ -152,33 +158,6 @@ void Graphics::EndFrame()
 	}
 	pSwapChain->Present(1u, 0u);
 }
-
-void Graphics::BindSwapBuffer() noexcept {
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
-
-	D3D11_VIEWPORT vp;
-	vp.Width = (float)width;
-	vp.Height = (float)height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0.0f;
-	vp.TopLeftY = 0.0f;
-	pContext->RSSetViewports(1u, &vp);
-}
-
-void Graphics::BindSwapBuffer(const DepthStencil& ds) noexcept {
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), ds.pDepthStencilView.Get());
-
-	D3D11_VIEWPORT vp;
-	vp.Width = (float)width;
-	vp.Height = (float)height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0.0f;
-	vp.TopLeftY = 0.0f;
-	pContext->RSSetViewports(1u, &vp);
-}
-
 
 Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
 	: Exception(line, file), hr(hr) {

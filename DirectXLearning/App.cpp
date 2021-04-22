@@ -10,6 +10,9 @@
 #include "ModelProbe.h"
 #include "Node.h"
 #include "XMUtils.h"
+#include "TechniqueProbe.h"
+#include "BufferClearPass.h"
+#include "LambertianPass.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -38,14 +41,35 @@ App::App(const std::string& commandLine)
 	TestDynamicMeshLoading(wnd.Gfx());
 
 	tc1.SetPos({ 4.0f, 0.0f, 0.0f });
-	tc1.SetPos({ 0.0f, 4.0f, 0.0f });
+	tc2.SetPos({ 0.0f, 4.0f, 0.0f });
+
+	{
+		{
+			auto bcp = std::make_unique<BufferClearPass>("clear");
+			bcp->SetInputResource("renderTarget", "$.backbuffer");
+			bcp->SetInputResource("depthStencil", "$.masterDepth");
+			rg.AppendPass(std::move(bcp));
+		}
+		{
+			auto lp = std::make_unique<LambertianPass>("lambertian");
+			lp->SetInputResource("renderTarget", "clear.renderTarget");
+			lp->SetInputResource("depthStencil", "clear.depthStencil");
+			rg.AppendPass(std::move(lp));
+		}
+		rg.SetSinkTarget("backbuffer", "lambertian.renderTarget");
+		rg.Finalize();
+
+		tc1.LinkTechniques(rg);
+		tc2.LinkTechniques(rg);
+		light.LinkTechniques(rg);
+	}
 
 	//TestDynamicConstant();
 
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	//bluePlane.SetPos(cam.GetPos());
 	//redPlane.SetPos(cam.GetPos());
-	goblin.SetRootTransform(DirectX::XMMatrixRotationY(-146.0f) * DirectX::XMMatrixTranslation(-10.0f, 8.4f, -4.0f));
+	//goblin.SetRootTransform(DirectX::XMMatrixRotationY(-146.0f) * DirectX::XMMatrixTranslation(-10.0f, 8.4f, -4.0f));
 	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
@@ -74,17 +98,17 @@ void App::DoFrame() {
 
 	light.Bind(wnd.Gfx(), cam.GetMatrix());
 
-	goblin.Submit(fc);
+	//goblin.Submit(fc);
 	//nano.Draw(wnd.Gfx());
 	//wall.Draw(wnd.Gfx());
-	light.Submit(fc);
-	tc1.Submit(fc);
-	sponza.Submit(fc);
+	light.Submit();
+	tc1.Submit();
+	//sponza.Submit(fc);
 	//bluePlane.Draw(wnd.Gfx());
 	//redPlane.Draw(wnd.Gfx());
-	tc2.Submit(fc);
+	tc2.Submit();
 
-	fc.Execute(wnd.Gfx());
+	rg.Execute(wnd.Gfx());
 
 	while (const auto e = wnd.kbd.ReadKey()) {
 		if (!e->IsPress()) {
@@ -187,8 +211,8 @@ void App::DoFrame() {
 
 	class MP : ModelProbe {
 	public:
-		void SpawnWindow(Model& model) {
-			ImGui::Begin("Model");
+		void SpawnWindow(Model& model, const char* title) {
+			ImGui::Begin(title);
 			ImGui::Columns(2, nullptr, true);
 			model.Accept(*this);
 
@@ -304,23 +328,21 @@ void App::DoFrame() {
 	static MP modelProbe;
 
 	// IMGUI
-	modelProbe.SpawnWindow(sponza);
+	//modelProbe.SpawnWindow(sponza, "Sponza");
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	ShowImguiDemoWindow();
 
-	modelProbe.SpawnWindow(goblin);
+	//modelProbe.SpawnWindow(goblin, "Goblin");
 	//nano.ShowWindow(wnd.Gfx(), "Nanosuit");
 	//wall.ShowWindow(wnd.Gfx(), "Wall");
 	//bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
 	//redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
 
-	fc.ShowWindow(wnd.Gfx());
-
 	wnd.Gfx().EndFrame();
-	fc.Reset();
+	rg.Reset();
 }
 
 void App::ShowImguiDemoWindow() {

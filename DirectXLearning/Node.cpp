@@ -15,17 +15,17 @@ meshPtrs(std::move(meshPtrs))
 	DirectX::XMStoreFloat4x4(&appliedTransform, DirectX::XMMatrixIdentity());
 }
 
-void Node::Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const noxnd {
+void Node::Submit(DirectX::FXMMATRIX accumulatedTransform) const noxnd {
 	const auto built =
 		DirectX::XMLoadFloat4x4(&appliedTransform) *
 		DirectX::XMLoadFloat4x4(&transform) *
 		accumulatedTransform;
 
 	for (const auto pm : meshPtrs) {
-		pm->Submit(frame, built);
+		pm->Submit(built);
 	}
 	for (const auto& pc : childPtrs) {
-		pc->Submit(frame, built);
+		pc->Submit(built);
 	}
 }
 

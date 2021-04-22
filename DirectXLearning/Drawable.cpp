@@ -1,16 +1,15 @@
 #include "Drawable.h"
 #include "Bindable.h"
 #include "IndexBuffer.h"
-#include "FrameCommander.h"
 #include "Material.h"
 
 #include "assimp/scene.h"
 
 using namespace Bind;
 
-void Drawable::Submit(FrameCommander& frame) const noexcept {
+void Drawable::Submit() const noexcept {
 	for (const auto& tech : techniques) {
-		tech.Submit(frame, *this);
+		tech.Submit(*this);
 	}
 }
 
@@ -33,6 +32,12 @@ void Drawable::Accept(TechniqueProbe& probe) {
 
 UINT Drawable::GetIndexCount() const noxnd {
 	return pIndices->GetCount();
+}
+
+void Drawable::LinkTechniques(RenderGraph& rg) {
+	for (auto& tech : techniques) {
+		tech.Link(rg);
+	}
 }
 
 Drawable::Drawable(Graphics& gfx, const Material& mat, const aiMesh& mesh, float scale) noexcept {

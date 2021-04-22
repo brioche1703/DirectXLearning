@@ -1,11 +1,11 @@
 #pragma once
-#include "Graphics.h"
+
 #include "GraphicsResource.h"
-#include "ConditionalNoexcept.h"
 
 #include <string>
 #include <memory>
 
+class Graphics;
 class Drawable;
 class TechniqueProbe;
 

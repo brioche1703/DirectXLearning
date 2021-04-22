@@ -68,7 +68,7 @@ std::unique_ptr<Node> Model::ParseNode(int& nextId, const aiNode& node, float sc
 }
 
 void Model::Submit(FrameCommander& frame) const noxnd {
-	pRoot->Submit(frame, DirectX::XMMatrixIdentity());
+	pRoot->Submit(DirectX::XMMatrixIdentity());
 }
 
 

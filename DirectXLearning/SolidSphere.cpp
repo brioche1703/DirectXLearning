@@ -21,12 +21,12 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 
 	{
 		Technique solid;
-		Step only(0);
+		Step only("lambertian");
 
-		auto pvs = VertexShader::Resolve(gfx, "SolidVS.cso");
+		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		only.AddBindable(std::move(pvs));
-		only.AddBindable(PixelShader::Resolve(gfx, "SolidPS.cso"));
+		only.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
 
 		struct PSColorConstant {
 			dx::XMFLOAT3 color = { 1.0f, 1.0f, 1.0f };

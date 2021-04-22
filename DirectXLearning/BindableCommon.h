@@ -8,7 +8,6 @@
 #include "PixelShader.h"
 #include "InputLayout.h"
 #include "TransformCBuf.h"
-#include "TransformCBufDouble.h"
 #include "Texture.h"
 #include "Blender.h"
 #include "Rasterizer.h"

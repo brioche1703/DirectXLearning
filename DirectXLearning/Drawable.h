@@ -9,6 +9,7 @@
 #include <vector>
 
 class TechniqueProbe;
+class RenderGraph;
 class Material;
 struct aiMesh;
 
@@ -30,11 +31,12 @@ public:
 
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 
-	void Submit(class FrameCommander& frame) const noexcept;
+	void Submit() const noexcept;
 	void AddTechnique(Technique tech_in) noexcept;
 	void Bind(Graphics& gfx) const noexcept;
 	void Accept(TechniqueProbe& probe);
 	UINT GetIndexCount() const noxnd;
+	void LinkTechniques(RenderGraph&);
 
 
 protected:

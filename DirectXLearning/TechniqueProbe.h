@@ -1,24 +1,30 @@
 #pragma once
 
+#include <limits>
+
 namespace Dcb {
 	class Buffer;
 }
 
+class Technique;
+class Step;
+
+
 class TechniqueProbe {
 public:
-	void SetTechnique(class Technique* pTech_in) {
+	void SetTechnique(Technique* pTech_in) {
 		pTech = pTech_in;
 		techIdx++;
 		OnSetTechnique();
 	}
 
-	void SetStep(class Step* pStep_in) {
+	void SetStep(Step* pStep_in) {
 		pStep = pStep_in;
 		techIdx++;
 		OnSetStep();
 	}
 
-	virtual bool VisitBuffer(class Dcb::Buffer& buf) {
+	virtual bool VisitBuffer(Dcb::Buffer& buf) {
 		bufIdx++;
 		return OnVisitBuffer(buf);
 	}
@@ -26,14 +32,14 @@ public:
 protected:
 	virtual void OnSetTechnique() {}
 	virtual void OnSetStep() {}
-	virtual bool OnVisitBuffer(class Dcb::Buffer&) {
+	virtual bool OnVisitBuffer(Dcb::Buffer&) {
 		return false;
 	}
 
 
 protected:
-	class Technique* pTech = nullptr;
-	class Step* pStep = nullptr;
+	Technique* pTech = nullptr;
+	Step* pStep = nullptr;
 	size_t techIdx = std::numeric_limits<size_t>::max();
 	size_t stepIdx = std::numeric_limits<size_t>::max();
 	size_t bufIdx = std::numeric_limits<size_t>::max();

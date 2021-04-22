@@ -25,14 +25,14 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
     // alpha testing
     float4 dtex = tex.Sample(splr, tc);
     
-    #ifdef MASK_BOI
+#ifdef MASK_BOI
     clip(dtex.a < 0.1f ? -1 : 1);
     // flip normal when backface
     if (dot(viewNormal, viewFragPos) >= 0.0f)
     {
         viewNormal = -viewNormal;
     }
-    #endif
+#endif
 
     viewNormal = normalize(viewNormal);
     // replace normal with mapped if normal mapping enabled
