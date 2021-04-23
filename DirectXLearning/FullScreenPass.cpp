@@ -6,15 +6,15 @@ namespace dx = DirectX;
 namespace Rgph {
 	FullScreenPass::FullScreenPass(const std::string name, Graphics& gfx) noxnd
 		:
-	BindingPass(name)
+	BindingPass(std::move(name))
 	{
 		dxLearning::VertexLayout lay;
 		lay.Append(dxLearning::VertexLayout::Position2D);
 		dxLearning::VertexBuffer bufFull{ lay };
 		bufFull.EmplaceBack(dx::XMFLOAT2{ -1,  1 });
-		bufFull.EmplaceBack(dx::XMFLOAT2{ 1,  1 });
+		bufFull.EmplaceBack(dx::XMFLOAT2{  1,  1 });
 		bufFull.EmplaceBack(dx::XMFLOAT2{ -1, -1 });
-		bufFull.EmplaceBack(dx::XMFLOAT2{ 1,  1 });
+		bufFull.EmplaceBack(dx::XMFLOAT2{  1, -1 });
 
 		AddBind(Bind::VertexBuffer::Resolve(gfx, "$Full", std::move(bufFull)));
 

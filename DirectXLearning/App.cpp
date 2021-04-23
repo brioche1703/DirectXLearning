@@ -78,6 +78,7 @@ void App::DoFrame(float dt) {
 	light.SpawnControlWindow();
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
+	rg.RenderWidgets(wnd.Gfx());
 	ShowImguiDemoWindow();
 
 	//modelProbe.SpawnWindow(goblin, "Goblin");

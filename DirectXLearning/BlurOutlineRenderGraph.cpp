@@ -11,6 +11,8 @@
 #include "Source.h"
 #include "Sink.h"
 
+#include "external/imgui/imgui.h"
+
 namespace Rgph {
 	BlurOutlineRenderGraph::BlurOutlineRenderGraph(Graphics& gfx)
 		:
@@ -47,9 +49,9 @@ namespace Rgph {
 				lay["coefficients"].Set<Dcb::Float>(maxRadius * 2 + 1);
 				Dcb::Buffer buf{ std::move(lay) };
 
-				blurControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 0);
+				blurKernel = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 0);
 				SetKernelGauss(radius, sigma);
-				AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurControl", blurControl));
+				AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurKernel", blurKernel));
 			}
 			{
 				Dcb::RawLayout lay;
@@ -67,7 +69,7 @@ namespace Rgph {
 		{
 			auto pass = std::make_unique<HorizontalBlurPass>("horizontal", gfx, gfx.GetWidth(), gfx.GetHeight());
 			pass->SetSinkLinkage("scratchIn", "outlineDraw.scratchOutput");
-			pass->SetSinkLinkage("control", "$.blurControl");
+			pass->SetSinkLinkage("kernel", "$.blurKernel");
 			pass->SetSinkLinkage("direction", "$.blurDirection");
 			AppendPass(std::move(pass));
 		}
@@ -76,7 +78,7 @@ namespace Rgph {
 			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "outlineMask.depthStencil");
 			pass->SetSinkLinkage("scratchIn", "horizontal.scratchOutput");
-			pass->SetSinkLinkage("control", "$.blurControl");
+			pass->SetSinkLinkage("kernel", "$.blurKernel");
 			pass->SetSinkLinkage("direction", "$.blurDirection");
 			AppendPass(std::move(pass));
 		}
@@ -87,22 +89,73 @@ namespace Rgph {
 	void BlurOutlineRenderGraph::SetKernelGauss(int radius, float sigma) noxnd
 	{
 		assert(radius <= maxRadius);
-		auto k = blurControl->GetBuffer();
+		auto k = blurKernel->GetBuffer();
 		const int nTaps = radius * 2 + 1;
 		k["nTaps"] = nTaps;
 		float sum = 0.0f;
-		for (int i = 0; i < nTaps; i++)
-		{
+		for (int i = 0; i < nTaps; i++) {
 			const auto x = float(i - radius);
 			const auto g = gauss(x, sigma);
 			sum += g;
 			k["coefficients"][i] = g;
 		}
-		for (int i = 0; i < nTaps; i++)
-		{
+		for (int i = 0; i < nTaps; i++) {
 			k["coefficients"][i] = (float)k["coefficients"][i] / sum;
 		}
-		blurControl->SetBuffer(k);
+		blurKernel->SetBuffer(k);
 	}
 
+	void BlurOutlineRenderGraph::SetKernelBox(int radius) noxnd
+	{
+		assert(radius <= maxRadius);
+		auto k = blurKernel->GetBuffer();
+		const int nTaps = radius * 2 + 1;
+		k["nTaps"] = nTaps;
+		const float c = 1.0f / nTaps;
+		for (int i = 0; i < nTaps; i++) {
+			k["coefficients"][i] = c;
+		}
+		blurKernel->SetBuffer(k);
+	}
+
+	void BlurOutlineRenderGraph::RenderWidgets(Graphics& gfx)
+	{
+		if (ImGui::Begin("Kernel")) {
+			bool filterChanged = false; {
+				const char* items[] = { "Gauss","Box" };
+				static const char* curItem = items[0];
+				if (ImGui::BeginCombo("Filter Type", curItem)) {
+					for (int n = 0; n < std::size(items); n++) {
+						const bool isSelected = (curItem == items[n]);
+						if (ImGui::Selectable(items[n], isSelected)) {
+							filterChanged = true;
+							curItem = items[n];
+							if (curItem == items[0]) {
+								kernelType = KernelType::Gauss;
+							}
+							else if (curItem == items[1]) {
+								kernelType = KernelType::Box;
+							}
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
+
+			bool radChange = ImGui::SliderInt("Radius", &radius, 0, maxRadius);
+			bool sigChange = ImGui::SliderFloat("Sigma", &sigma, 0.1f, 10.0f);
+			if (radChange || sigChange || filterChanged) {
+				if (kernelType == KernelType::Gauss) {
+					SetKernelGauss(radius, sigma);
+				}
+				else if (kernelType == KernelType::Box) {
+					SetKernelBox(radius);
+				}
+			}
+		}
+		ImGui::End();
+	}
 }
