@@ -4,7 +4,9 @@
 #include "SolidSphere.h"
 #include "ConstantBuffers.h"
 
-class RenderGraph;
+namespace Rgph {
+	class RenderGraph;
+}
 
 class PointLight {
 public:
@@ -13,7 +15,7 @@ public:
 	void Reset() noexcept;
 	void Submit() const noxnd;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept;
-	void LinkTechniques(RenderGraph&);
+	void LinkTechniques(Rgph::RenderGraph&);
 
 private:
 	struct PointLightCBuf {

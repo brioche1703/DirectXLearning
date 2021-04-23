@@ -8,8 +8,9 @@ namespace Bind {
 		}
 	}
 
-	void TransformCBuf::Bind(Graphics& gfx) noexcept {
-		UpdateBindImpl(gfx, GetTransforms(gfx));
+	void TransformCBuf::Bind(Graphics& gfx) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(UpdateBindImpl(gfx, GetTransforms(gfx)));
 	}
 
 	void TransformCBuf::InitializeParentReference(const Drawable& parent) noexcept {
@@ -20,13 +21,13 @@ namespace Bind {
 		return std::make_unique<TransformCBuf>(*this);
 	}
 
-	void TransformCBuf::UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept {		
+	void TransformCBuf::UpdateBindImpl(Graphics& gfx, const Transforms& tf) noxnd {		
 		assert(pParent != nullptr);
 		pvcBuffer->Update(gfx, tf);
 		pvcBuffer->Bind(gfx);
 	}
 
-	TransformCBuf::Transforms TransformCBuf::GetTransforms(Graphics& gfx) noexcept {
+	TransformCBuf::Transforms TransformCBuf::GetTransforms(Graphics& gfx) noxnd {
 		assert(pParent != nullptr);
 		const auto modelView = pParent->GetTransformXM() * gfx.GetCamera();
 		return {

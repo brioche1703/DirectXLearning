@@ -67,6 +67,9 @@
     <Filter Include="Source Files\Jobber\PassLib">
       <UniqueIdentifier>{d73f9558-c913-4f18-b2f3-34d5241371c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Jobber\GraphLib">
+      <UniqueIdentifier>{5be4944b-a8fa-47ab-9f76-db5c8a578644}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -237,10 +240,10 @@
     <ClCompile Include="Pass.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
-    <ClCompile Include="PassInput.cpp">
+    <ClCompile Include="Sink.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
-    <ClCompile Include="PassOutput.cpp">
+    <ClCompile Include="Source.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
     <ClCompile Include="RenderGraph.cpp">
@@ -278,6 +281,9 @@
     </ClCompile>
     <ClCompile Include="VerticalBlurPass.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
+    </ClCompile>
+    <ClCompile Include="StepLinkingProbe.cpp">
+      <Filter>Source Files\Jobber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -533,10 +539,10 @@
     <ClInclude Include="Pass.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
     </ClInclude>
-    <ClInclude Include="PassInput.h">
+    <ClInclude Include="Sink.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
     </ClInclude>
-    <ClInclude Include="PassOutput.h">
+    <ClInclude Include="Source.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
     </ClInclude>
     <ClInclude Include="RenderGraphCompileException.h">
@@ -572,13 +578,7 @@
     <ClInclude Include="TestModelProbe.h">
       <Filter>Header Files\Jobber</Filter>
     </ClInclude>
-    <ClInclude Include="ScaleOutlineRenderGraph.h">
-      <Filter>Header Files\Jobber</Filter>
-    </ClInclude>
     <ClInclude Include="BlurOutlineDrawingPass.h">
-      <Filter>Header Files\Jobber\PassLib</Filter>
-    </ClInclude>
-    <ClInclude Include="BlurOutlineRenderGraph.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
     </ClInclude>
     <ClInclude Include="HorizontalBlurPass.h">
@@ -586,6 +586,15 @@
     </ClInclude>
     <ClInclude Include="VerticalBlurPass.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="StepLinkingProbe.h">
+      <Filter>Header Files\Jobber</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurOutlineRenderGraph.h">
+      <Filter>Header Files\Jobber\GraphLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleOutlineRenderGraph.h">
+      <Filter>Header Files\Jobber\GraphLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

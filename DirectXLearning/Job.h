@@ -4,6 +4,7 @@
 #include "Drawable.h"
 #include "Step.h"
 
+namespace Rgph {
 class Job {
 public:
 	Job(const class Step* pStep, const class Drawable* pDrawable);
@@ -12,4 +13,4 @@ public:
 private:
 	const class Drawable* pDrawable;
 	const class Step* pStep;
-};
+};}

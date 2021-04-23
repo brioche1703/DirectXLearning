@@ -12,10 +12,10 @@ namespace Bind {
 		friend RenderTarget;
 
 	public:
-		void BindAsBuffer(Graphics& gfx) noexcept override;
-		void BindAsBuffer(Graphics& gfx, BufferResource* renderTarget) noexcept override;
-		void BindAsBuffer(Graphics& gfx, RenderTarget* rt) noexcept;
-		void Clear(Graphics& gfx) noexcept override;
+		void BindAsBuffer(Graphics& gfx) noxnd override;
+		void BindAsBuffer(Graphics& gfx, BufferResource* renderTarget) noxnd override;
+		void BindAsBuffer(Graphics& gfx, RenderTarget* rt) noxnd;
+		void Clear(Graphics& gfx) noxnd override;
 
 	protected:
 		DepthStencil(Graphics& gfx, UINT width, UINT height, bool canBindShaderInput);
@@ -27,7 +27,7 @@ namespace Bind {
 	public:
 		ShaderInputDepthStencil(Graphics& gfx, UINT slot);
 		ShaderInputDepthStencil(Graphics& gfx, UINT widht, UINT height, UINT slot);
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 
 	private:
 		UINT slot;
@@ -38,6 +38,6 @@ namespace Bind {
 	public:
 		OutputOnlyDepthStencil(Graphics& gfx);
 		OutputOnlyDepthStencil(Graphics& gfx, UINT width, UINT height);
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 	};
 }

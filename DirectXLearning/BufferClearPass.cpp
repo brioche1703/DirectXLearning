@@ -1,16 +1,17 @@
 #include "BufferClearPass.h"
+#include "Sink.h"
+#include "Source.h"
 
-BufferClearPass::BufferClearPass(std::string name) 
-	:
-	Pass(std::move(name))
-{
-	RegisterInput(BufferInput<Bind::RenderTarget>::Make("renderTarget", renderTarget));
-	RegisterInput(BufferInput<Bind::DepthStencil>::Make("depthStencil", depthStencil));
-	RegisterOutput(BufferOutput<Bind::RenderTarget>::Make("renderTarget", renderTarget));
-	RegisterOutput(BufferOutput<Bind::DepthStencil>::Make("depthStencil", depthStencil));
-}
+namespace Rgph {
+	BufferClearPass::BufferClearPass(std::string name)
+		:
+		Pass(std::move(name))
+	{
+		RegisterSink(DirectBufferSink<Bind::BufferResource>::Make("buffer", buffer));
+		RegisterSource(DirectBufferSource<Bind::BufferResource>::Make("buffer", buffer));
+	}
 
-void BufferClearPass::Execute(Graphics& gfx) const noxnd {
-	renderTarget->Clear(gfx);
-	depthStencil->Clear(gfx);
+	void BufferClearPass::Execute(Graphics& gfx) const noxnd {
+		buffer->Clear(gfx);
+	}
 }

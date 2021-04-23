@@ -5,6 +5,7 @@
 
 #include <vector>
 
+namespace Rgph {
 class RenderQueuePass : public BindingPass {
 public:
 	using BindingPass::BindingPass;
@@ -15,4 +16,4 @@ public:
 private:
 	std::vector<Job> jobs;
 };
-
+}

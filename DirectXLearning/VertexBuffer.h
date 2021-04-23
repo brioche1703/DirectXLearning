@@ -14,7 +14,7 @@ namespace Bind {
 		VertexBuffer(Graphics& gfx, const std::string& tag, const dxLearning::VertexBuffer& vbuf);
 
 		const dxLearning::VertexLayout& GetLayout() const noexcept;
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 
 		static std::shared_ptr<VertexBuffer> Resolve(Graphics& gfx, const std::string& tag, const dxLearning::VertexBuffer& vbuf);
 

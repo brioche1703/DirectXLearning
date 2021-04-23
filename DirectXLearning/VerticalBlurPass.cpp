@@ -1,33 +1,37 @@
 #include "VerticalBlurPass.h"
 
 #include "BindableCommon.h"
+#include "PixelShader.h"
+#include "Sink.h"
+#include "Source.h"
 
-VerticalBlurPass::VerticalBlurPass(std::string name, Graphics& gfx) 
-	:
-	FullScreenPass(std::move(name), gfx)
-{
-	using namespace Bind;
-	AddBind(PixelShader::Resolve(gfx, "BlurOutline_PS.cso"));
-	AddBind(Blender::Resolve(gfx, true));
-	AddBind(Stencil::Resolve(gfx, Stencil::Mode::Mask));
+namespace Rgph {
+	VerticalBlurPass::VerticalBlurPass(std::string name, Graphics& gfx)
+		:
+		FullScreenPass(std::move(name), gfx)
+	{
+		using namespace Bind;
+		AddBind(PixelShader::Resolve(gfx, "BlurOutline_PS.cso"));
+		AddBind(Blender::Resolve(gfx, true));
+		AddBind(Stencil::Resolve(gfx, Stencil::Mode::Mask));
 
-	RegisterInput(ImmutableInput<Bindable>::Make("scratchIn", blurScratchIn));
-	RegisterInput(ImmutableInput<Bindable>::Make("control", control));
-	RegisterInput(ImmutableInput<CachingPixelConstantBufferEx>::Make("direction", direction));
-	RegisterInput(BufferInput<RenderTarget>::Make("renderTarget", renderTarget));
-	RegisterInput(BufferInput<DepthStencil>::Make("depthStencil", depthStencil));
+		AddBindSink<Bind::RenderTarget>("scratchIn");
+		AddBindSink<Bind::CachingPixelConstantBufferEx>("control");
 
-	RegisterOutput(BufferOutput<RenderTarget>::Make("renderTarget", renderTarget));
-	RegisterOutput(BufferOutput<DepthStencil>::Make("depthStencil", depthStencil));
-}
+		RegisterSink(DirectBindableSink<CachingPixelConstantBufferEx>::Make("direction", direction));
+		RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
+		RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
 
-void VerticalBlurPass::Execute(Graphics& gfx) const noexcept {
-	auto buf = direction->GetBuffer();
-	buf["horizontal"] = false;
-	direction->SetBuffer(buf);
+		RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
+		RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
+	}
 
-	control->Bind(gfx);
-	direction->Bind(gfx);
-	blurScratchIn->Bind(gfx);
-	FullScreenPass::Execute(gfx);
+	void VerticalBlurPass::Execute(Graphics& gfx) const noxnd {
+		auto buf = direction->GetBuffer();
+		buf["isHorizontal"] = false;
+		direction->SetBuffer(buf);
+
+		direction->Bind(gfx);
+		FullScreenPass::Execute(gfx);
+	}
 }

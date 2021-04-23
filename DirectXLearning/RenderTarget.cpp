@@ -56,22 +56,23 @@ namespace Bind {
 			pTexture, &rtvDesc, &pTargetView));
 	}
 
-	void RenderTarget::BindAsBuffer(Graphics& gfx) noexcept {
-		ID3D11DepthStencilView* const	null = nullptr;
+	void RenderTarget::BindAsBuffer(Graphics& gfx) noxnd {
+		ID3D11DepthStencilView* const null = nullptr;
 		BindAsBuffer(gfx, null);
 	}
 
-	void RenderTarget::BindAsBuffer(Graphics& gfx, BufferResource* depthStencil) noexcept {
+	void RenderTarget::BindAsBuffer(Graphics& gfx, BufferResource* depthStencil) noxnd {
 		assert(dynamic_cast<DepthStencil*>(depthStencil) != nullptr);
 		BindAsBuffer(gfx, static_cast<DepthStencil*>(depthStencil));
 	}
 
-	void RenderTarget::BindAsBuffer(Graphics& gfx, DepthStencil* depthStencil) noexcept {
+	void RenderTarget::BindAsBuffer(Graphics& gfx, DepthStencil* depthStencil) noxnd {
 		BindAsBuffer(gfx, depthStencil ? depthStencil->pDepthStencilView.Get() : nullptr);
 	}
 
-	void RenderTarget::BindAsBuffer(Graphics& gfx, ID3D11DepthStencilView* pDepthStencilView) noexcept {
-		GetContext(gfx)->OMSetRenderTargets(1, pTargetView.GetAddressOf(), pDepthStencilView);
+	void RenderTarget::BindAsBuffer(Graphics& gfx, ID3D11DepthStencilView* pDepthStencilView) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(1, pTargetView.GetAddressOf(), pDepthStencilView));
 
 		D3D11_VIEWPORT vp;
 		vp.Width = (float)width;
@@ -80,22 +81,23 @@ namespace Bind {
 		vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
-		GetContext(gfx)->RSSetViewports(1u, &vp);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->RSSetViewports(1u, &vp));
 	}
 
-	void RenderTarget::Clear(Graphics& gfx, const std::array<float, 4>& color) noexcept {
-		GetContext(gfx)->ClearRenderTargetView(pTargetView.Get(), color.data());
+	void RenderTarget::Clear(Graphics& gfx, const std::array<float, 4>& color) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->ClearRenderTargetView(pTargetView.Get(), color.data()));
 	}
 
-	void RenderTarget::Clear(Graphics& gfx) noexcept {
+	void RenderTarget::Clear(Graphics& gfx) noxnd {
 		Clear(gfx, { 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
-	UINT RenderTarget::GetWidth() const noexcept {
+	UINT RenderTarget::GetWidth() const noxnd {
 		return width;
 	}
 
-	UINT RenderTarget::GetHeight() const noexcept {
+	UINT RenderTarget::GetHeight() const noxnd {
 		return height;
 	}
 
@@ -119,11 +121,12 @@ namespace Bind {
 			pRes.Get(), &srvDesc, &pShaderResourceView));
 	}
 
-	void ShaderInputRenderTarget::Bind(Graphics& gfx) noexcept {
-		GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf());
+	void ShaderInputRenderTarget::Bind(Graphics& gfx) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 	}
 
-	void OutputOnlyRenderTarget::Bind(Graphics& gfx) noexcept {
+	void OutputOnlyRenderTarget::Bind(Graphics& gfx) noxnd {
 		assert("Cannot bind OutputOnlyRenderTarget as shader input" && false);
 	}
 

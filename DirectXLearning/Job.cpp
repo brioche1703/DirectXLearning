@@ -1,13 +1,15 @@
 #include "Job.h"
 
-Job::Job(const Step* pStep, const Drawable* pDrawable)
-	:
-	pDrawable{ pDrawable },
-	pStep{ pStep }
-{}
+namespace Rgph {
+	Job::Job(const Step* pStep, const Drawable* pDrawable)
+		:
+		pDrawable{ pDrawable },
+		pStep{ pStep }
+	{}
 
-void Job::Execute(Graphics& gfx) const noxnd {
-	pDrawable->Bind(gfx);
-	pStep->Bind(gfx);
-	gfx.DrawIndexed(pDrawable->GetIndexCount());
+	void Job::Execute(Graphics& gfx) const noxnd {
+		pDrawable->Bind(gfx);
+		pStep->Bind(gfx);
+		gfx.DrawIndexed(pDrawable->GetIndexCount());
+	}
 }

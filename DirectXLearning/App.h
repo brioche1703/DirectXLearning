@@ -37,7 +37,7 @@ private:
 	Timer timer;
 	float speed_factor = 1.0f;
 	Camera cam;
-	BlurOutlineRenderGraph rg{ wnd.Gfx() };
+	Rgph::BlurOutlineRenderGraph rg{ wnd.Gfx() };
 
 	PointLight light;
 	//Model goblin{ wnd.Gfx(), "src\\models\\gobber\\GoblinX.obj" , 4.0f };

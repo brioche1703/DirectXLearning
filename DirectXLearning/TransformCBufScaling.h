@@ -8,7 +8,7 @@ namespace Bind {
 	public:
 		TransformCBufScaling(Graphics& gfx, float scale);
 		void Accept(TechniqueProbe& probe) override;
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 		std::unique_ptr<CloningBindable> Clone() const noexcept override;
 
 	private:

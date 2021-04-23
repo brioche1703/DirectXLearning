@@ -9,7 +9,7 @@ namespace Bind {
 	class VertexShader : public Bindable {
 	public:
 		VertexShader(Graphics& gfx, const std::string& path);
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 		ID3DBlob* GetBytecode() const noexcept;
 
 		static std::shared_ptr<VertexShader> Resolve(Graphics& gfx, const std::string& path);

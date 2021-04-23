@@ -60,16 +60,18 @@ namespace Bind {
 	public:
 		using ConstantBufferEx::ConstantBufferEx;
 
-		void Bind(Graphics& gfx) noexcept override {
-			GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
+		void Bind(Graphics& gfx) noxnd override {
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
 		}
 	};
 
 	class VertexConstantBufferEx : public ConstantBufferEx {
 	public:
 		using ConstantBufferEx::ConstantBufferEx;
-		void Bind(Graphics& gfx) noexcept override {
-			GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
+		void Bind(Graphics& gfx) noxnd override {
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
 		}
 	};
 
@@ -99,7 +101,7 @@ namespace Bind {
 			buf.CopyFrom(buf_in);
 			dirty = true;
 		}
-		void Bind(Graphics& gfx) noexcept override
+		void Bind(Graphics& gfx) noxnd override
 		{
 			if (dirty)
 			{
@@ -121,25 +123,4 @@ namespace Bind {
 
 	using CachingPixelConstantBufferEx = CachingConstantBufferEx<PixelConstantBufferEx>;
 	using CachingVertexConstantBufferEx = CachingConstantBufferEx<VertexConstantBufferEx>;
-
-	//	class NocachePixelConstantBufferEX : public PixelConstantBufferEX
-	//	{
-	//	public:
-	//		NocachePixelConstantBufferEX(Graphics& gfx, const Dcb::CookedLayout& layout, UINT slot)
-	//			:
-	//			PixelConstantBufferEX(gfx, *layout.ShareRoot(), slot, nullptr),
-	//			pLayoutRoot(layout.ShareRoot())
-	//		{}
-	//		NocachePixelConstantBufferEX(Graphics& gfx, const Dcb::Buffer& buf, UINT slot)
-	//			:
-	//			PixelConstantBufferEX(gfx, buf.GetRootLayoutElement(), slot, &buf),
-	//			pLayoutRoot(buf.ShareLayoutRoot())
-	//		{}
-	//		const Dcb::LayoutElement& GetRootLayoutElement() const noexcept override
-	//		{
-	//			return *pLayoutRoot;
-	//		}
-	//	private:
-	//		std::shared_ptr<Dcb::LayoutElement> pLayoutRoot;
-	//	};
 }

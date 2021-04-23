@@ -30,12 +30,13 @@ namespace Bind {
 			&pIndexBuffer));
 	}
 
-	void IndexBuffer::Bind(Graphics& gfx) noexcept
+	void IndexBuffer::Bind(Graphics& gfx) noxnd
 	{
-		GetContext(gfx)->IASetIndexBuffer(
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->IASetIndexBuffer(
 			pIndexBuffer.Get(),
 			DXGI_FORMAT_R16_UINT,
-			0u);
+			0u));
 	}
 
 	UINT IndexBuffer::GetCount() const noexcept

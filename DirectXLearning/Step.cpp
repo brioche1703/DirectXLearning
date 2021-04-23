@@ -29,10 +29,10 @@ void Step::AddBindable(std::shared_ptr<Bind::Bindable> bind_in) noexcept {
 }
 
 void Step::Submit(const Drawable& drawable) const {
-	pTargetPass->Accept(Job{ this, &drawable });
+	pTargetPass->Accept(Rgph::Job{ this, &drawable });
 }
 
-void Step::Bind(Graphics& gfx) const {
+void Step::Bind(Graphics& gfx) const noxnd {
 	for (const auto& b : bindables) {
 		b->Bind(gfx);
 	}
@@ -51,7 +51,7 @@ void Step::Accept(TechniqueProbe& probe) {
 	}
 }
 
-void Step::Link(RenderGraph& rg) {
+void Step::Link(Rgph::RenderGraph& rg) {
 	assert(pTargetPass == nullptr);
 	pTargetPass = &rg.GetRenderQueue(targetPassName);
 }

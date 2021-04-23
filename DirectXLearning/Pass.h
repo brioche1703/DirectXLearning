@@ -1,12 +1,11 @@
 #pragma once
 
 #include "ConditionalNoexcept.h"
-#include "PassInput.h"
-#include "PassOutput.h"
 
 #include <string>
 #include <array>
 #include <vector>
+#include <memory>
 
 class Graphics;
 
@@ -15,28 +14,30 @@ namespace Bind {
 	class DepthStencil;
 }
 
-class Pass {
-public:
-	Pass(std::string name) noexcept;
-	virtual void Execute(Graphics& gfx) const noxnd = 0;
-	virtual void Reset() noxnd;
-	const std::string& GetName() const noexcept;
-	const std::vector<std::unique_ptr<PassInput>>& GetInputs() const;
-	PassOutput& GetOutput(const std::string& registeredName) const;
-	PassInput& GetInput(const std::string& registeredName) const;
-	void SetInputResource(const std::string& registeredName, const std::string& target);
-	virtual void Finalize();
-	virtual ~Pass();
+namespace Rgph {
+	class Sink;
+	class Source;
 
-protected:
-	void RegisterInput(std::unique_ptr<PassInput> input);
-	void RegisterOutput(std::unique_ptr<PassOutput> output);
-	void BindBufferResources(Graphics& gfx) const noxnd;
-	std::shared_ptr<Bind::RenderTarget> renderTarget;
-	std::shared_ptr<Bind::DepthStencil> depthStencil;
+	class Pass {
+	public:
+		Pass(std::string name) noexcept;
+		virtual void Execute(Graphics& gfx) const noxnd = 0;
+		virtual void Reset() noxnd;
+		const std::string& GetName() const noexcept;
+		const std::vector<std::unique_ptr<Sink>>& GetSinks() const;
+		Source& GetSource(const std::string& registeredName) const;
+		Sink& GetSink(const std::string& registeredName) const;
+		void SetSinkLinkage(const std::string& registeredName, const std::string& target);
+		virtual void Finalize();
+		virtual ~Pass();
 
-private:
-	std::vector<std::unique_ptr<PassInput>> inputs;
-	std::vector<std::unique_ptr<PassOutput>> outputs;
-	std::string name;
-};
+	protected:
+		void RegisterSink(std::unique_ptr<Sink> sink);
+		void RegisterSource(std::unique_ptr<Source> source);
+
+	private:
+		std::vector<std::unique_ptr<Sink>> sinks;
+		std::vector<std::unique_ptr<Source>> sources;
+		std::string name;
+	};
+}

@@ -2,6 +2,7 @@
 
 #include "Bindable.h"
 #include "BindableCodex.h"
+#include "GraphicsThrowMacros.h"
 
 namespace Bind {
 	class Stencil : public Bindable {
@@ -60,11 +61,10 @@ namespace Bind {
 			return typeid(Stencil).name() + "#"s + modeName();
 		}
 
-		void Bind(Graphics& gfx) noexcept override {
-			GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0xFF);
+		void Bind(Graphics& gfx) noxnd override {
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0xFF));
 		}
-
-		
 	
 		std::string GetUID() const noexcept override {
 			return GenerateUID(mode);

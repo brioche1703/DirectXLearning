@@ -1,13 +1,15 @@
 #include "Topology.h"
 #include "BindableCodex.h"
+#include "GraphicsThrowMacros.h"
 
 namespace Bind {
 	Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 		: type(type)
 	{}
 
-	void Topology::Bind(Graphics& gfx) noexcept {
-		GetContext(gfx)->IASetPrimitiveTopology(type);
+	void Topology::Bind(Graphics& gfx) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->IASetPrimitiveTopology(type));
 	}
 
 	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type) {

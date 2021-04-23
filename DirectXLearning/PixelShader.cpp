@@ -15,8 +15,9 @@ namespace Bind {
 		GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 	}
 
-	void PixelShader::Bind(Graphics& gfx) noexcept {
-		GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	void PixelShader::Bind(Graphics& gfx) noxnd {
+		INFOMAN_NOHR(gfx);
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u));
 	}
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path) {

@@ -18,7 +18,7 @@ void Drawable::AddTechnique(Technique tech_in) noexcept {
 	techniques.push_back(std::move(tech_in));
 }
 
-void Drawable::Bind(Graphics& gfx) const noexcept {
+void Drawable::Bind(Graphics& gfx) const noxnd {
 	pTopology->Bind(gfx);
 	pIndices->Bind(gfx);
 	pVertices->Bind(gfx);
@@ -34,7 +34,7 @@ UINT Drawable::GetIndexCount() const noxnd {
 	return pIndices->GetCount();
 }
 
-void Drawable::LinkTechniques(RenderGraph& rg) {
+void Drawable::LinkTechniques(Rgph::RenderGraph& rg) {
 	for (auto& tech : techniques) {
 		tech.Link(rg);
 	}

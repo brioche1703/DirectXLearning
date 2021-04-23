@@ -16,7 +16,7 @@ void Bind::TransformCBufScaling::Accept(TechniqueProbe& probe) {
 	probe.VisitBuffer(buf);
 }
 
-void Bind::TransformCBufScaling::Bind(Graphics& gfx) noexcept {
+void Bind::TransformCBufScaling::Bind(Graphics& gfx) noxnd {
 
 	const float scale = buf["scale"];
 	const auto scaleMatrix = dx::XMMatrixScaling(scale, scale, scale);

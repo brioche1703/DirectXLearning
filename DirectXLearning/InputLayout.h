@@ -11,7 +11,7 @@ namespace Bind {
 	class InputLayout : public Bindable {
 	public:
 		InputLayout(Graphics& gfx, const dxLearning::VertexLayout layout, ID3DBlob* pVertexShaderBytecode);
-		void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noxnd override;
 
 		const dxLearning::VertexLayout GetLayout() const noexcept;
 		static std::shared_ptr<InputLayout> Resolve(Graphics& gfx, const dxLearning::VertexLayout& layout, ID3DBlob* pVertexShaderBytecode);

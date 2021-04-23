@@ -12,8 +12,10 @@ namespace Bind {
 	class InputLayout;
 }
 
-class FullScreenPass : public BindingPass {
-public:
-	FullScreenPass(const std::string name, Graphics& gfx) noxnd;
-	void Execute(Graphics& gfx) const noexcept override;
-};
+namespace Rgph {
+	class FullScreenPass : public BindingPass {
+	public:
+		FullScreenPass(const std::string name, Graphics& gfx) noxnd;
+		void Execute(Graphics& gfx) const noxnd override;
+	};
+}
