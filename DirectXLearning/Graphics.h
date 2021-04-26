@@ -7,7 +7,7 @@
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <wrl.h>
+#include "CustomWRL.h"
 #include <DirectXMath.h>
 #include <memory>
 

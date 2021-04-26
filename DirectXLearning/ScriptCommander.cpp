@@ -1,8 +1,12 @@
 #include "ScriptCommander.h"
+
+#include "TexturePreprocessor.h"
+
+#include "json.hpp"
+
 #include <sstream>
 #include <fstream>
-#include "json.hpp"
-#include "TexturePreprocessor.h"
+#include <filesystem>
 
 namespace jso = nlohmann;
 using namespace std::string_literals;
@@ -22,7 +26,7 @@ ScriptCommander::ScriptCommander(const std::vector<std::string>& args)
 		jso::json top;
 		script >> top;
 
-		if (!top.at("enabled"))
+		if (top.at("enabled"))
 		{
 			bool abort = false;
 			for (const auto& j : top.at("commands"))
@@ -50,6 +54,11 @@ ScriptCommander::ScriptCommander(const std::vector<std::string>& args)
 					TexturePreprocessor::MakeStripes(params.at("dest"), params.at("size"), params.at("stripeWidth"));
 					abort = true;
 				}
+				else if (commandName == "publish")
+				{
+					Publish(params.at("dest"));
+					abort = true;
+				}
 				else
 				{
 					throw SCRIPT_ERROR("Unknown command: "s + commandName);
@@ -62,7 +71,6 @@ ScriptCommander::ScriptCommander(const std::vector<std::string>& args)
 		}
 	}
 }
-
 
 
 ScriptCommander::Completion::Completion(const std::string& content) noexcept
@@ -105,4 +113,22 @@ const char* ScriptCommander::Exception::what() const noexcept
 const char* ScriptCommander::Exception::GetType() const noexcept
 {
 	return "Script Command Error";
+}
+
+void ScriptCommander::Publish(std::string path) const {
+	namespace fs = std::filesystem;
+	fs::create_directory(path);
+	fs::copy_file(R"(..\x64\Release\DirectXLearning.exe)", path + R"(\DirectXLearning.exe)", fs::copy_options::overwrite_existing);
+	//fs::copy_file(R"(..\x64\Release\dxLearning.exe)", path + R"(\dxLearning.exe)", fs::copy_options::overwrite_existing);
+
+	for (auto& p : fs::directory_iterator("..\\")) {
+		if (p.path().extension() == L".dll") {
+			fs::copy_file(p.path(), path + "\\" + p.path().filename().string(), fs::copy_options::overwrite_existing);
+		}
+	}
+
+	fs::copy_file("src\\images", path + R"(\src\images)", fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+	fs::copy_file("src\\models", path + R"(\src\models)", fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+	fs::copy_file("src\\icons", path + R"(\src\icons)", fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+
 }

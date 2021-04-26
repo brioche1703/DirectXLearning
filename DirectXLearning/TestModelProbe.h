@@ -68,8 +68,13 @@ public:
 
 class MP : ModelProbe {
 public:
-	void SpawnWindow(Model& model, const char* title) {
-		ImGui::Begin(title);
+	MP(std::string name)
+		:
+		name(std::move(name))
+	{}
+
+	void SpawnWindow(Model& model) {
+		ImGui::Begin(name.c_str());
 		ImGui::Columns(2, nullptr, true);
 		model.Accept(*this);
 
@@ -138,6 +143,7 @@ private:
 		float z = 0.0f;
 	};
 
+	std::string name;
 	std::unordered_map<int, TransformParameters> transformParams;
 
 private:
@@ -163,6 +169,4 @@ private:
 		tp.z = translation.z;
 		return transformParams.insert({ id,{ tp } }).first->second;
 	}
-
-
 };

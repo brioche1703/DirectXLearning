@@ -4,6 +4,7 @@
 #include "BufferResource.h"
 
 class Graphics;
+class Surface;
 
 namespace Bind {
 	class DepthStencil;
@@ -34,6 +35,7 @@ namespace Bind {
 	public:
 		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot);
 		void Bind(Graphics& gfx) noxnd override;
+		Surface ToSurface(Graphics& gfx) const;
 
 	private:
 		UINT slot;

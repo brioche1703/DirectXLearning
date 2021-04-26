@@ -1,12 +1,10 @@
 {
-  "enabled": true,
+  "enabled": false,
   "commands": [
     {
-      "command": "make-stripes",
+      "command": "publish",
       "params": {
-        "dest": "src\\images\\stripes.png",
-        "size": 256,
-        "stripeWidth": 4
+        "dest": "C:\\Users\\kevin\\Desktop\\DirectXLearning"
       }
     }
   ]

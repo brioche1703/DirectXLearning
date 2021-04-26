@@ -3,6 +3,7 @@
 #include "Testing.h"
 #include "ModelProbe.h"
 #include "TestModelProbe.h"
+#include "MathsUtils.h"
 
 namespace dx = DirectX;
 
@@ -17,11 +18,21 @@ App::App(const std::string& commandLine)
 
 	tc1.SetPos({ 4.0f, 0.0f, 0.0f });
 	tc2.SetPos({ 0.0f, 4.0f, 0.0f });
+	nano.SetRootTransform(
+		dx::XMMatrixRotationY(PI / 2.0f) *
+		dx::XMMatrixTranslation(27.0f, 0.56f, 1.7f)
+	);
+	goblin.SetRootTransform(
+		dx::XMMatrixRotationY(-PI / 2.0f) *
+		dx::XMMatrixTranslation(-8.0f, 10.0f, 0.0f)
+	);
 
 	tc1.LinkTechniques(rg);
 	tc2.LinkTechniques(rg);
 	light.LinkTechniques(rg);
 	sponza.LinkTechniques(rg);
+	nano.LinkTechniques(rg);
+	goblin.LinkTechniques(rg);
 
 	//TestDynamicConstant();
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
@@ -61,19 +72,24 @@ void App::DoFrame(float dt) {
 	tc1.Submit();
 	tc2.Submit();
 	sponza.Submit();
+	goblin.Submit();
+	nano.Submit();
 
 	rg.Execute(wnd.Gfx());
 
-	//goblin.Submit(fc);
-	//nano.Draw(wnd.Gfx());
 	//wall.Draw(wnd.Gfx());
 	//bluePlane.Draw(wnd.Gfx());
 	//redPlane.Draw(wnd.Gfx());
 
-	static MP modelProbe;
+	static MP sponzaProbe{ "Sponza" };
+	static MP goblinProbe{ "Goblin" };
+	static MP nanoProbe{"Nano"};
 
 	// IMGUI
-	modelProbe.SpawnWindow(sponza, "Sponza");
+	sponzaProbe.SpawnWindow(sponza);
+	goblinProbe.SpawnWindow(goblin);
+	nanoProbe.SpawnWindow(nano);
+
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
@@ -81,8 +97,6 @@ void App::DoFrame(float dt) {
 	rg.RenderWidgets(wnd.Gfx());
 	ShowImguiDemoWindow();
 
-	//modelProbe.SpawnWindow(goblin, "Goblin");
-	//nano.ShowWindow(wnd.Gfx(), "Nanosuit");
 	//wall.ShowWindow(wnd.Gfx(), "Wall");
 	//bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
 	//redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");

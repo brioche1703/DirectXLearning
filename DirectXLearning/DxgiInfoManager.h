@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <string>
-#include <wrl.h>
+#include "CustomWRL.h"
 #include <dxgidebug.h>
 
 class DxgiInfoManager {

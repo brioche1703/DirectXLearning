@@ -23,7 +23,7 @@ namespace Rgph {
 
 		auto vs = Bind::VertexShader::Resolve(gfx, "Fullscreen_VS.cso");
 
-		AddBind(Bind::InputLayout::Resolve(gfx, lay, vs->GetBytecode()));
+		AddBind(Bind::InputLayout::Resolve(gfx, lay, *vs));
 		AddBind(std::move(vs));
 		AddBind(Bind::Topology::Resolve(gfx));
 		AddBind(Bind::Rasterizer::Resolve(gfx, false));

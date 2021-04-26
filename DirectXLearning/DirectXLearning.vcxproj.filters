@@ -596,6 +596,9 @@
     <ClInclude Include="ScaleOutlineRenderGraph.h">
       <Filter>Header Files\Jobber\GraphLib</Filter>
     </ClInclude>
+    <ClInclude Include="CustomWRL.h">
+      <Filter>Header Files\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -700,6 +703,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PhongDifSpcNrm_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpc_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpc_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

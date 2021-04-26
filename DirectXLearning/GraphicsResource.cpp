@@ -1,5 +1,7 @@
 #include "GraphicsResource.h"
 
+#include <stdexcept>
+
 ID3D11DeviceContext* GraphicsResource::GetContext(Graphics& gfx) noexcept {
 	return gfx.pContext.Get();
 }

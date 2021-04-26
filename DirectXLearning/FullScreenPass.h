@@ -5,13 +5,6 @@
 #include <memory>
 #include <string>
 
-namespace Bind {
-	class IndexBuffer;
-	class VertexBuffer;
-	class VertexShader;
-	class InputLayout;
-}
-
 namespace Rgph {
 	class FullScreenPass : public BindingPass {
 	public:
