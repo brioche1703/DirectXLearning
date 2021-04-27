@@ -11,7 +11,8 @@ namespace Bind {
 	VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const dxLearning::VertexBuffer& vbuf)
 		:
 		tag(tag),
-		stride((UINT)vbuf.GetLayout().Size())
+		stride((UINT)vbuf.GetLayout().Size()),
+		layout(vbuf.GetLayout())
 	{
 		INFOMAN(gfx);
 

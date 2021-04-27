@@ -9,7 +9,6 @@
 #include <vector>
 
 class TechniqueProbe;
-class RenderGraph;
 class Material;
 struct aiMesh;
 

@@ -145,6 +145,7 @@
       </FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
+      <AdditionalOptions>/w34265 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -199,6 +200,8 @@
     <ClCompile Include="BlurOutlineRenderGraph.cpp" />
     <ClCompile Include="BufferClearPass.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraContainer.cpp" />
+    <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="DirectXException.cpp" />
     <ClCompile Include="Drawable.cpp" />
@@ -211,6 +214,7 @@
     <ClCompile Include="external\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="external\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="external\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
@@ -229,6 +233,7 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="NullPixelShader.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Sink.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -278,6 +283,8 @@
     <ClInclude Include="BufferClearPass.h" />
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraContainer.h" />
+    <ClInclude Include="CameraIndicator.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ConditionalNoexcept.h" />
     <ClInclude Include="Cone.h" />
@@ -299,6 +306,7 @@
     <ClInclude Include="external\imgui\imstb_rectpack.h" />
     <ClInclude Include="external\imgui\imstb_textedit.h" />
     <ClInclude Include="external\imgui\imstb_truetype.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsResource.h" />
@@ -327,6 +335,7 @@
     <ClInclude Include="OutlineDrawingPass.h" />
     <ClInclude Include="OutlineMaskGenerationPass.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="Projection.h" />
     <ClInclude Include="Sink.h" />
     <ClInclude Include="Source.h" />
     <ClInclude Include="PerfLog.h" />
@@ -369,6 +378,7 @@
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
     <ClInclude Include="WindowThrowMacros.h" />
+    <ClInclude Include="WireframePass.h" />
     <ClInclude Include="XMUtils.h" />
   </ItemGroup>
   <ItemGroup>

@@ -285,6 +285,18 @@
     <ClCompile Include="StepLinkingProbe.cpp">
       <Filter>Source Files\Jobber</Filter>
     </ClCompile>
+    <ClCompile Include="CameraContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraIndicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -598,6 +610,21 @@
     </ClInclude>
     <ClInclude Include="CustomWRL.h">
       <Filter>Header Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraIndicator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WireframePass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

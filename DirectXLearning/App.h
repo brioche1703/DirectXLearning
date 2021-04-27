@@ -4,7 +4,7 @@
 #include "Timer.h"
 #include "BindableCommon.h"
 #include "ImguiManager.h"
-#include "Camera.h"
+#include "CameraContainer.h"
 #include "PointLight.h"
 #include "Model.h"
 #include "TestPlane.h"
@@ -14,6 +14,7 @@
 #include "ScaleOutlineRenderGraph.h"
 #include "BlurOutlineRenderGraph.h"
 #include "MathsUtils.h"
+#include "CameraContainer.h"
 
 #include <set>
 
@@ -37,7 +38,7 @@ private:
 	ScriptCommander scriptCommander;
 	Timer timer;
 	float speed_factor = 1.0f;
-	Camera cam{{15.0f, 8.0f, 0.0f}, 0.0f, PI / 2.0f};
+	CameraContainer cameras;
 	Rgph::BlurOutlineRenderGraph rg{ wnd.Gfx() };
 
 	PointLight light;

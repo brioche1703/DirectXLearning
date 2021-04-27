@@ -4,6 +4,7 @@
 #include "ModelProbe.h"
 #include "TestModelProbe.h"
 #include "MathsUtils.h"
+#include "Camera.h"
 
 namespace dx = DirectX;
 
@@ -14,6 +15,9 @@ App::App(const std::string& commandLine)
 	scriptCommander(TokenizeQuoted(commandLine)),
 	light(wnd.Gfx())
 {
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
+
 	TestDynamicMeshLoading(wnd.Gfx());
 
 	tc1.SetPos({ 4.0f, 0.0f, 0.0f });
@@ -33,6 +37,7 @@ App::App(const std::string& commandLine)
 	sponza.LinkTechniques(rg);
 	nano.LinkTechniques(rg);
 	goblin.LinkTechniques(rg);
+	cameras.LinkTechniques(rg);
 
 	//TestDynamicConstant();
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
@@ -40,8 +45,6 @@ App::App(const std::string& commandLine)
 	//redPlane.SetPos(cam.GetPos());
 	//goblin.SetRootTransform(DirectX::XMMatrixRotationY(-146.0f) * DirectX::XMMatrixTranslation(-10.0f, 8.4f, -4.0f));
 	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
-
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 }
 
 App::~App()
@@ -64,9 +67,8 @@ int App::Go() {
 void App::DoFrame(float dt) {
 
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
-	wnd.Gfx().SetCamera(cam.GetMatrix());
-
-	light.Bind(wnd.Gfx(), cam.GetMatrix());
+	cameras->BindToGraphics(wnd.Gfx());
+	light.Bind(wnd.Gfx(), cameras->GetMatrix());
 
 	light.Submit();
 	tc1.Submit();
@@ -74,6 +76,7 @@ void App::DoFrame(float dt) {
 	sponza.Submit();
 	goblin.Submit();
 	nano.Submit();
+	cameras.Submit();
 
 	rg.Execute(wnd.Gfx());
 
@@ -90,7 +93,7 @@ void App::DoFrame(float dt) {
 	goblinProbe.SpawnWindow(goblin);
 	nanoProbe.SpawnWindow(nano);
 
-	cam.SpawnControlWindow();
+	cameras.SpawnWindow(wnd.Gfx());
 	light.SpawnControlWindow();
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
@@ -129,28 +132,28 @@ void App::HandleInput(float dt) {
 
 	if (!wnd.CursorEnabled()) {
 		if (wnd.kbd.KeyIsPressed('W')) {
-			cam.Translate({ 0.0f, 0.0f, dt });
+			cameras->Translate({ 0.0f, 0.0f, dt });
 		}
 		if (wnd.kbd.KeyIsPressed('S')) {
-			cam.Translate({ 0.0f, 0.0f, -dt });
+			cameras->Translate({ 0.0f, 0.0f, -dt });
 		}
 		if (wnd.kbd.KeyIsPressed('A')) {
-			cam.Translate({ -dt, 0.0f, 0.0f });
+			cameras->Translate({ -dt, 0.0f, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('D')) {
-			cam.Translate({ dt, 0.0f, 0.0f });
+			cameras->Translate({ dt, 0.0f, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('R')) {
-			cam.Translate({ 0.0f, dt, 0.0f });
+			cameras->Translate({ 0.0f, dt, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('F')) {
-			cam.Translate({ 0.0f, -dt, 0.0f });
+			cameras->Translate({ 0.0f, -dt, 0.0f });
 		}
 	}
 
 	while (const auto delta = wnd.mouse.ReadRawDelta()) {
 		if (!wnd.CursorEnabled()) {
-			cam.Rotate((float)delta->x, (float)delta->y);
+			cameras->Rotate((float)delta->x, (float)delta->y);
 		}
 	}
 
