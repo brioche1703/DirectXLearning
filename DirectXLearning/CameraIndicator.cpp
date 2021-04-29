@@ -1,6 +1,7 @@
 #include "CameraIndicator.h"
 
 #include "BindableCommon.h"
+#include "Channels.h"
 
 #include <vector>
 
@@ -62,7 +63,7 @@ CameraIndicator::CameraIndicator(Graphics& gfx) {
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	{
-		Technique line;
+		Technique line(Chan::main);
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");

@@ -38,8 +38,8 @@ void Projection::SetRotation(DirectX::XMFLOAT3 rot) {
 	frustum.SetRotation(rot);
 }
 
-void Projection::Submit() const {
-	frustum.Submit();
+void Projection::Submit(size_t channel) const {
+	frustum.Submit(channel);
 }
 
 void Projection::LinkTechniques(Rgph::RenderGraph& rg) {

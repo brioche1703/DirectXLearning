@@ -5,6 +5,7 @@
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
 #include "Sampler.h"
+#include "Channels.h"
 
 #include "external/imgui/imgui.h"
 
@@ -27,18 +28,18 @@ TestCube::TestCube(Graphics& gfx, float size)
 
 	auto tcb = std::make_shared<TransformCBuf>(gfx);
 	{
-		Technique shade("Shade");
+		Technique shade("Shade", Chan::main);
 		{
 			Step only("lambertian");
 
 			only.AddBindable(Texture::Resolve(gfx, "src\\images\\brickwall.jpg"));
 			only.AddBindable(Sampler::Resolve(gfx));
 
-			auto pvs = VertexShader::Resolve(gfx, "PhongDif_VS.cso");
+			auto pvs = VertexShader::Resolve(gfx, "ShadowTest_VS.cso");
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
 			only.AddBindable(std::move(pvs));
 
-			only.AddBindable(PixelShader::Resolve(gfx, "PhongDif_PS.cso"));
+			only.AddBindable(PixelShader::Resolve(gfx, "ShadowTest_PS.cso"));
 
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Float3>("specularColor");
@@ -60,7 +61,7 @@ TestCube::TestCube(Graphics& gfx, float size)
 
 
 	{
-		Technique outline("Outline");
+		Technique outline("Outline", Chan::main);
 		{
 			Step mask("outlineMask");
 
@@ -128,6 +129,17 @@ TestCube::TestCube(Graphics& gfx, float size)
 		}
 
 		AddTechnique(std::move(outline));
+	}
+
+	{
+		Technique map("ShadowMap", Chan::shadow, true);
+		{
+			Step draw("shadowMap");
+			draw.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *VertexShader::Resolve(gfx, "Solid_VS.cso")));
+			draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
+			map.AddStep(std::move(draw));
+		}
+		AddTechnique(std::move(map));
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "DynamicConstant.h"
 #include "ConstantBuffersEX.h"
 #include "TransformCBufScaling.h"
+#include "Channels.h"
 
 #include <memory>
 
@@ -20,7 +21,7 @@ modelPath(path.string())
 
 	// Phong Technique
 	{
-		Technique phong{ "Phong" };
+		Technique phong("Phong", Chan::main);
 		Step step("lambertian");
 		std::string shaderCode = "Phong";
 		aiString texFileName;
@@ -125,7 +126,7 @@ modelPath(path.string())
 	}
 	// Outline technique
 	{
-		Technique outline("Outline", false);
+	Technique outline("Outline", Chan::main, false);
 		{
 			Step mask("outlineMask");
 
@@ -161,6 +162,17 @@ modelPath(path.string())
 			outline.AddStep(std::move(draw));
 		}
 		techniques.push_back(std::move(outline));
+	}
+
+	{
+		Technique map("ShadowMap", Chan::shadow, true);
+		{
+			Step draw("shadowMap");
+			draw.AddBindable(InputLayout::Resolve(gfx, vtxLayout, *VertexShader::Resolve(gfx, "Solid_VS.cso")));
+			draw.AddBindable(std::make_shared<TransformCBuf>(gfx));
+			map.AddStep(std::move(draw));
+		}
+		techniques.push_back(std::move(map));
 	}
 
 }

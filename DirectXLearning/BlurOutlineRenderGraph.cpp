@@ -11,6 +11,7 @@
 #include "Source.h"
 #include "Sink.h"
 #include "WireframePass.h"
+#include "ShadowMappingPass.h"
 
 #include "external/imgui/imgui.h"
 
@@ -30,7 +31,12 @@ namespace Rgph {
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<ShadowMappingPass>(gfx, "shadowMap");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
+			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));
@@ -89,6 +95,7 @@ namespace Rgph {
 			pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
 			AppendPass(std::move(pass));
 		}
+
 		SetSinkTarget("backbuffer", "wireframe.renderTarget");
 		Finalize();
 	}
@@ -164,5 +171,18 @@ namespace Rgph {
 			}
 		}
 		ImGui::End();
+	}
+
+	void BlurOutlineRenderGraph::BindMainCamera(Camera& cam) {
+		dynamic_cast<LambertianPass&>(FindPassByName("lambertian")).BindMainCamera(cam);
+	}
+
+	void BlurOutlineRenderGraph::BindShadowCamera(Camera& cam) {
+		dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).BindShadowCamera(cam);
+		dynamic_cast<LambertianPass&>(FindPassByName("lambertian")).BindShadowCamera(cam);
+	}
+
+	void BlurOutlineRenderGraph::DumpShadowMap(Graphics& gfx, const std::string& path) {
+		dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).DumpShadowMap(gfx, path);
 	}
 }

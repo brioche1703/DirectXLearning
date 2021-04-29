@@ -8,8 +8,9 @@
 
 namespace dx = DirectX;
  
-Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw) noexcept
+Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw, bool tethered) noexcept
 	:
+	tethered(tethered),
 	name(std::move(name)),
 	homePos(homePos),
 	homePitch(homePitch),
@@ -17,6 +18,12 @@ Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float
 	proj(gfx, 1.0f, 9.0f / 16.0f, 0.5f, 400.0f),
 	indicator(gfx)
 {
+	if (tethered) {
+		pos = homePos;
+		indicator.SetPos(pos);
+		proj.SetPos(pos);
+	}
+
 	Reset(gfx);
 }
 
@@ -37,15 +44,23 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept {
 	return XMMatrixLookAtLH(camPosition, camTarget, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 }
 
+DirectX::XMMATRIX Camera::GetProjection() const noexcept
+{
+	return proj.GetMatrix();
+}
+
 void Camera::SpawnControlWidgets(Graphics& gfx) noexcept {
 	bool rotDirty = false;
 	bool posDirty = false;
 	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
 
-	ImGui::Text("Position");
-	dcheck(ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f"), posDirty);
-	dcheck(ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f"), posDirty);
-	dcheck(ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f"), posDirty);
+	if (!tethered) {
+		ImGui::Text("Position");
+		dcheck(ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f"), posDirty);
+		dcheck(ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f"), posDirty);
+		dcheck(ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f"), posDirty);
+	}
+
 	ImGui::Text("Orientation");
 	dcheck(ImGui::SliderAngle("Pitch", &pitch, 0.995f * -90.0f, 0.995f * 90.0f), rotDirty);
 	dcheck(ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f), rotDirty);
@@ -69,17 +84,24 @@ void Camera::SpawnControlWidgets(Graphics& gfx) noexcept {
 }
 
 void Camera::Reset(Graphics& gfx) noexcept {
-	pos = homePos;
+	if (!tethered) {
+		pos = homePos;
+		indicator.SetPos(pos);
+		proj.SetPos(pos);
+	}
+
 	pitch = homePitch;
 	yaw = homeYaw;
-
-	indicator.SetPos(pos);
-	proj.SetPos(pos);
 	const dx::XMFLOAT3 angles = { pitch, yaw, 0.0f };
-
 	indicator.SetRotation(angles);
 	proj.SetRotation(angles);
 	proj.Reset(gfx);
+}
+
+void Camera::SetPos(DirectX::XMFLOAT3 pos) noexcept {
+	this->pos = pos;
+	indicator.SetPos(pos);
+	proj.SetPos(pos);
 }
 
 void Camera::Rotate(float dx, float dy) noexcept {
@@ -119,11 +141,11 @@ void Camera::LinkTechniques(Rgph::RenderGraph& rg) {
 	proj.LinkTechniques(rg);
 }
 
-void Camera::Submit() const {
+void Camera::Submit(size_t channel) const {
 	if (enableCameraIndicator) {
-		indicator.Submit();
+		indicator.Submit(channel);
 	}
 	if (enableFrustumIndicator) {
-		proj.Submit();
+		proj.Submit(channel);
 	}
 }

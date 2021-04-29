@@ -70,6 +70,9 @@
     <Filter Include="Header Files\Jobber\GraphLib">
       <UniqueIdentifier>{5be4944b-a8fa-47ab-9f76-db5c8a578644}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Jobber\GraphLib">
+      <UniqueIdentifier>{ecdf50de-be3b-4cab-969e-40265fd0fde7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -270,12 +273,6 @@
     <ClCompile Include="TransformCBufScaling.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
-      <Filter>Source Files\Jobber</Filter>
-    </ClCompile>
-    <ClCompile Include="BlurOutlineRenderGraph.cpp">
-      <Filter>Source Files\Jobber\PassLib</Filter>
-    </ClCompile>
     <ClCompile Include="HorizontalBlurPass.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
@@ -296,6 +293,18 @@
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\GraphLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\GraphLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowCameraCBuf.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowSampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -626,6 +635,18 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="Channels.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowCameraCBuf.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSampler.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMappingPass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -652,30 +673,30 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="cpp.hint" />
+    <None Include="VSShadow.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Solid_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="xPhongDifNro.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="PhongDifSpcNrm_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Offset_VS.hlsl">
+    <FxCompile Include="Offset_VS_deprecated.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="LightVectorData.hlsl">
+    <FxCompile Include="LightVectorData.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="PointLight.hlsl">
+    <FxCompile Include="PointLight.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="ShaderOps.hlsl">
+    <FxCompile Include="ShaderOps.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="Transform.hlsl">
+    <FxCompile Include="Transform.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
     <FxCompile Include="PointLight.hlsl">
@@ -738,5 +759,16 @@
     <FxCompile Include="PhongDifMskSpc_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ShadowTest_VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowTest_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="PSShadow.hlsli">
+      <Filter>Shader\Common</Filter>
+    </Text>
   </ItemGroup>
 </Project>

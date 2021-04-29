@@ -134,6 +134,9 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 	}
+	ID3D11ShaderResourceView* const pNullTex = nullptr;
+	pContext->PSSetShaderResources(0, 1, &pNullTex);
+	pContext->PSSetShaderResources(3, 1, &pNullTex);
 }
 
 void Graphics::EndFrame()

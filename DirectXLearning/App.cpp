@@ -5,6 +5,7 @@
 #include "TestModelProbe.h"
 #include "MathsUtils.h"
 #include "Camera.h"
+#include "Channels.h"
 
 namespace dx = DirectX;
 
@@ -13,15 +14,16 @@ App::App(const std::string& commandLine)
 	commandLine(commandLine),
 	wnd(1280, 720, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)),
-	light(wnd.Gfx())
+	light(wnd.Gfx(), { 10.0f, 5.0f, 0.0f })
 {
 	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
 	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
+	cameras.AddCamera(light.ShareCamera());
 
 	TestDynamicMeshLoading(wnd.Gfx());
 
-	tc1.SetPos({ 4.0f, 0.0f, 0.0f });
-	tc2.SetPos({ 0.0f, 4.0f, 0.0f });
+	tc1.SetPos({ 10.0f, 5.0f, 6.0f });
+	tc2.SetPos({ 10.0f, 5.0f, 14.0f });
 	nano.SetRootTransform(
 		dx::XMMatrixRotationY(PI / 2.0f) *
 		dx::XMMatrixTranslation(27.0f, 0.56f, 1.7f)
@@ -39,6 +41,7 @@ App::App(const std::string& commandLine)
 	goblin.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 
+	rg.BindShadowCamera(*light.ShareCamera());
 	//TestDynamicConstant();
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	//bluePlane.SetPos(cam.GetPos());
@@ -67,18 +70,29 @@ int App::Go() {
 void App::DoFrame(float dt) {
 
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
-	cameras->BindToGraphics(wnd.Gfx());
 	light.Bind(wnd.Gfx(), cameras->GetMatrix());
+	rg.BindMainCamera(cameras.GetActiveCamera());
 
-	light.Submit();
-	tc1.Submit();
-	tc2.Submit();
-	sponza.Submit();
-	goblin.Submit();
-	nano.Submit();
-	cameras.Submit();
+	light.Submit(Chan::main);
+	tc1.Submit(Chan::main);
+	tc2.Submit(Chan::main);
+	sponza.Submit(Chan::main);
+	goblin.Submit(Chan::main);
+	nano.Submit(Chan::main);
+	cameras.Submit(Chan::main);
+
+	tc1.Submit(Chan::shadow);
+	tc2.Submit(Chan::shadow);
+	sponza.Submit(Chan::shadow);
+	goblin.Submit(Chan::shadow);
+	nano.Submit(Chan::shadow);
 
 	rg.Execute(wnd.Gfx());
+
+	if (savingDepth) {
+		rg.DumpShadowMap(wnd.Gfx(), "shadow.png");
+		savingDepth = false;
+	}
 
 	//wall.Draw(wnd.Gfx());
 	//bluePlane.Draw(wnd.Gfx());
@@ -126,6 +140,9 @@ void App::HandleInput(float dt) {
 			break;
 		case VK_F1:
 			showDemoWindow = !showDemoWindow;
+			break;
+		case 'P':
+			savingDepth = true;
 			break;
 		}
 	}

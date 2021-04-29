@@ -1,9 +1,9 @@
-#include "ShaderOps.hlsl"
-#include "LightVectorData.hlsl"
+#include "ShaderOps.hlsli"
+#include "LightVectorData.hlsli"
+#include "PointLight.hlsli"
+#include "PSShadow.hlsli"
 
-#include "PointLight.hlsl"
-
-cbuffer ObjectCBuf
+cbuffer ObjectCBuf : register(b1)
 {
     float3 materialColor;
     float3 specularColor;
@@ -12,21 +12,31 @@ cbuffer ObjectCBuf
 };
 
 
-float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal) : SV_Target
+float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float4 spos : ShadowPosition) : SV_Target
 {    
+    float3 diffuse;
+    float3 specular;
+
+    if (ShadowUnoccluded(spos))
+    {
     // normalize the mesh normal
-    viewNormal = normalize(viewNormal);
+        viewNormal = normalize(viewNormal);
 	// fragment to light vector data
-    const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
+        const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
 	// attenuation
-    const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
+        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
 	// diffuse
-    const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
+        diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
     // specular
-    const float3 specular = Speculate(
-        diffuseColor * diffuseIntensity * specularColor, specularWeight, viewNormal,
-        lv.vToL, viewFragPos, att, specularGloss
-    );
+        specular = Speculate(
+            diffuseColor * diffuseIntensity * specularColor, specularWeight, viewNormal,
+            lv.vToL, viewFragPos, att, specularGloss
+        );
+    }
+    else
+    {
+        diffuse = specular = 0.0f;
+    }
 	// final color
     return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
 }

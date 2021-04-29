@@ -34,7 +34,7 @@ public:
 
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 
-	void Submit() const noexcept;
+	void Submit(size_t channelFilter) const noexcept;
 	void AddTechnique(Technique tech_in) noexcept;
 	void Bind(Graphics& gfx) const noxnd;
 	void Accept(TechniqueProbe& probe);
