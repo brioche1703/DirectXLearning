@@ -26,7 +26,7 @@ App::App(const std::string& commandLine)
 	tc2.SetPos({ 10.0f, 5.0f, 14.0f });
 	nano.SetRootTransform(
 		dx::XMMatrixRotationY(PI / 2.0f) *
-		dx::XMMatrixTranslation(27.0f, 0.56f, 1.7f)
+	dx::XMMatrixTranslation(27.0f, -0.56f, 1.7f)
 	);
 	goblin.SetRootTransform(
 		dx::XMMatrixRotationY(-PI / 2.0f) *

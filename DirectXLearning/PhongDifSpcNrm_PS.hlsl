@@ -37,7 +37,8 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
     }
 #endif
 
-    if (ShadowUnoccluded(spos))
+    const float shadowLevel = Shadow(spos);
+    if (shadowLevel != 0.0f)
     {
         viewNormal = normalize(viewNormal);
         // replace normal with mapped if normal mapping enabled
@@ -79,6 +80,9 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
         diffuseColor * diffuseIntensity * specularReflectionColor, specularWeight, viewNormal,
         lv.vToL, viewFragPos, att, specularPower
         );
+
+        diffuse *= shadowLevel;
+        specularReflected *= shadowLevel;
     }
     else
     {

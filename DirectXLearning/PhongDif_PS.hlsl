@@ -18,7 +18,8 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
     float3 diffuse;
     float3 specular;
 
-    if (ShadowUnoccluded(spos))
+    const float shadowLevel = Shadow(spos);
+    if (shadowLevel != 0.0f)
     {
         viewNormal = normalize(viewNormal);
 	// Fragment to light vector data
@@ -32,6 +33,9 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
 	
 	// Specular
         specular = Speculate(diffuseColor * diffuseIntensity * specularColor, specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularGloss);
+
+        diffuse *= shadowLevel;
+        specular *= shadowLevel;
     }
     else
     {
