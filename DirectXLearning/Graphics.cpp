@@ -10,6 +10,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <array>
+#include <dxgi.h>
 
 #include "dxerr.h"
 #include "external/imgui/imgui_impl_dx11.h"
@@ -20,6 +21,7 @@ namespace dx = DirectX;
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
+#pragma comment(lib,"dxgi.lib")
 
 
 
@@ -80,6 +82,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	pContext->RSSetViewports(1u, &vp);
 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+	gpuName = GetGpuName_();
 }
 
 void Graphics::DrawIndexed(UINT count) noxnd {
@@ -120,6 +123,24 @@ UINT Graphics::GetWidth() const noexcept {
 }
 UINT Graphics::GetHeight() const noexcept {
 	return height;
+}
+
+std::string Graphics::GetGpuName() const noexcept {
+	return gpuName;
+}
+
+std::string Graphics::GetGpuName_() const noexcept {
+	wrl::ComPtr<IDXGIFactory1> dxgiFactory;
+	CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.ReleaseAndGetAddressOf()));
+	wrl::ComPtr<IDXGIAdapter1> adapter;
+
+	std::wstring gpuName;
+	dxgiFactory->EnumAdapters1(0, adapter.ReleaseAndGetAddressOf());
+	DXGI_ADAPTER_DESC1 desc = {};
+	adapter->GetDesc1(&desc);
+	gpuName = desc.Description;
+
+	return std::string(gpuName.begin(), gpuName.end());
 }
 
 std::shared_ptr<Bind::RenderTarget> Graphics::GetTarget() {

@@ -72,10 +72,10 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
      // attenuation
         const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
     	// diffuse light
-        const float3 diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
+        diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
 
         // specular reflected
-        const float3 specularReflected = Speculate(
+        specularReflected = Speculate(
         diffuseColor * diffuseIntensity * specularReflectionColor, specularWeight, viewNormal,
         lv.vToL, viewFragPos, att, specularPower
         );

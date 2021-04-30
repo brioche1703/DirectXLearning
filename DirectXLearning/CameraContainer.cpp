@@ -7,6 +7,7 @@
 
 void CameraContainer::SpawnWindow(Graphics& gfx) {
 	if (ImGui::Begin("Cameras")) {
+		ImGui::Text(("GPU : " + gfx.GetGpuName()).c_str());
 		if (ImGui::BeginCombo("Active Camera", (*this)->GetName().c_str())) {
 			for (int i = 0; i < std::size(cameras); i++) {
 				const bool isSelected = i == active;

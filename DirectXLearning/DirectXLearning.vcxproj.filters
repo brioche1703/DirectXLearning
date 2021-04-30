@@ -699,15 +699,6 @@
     <FxCompile Include="Transform.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="PointLight.hlsl">
-      <Filter>Shader\Common</Filter>
-    </FxCompile>
-    <FxCompile Include="ShaderOps.hlsl">
-      <Filter>Shader\Common</Filter>
-    </FxCompile>
-    <FxCompile Include="Transform.hlsl">
-      <Filter>Shader\Common</Filter>
-    </FxCompile>
     <FxCompile Include="Fullscreen_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>

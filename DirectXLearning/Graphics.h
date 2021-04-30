@@ -80,11 +80,16 @@ public:
 
 	UINT GetWidth() const noexcept;
 	UINT GetHeight() const noexcept;
-
+	std::string GetGpuName() const noexcept;
 	std::shared_ptr<Bind::RenderTarget> GetTarget();
+
+private:
+	std::string GetGpuName_() const noexcept;
+
 private:
 	UINT width;
 	UINT height;
+	std::string gpuName;
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;
