@@ -235,6 +235,7 @@
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
+    <ClCompile Include="ShadowRasterizer.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
     <ClCompile Include="Sink.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="Projection.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
+    <ClInclude Include="ShadowRasterizer.h" />
     <ClInclude Include="ShadowSampler.h" />
     <ClInclude Include="Sink.h" />
     <ClInclude Include="Source.h" />
@@ -400,6 +402,8 @@
     <None Include="DXTrace.inl" />
     <None Include="packages.config" />
     <None Include="process.json" />
+    <None Include="PSShadow_Dynamic.hlsli" />
+    <None Include="PSShadow_Static.hlsli" />
     <None Include="VSShadow.hlsli" />
   </ItemGroup>
   <ItemGroup>

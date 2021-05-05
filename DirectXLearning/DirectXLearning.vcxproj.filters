@@ -306,6 +306,9 @@
     <ClCompile Include="ShadowSampler.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowRasterizer.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -647,6 +650,9 @@
     <ClInclude Include="ShadowMappingPass.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowRasterizer.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -674,6 +680,12 @@
     </None>
     <None Include="cpp.hint" />
     <None Include="VSShadow.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
+    <None Include="PSShadow_Static.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
+    <None Include="PSShadow_Dynamic.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
   </ItemGroup>

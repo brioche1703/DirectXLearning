@@ -12,6 +12,8 @@
 #include "Sink.h"
 #include "WireframePass.h"
 #include "ShadowMappingPass.h"
+#include "ShadowSampler.h"
+#include "ShadowRasterizer.h"
 
 #include "external/imgui/imgui.h"
 
@@ -30,15 +32,40 @@ namespace Rgph {
 			pass->SetSinkLinkage("buffer", "$.masterDepth");
 			AppendPass(std::move(pass));
 		}
+		// Shadow Rasterizer
+		{
+			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>(gfx, 10000, 0.0005f, 1.0f);
+			AddGlobalSource(DirectBindableSource<Bind::ShadowRasterizer>::Make("shadowRasterizer", shadowRasterizer));
+		}
 		{
 			auto pass = std::make_unique<ShadowMappingPass>(gfx, "shadowMap");
+			pass->SetSinkLinkage("shadowRasterizer", "$.shadowRasterizer");
 			AppendPass(std::move(pass));
+		}
+		// Shadow control buffer and sampler
+		{
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Integer>("pcfLevel");
+			lay.Add<Dcb::Float>("depthBias");
+			lay.Add<Dcb::Bool>("hardwarePcf");
+			Dcb::Buffer buf{ std::move(lay) };
+			buf["pcfLevel"] = 0;
+			buf["depthBias"] = 0.0005f;
+			buf["hardwarePcf"] = true;
+			shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 2);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("shadowControl", shadowControl));
+		}
+		{							 
+			shadowSampler = std::make_shared<Bind::ShadowSampler>(gfx);
+			AddGlobalSource(DirectBindableSource<Bind::ShadowSampler>::Make("shadowSampler", shadowSampler));
 		}
 		{
 			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -100,8 +127,7 @@ namespace Rgph {
 		Finalize();
 	}
 
-	void BlurOutlineRenderGraph::SetKernelGauss(int radius, float sigma) noxnd
-	{
+	void BlurOutlineRenderGraph::SetKernelGauss(int radius, float sigma) noxnd {
 		assert(radius <= maxRadius);
 		auto k = blurKernel->GetBuffer();
 		const int nTaps = radius * 2 + 1;
@@ -119,8 +145,7 @@ namespace Rgph {
 		blurKernel->SetBuffer(k);
 	}
 
-	void BlurOutlineRenderGraph::SetKernelBox(int radius) noxnd
-	{
+	void BlurOutlineRenderGraph::SetKernelBox(int radius) noxnd {
 		assert(radius <= maxRadius);
 		auto k = blurKernel->GetBuffer();
 		const int nTaps = radius * 2 + 1;
@@ -132,8 +157,41 @@ namespace Rgph {
 		blurKernel->SetBuffer(k);
 	}
 
-	void BlurOutlineRenderGraph::RenderWidgets(Graphics& gfx)
-	{
+	void BlurOutlineRenderGraph::RenderWindows(Graphics& gfx) {
+		RenderKernelWindow(gfx);
+		RenderShadowWindow(gfx);
+	}
+
+	void BlurOutlineRenderGraph::RenderShadowWindow(Graphics& gfx) {
+		if (ImGui::Begin("Shadows")) {
+			auto ctrl = shadowControl->GetBuffer();
+			auto bilin = shadowSampler->GetBilinear();
+			bool pcfChange = ImGui::SliderInt("PCF Level", &ctrl["pcfLevel"], 0, 4);
+			bool biasChange = ImGui::SliderFloat("Post Bias", &ctrl["depthBias"], 0.0f, 1.0f, "%.6f", 3.6f);
+			bool hardwarePcfChange = ImGui::Checkbox("Harware PCF", &ctrl["hardwarePcf"]);
+			ImGui::Checkbox("Bilinear", &bilin);
+			if (pcfChange || biasChange || hardwarePcfChange) {
+				shadowControl->SetBuffer(ctrl);
+			}
+			shadowSampler->SetHardwarePcf(ctrl["hardwarePcf"]);
+			shadowSampler->SetBilinear(bilin);
+
+			{
+				auto bias = shadowRasterizer->GetDepthBias();
+				auto slop = shadowRasterizer->GetSlopBias();
+				auto clamp = shadowRasterizer->GetClamp();
+				bool biasChanged = ImGui::SliderInt("Pre Bias", &bias, 0, 100000);
+				bool slopChanged = ImGui::SliderFloat("Slope Bias", &slop, 0.0f, 100.0f, "%.4f", 4.0f);
+				bool clampChanged = ImGui::SliderFloat("Clamp", &clamp, 0.0001f, 0.5f, "%.4f", 2.5f);
+				if (biasChanged || slopChanged || clampChanged) {
+					shadowRasterizer->ChangeDepthBiasParameters(gfx, bias, slop, clamp);
+				}
+			}
+		}
+		ImGui::End();
+	}
+
+	void BlurOutlineRenderGraph::RenderKernelWindow(Graphics& gfx) {
 		if (ImGui::Begin("Kernel")) {
 			bool filterChanged = false; {
 				const char* items[] = { "Gauss","Box" };
