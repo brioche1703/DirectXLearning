@@ -309,6 +309,12 @@
     <ClCompile Include="ShadowRasterizer.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="CubeTexture.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyboxTransformCBuf.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -653,6 +659,15 @@
     <ClInclude Include="ShadowRasterizer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="CubeTexture.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxPass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxTransformCBuf.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -766,6 +781,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="ShadowTest_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Skybox_VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Skybox_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

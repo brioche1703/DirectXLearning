@@ -15,3 +15,5 @@
 #include "Stencil.h"
 #include "Sampler.h"
 #include "NullPixelShader.h"
+#include "SkyboxTransformCBuf.h"
+#include "CubeTexture.h"
