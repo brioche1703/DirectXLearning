@@ -249,6 +249,6 @@ namespace Rgph {
 	}
 
 	void BlurOutlineRenderGraph::DumpShadowMap(Graphics& gfx, const std::string& path) {
-		dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).DumpShadowMap(gfx, path);
+		//dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).DumpShadowMap(gfx, path);
 	}
 }

@@ -668,6 +668,9 @@
     <ClInclude Include="SkyboxTransformCBuf.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="Viewport.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -787,6 +790,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Skybox_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shadow_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
