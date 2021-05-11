@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "ShadowCameraCBuf.h"
 #include "ShadowSampler.h"
+#include "Sampler.h"
 
 namespace Rgph {
 	class LambertianPass : public RenderQueuePass {
@@ -23,6 +24,7 @@ namespace Rgph {
 			AddBindSink<Bind::Bindable>("shadowMap");
 			AddBindSink<Bind::Bindable>("shadowControl");
 			AddBindSink<Bind::Bindable>("shadowSampler");
+			AddBind(std::make_shared<Bind::Sampler>(gfx, Bind::Sampler::Type::Anisotropic, false, 2));
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));

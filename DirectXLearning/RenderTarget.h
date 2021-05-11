@@ -3,6 +3,8 @@
 #include "Bindable.h"
 #include "BufferResource.h"
 
+#include <optional>
+
 class Graphics;
 class Surface;
 
@@ -23,7 +25,7 @@ namespace Bind {
 		void BindAsBuffer(Graphics& gfx, ID3D11DepthStencilView* pDepthStencilView) noxnd;
 
 	protected:
-		RenderTarget(Graphics& gfx, ID3D11Texture2D* pTexture);
+		RenderTarget(Graphics& gfx, ID3D11Texture2D* pTexture, std::optional<UINT> face);
 		RenderTarget(Graphics& gfx, UINT width, UINT height);
 
 		UINT width;
@@ -43,11 +45,8 @@ namespace Bind {
 	};
 
 	class OutputOnlyRenderTarget : public RenderTarget {
-		friend Graphics;
 	public:
 		void Bind(Graphics& gfx) noxnd override;
-
-	private:
-		OutputOnlyRenderTarget(Graphics& gfx, ID3D11Texture2D* pTexture);
+		OutputOnlyRenderTarget(Graphics& gfx, ID3D11Texture2D* pTexture, std::optional<UINT> face = {});
 	};
 }

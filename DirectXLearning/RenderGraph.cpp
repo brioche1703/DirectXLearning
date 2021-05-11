@@ -77,10 +77,6 @@ namespace Rgph {
 		}
 	}
 
-	void RenderGraph::StoreDepth(Graphics& gfx, const std::string& path) {
-		masterDepth->ToSurface(gfx).Save(path);
-	}
-
 	void RenderGraph::Finalize() {
 		assert(!finalized);
 		for (const auto& p : passes) {

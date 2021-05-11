@@ -1,11 +1,15 @@
 #include "Transform.hlsli"
 
-float4 main( float3 pos : Position ) : SV_Position
+struct Output
 {
-    float4 output = mul(float4(pos, 1.0f), modelViewProj);
-    
-    const float3 viewPos = mul(float4(pos, 1.0f), modelView).xyz;
+    float3 viewPos : Position;
+    float4 pos : SV_Position;
+};
 
-    output.z = length(viewPos) * output.w / 100.0f;
+Output main( float3 pos : Position )
+{
+    Output output;
+    output.pos = mul(float4(pos, 1.0f), modelViewProj);
+    output.viewPos = mul(float4(pos, 1.0f), modelView).xyz;
 	return output;
 }

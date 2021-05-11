@@ -6,6 +6,11 @@
 namespace Bind {
 	class Viewport : public Bindable {
 	public:
+		Viewport(Graphics& gfx)
+			:
+			Viewport(gfx, (float)gfx.GetWidth(), (float)gfx.GetHeight())
+		{}
+		
 		Viewport(Graphics& gfx, float width, float height) {
 			vp.Width = width;
 			vp.Height = height;

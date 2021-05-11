@@ -51,13 +51,14 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 #ifndef NDEBUG
 	swapChainCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // !NDEBUG
-	
+
 	HRESULT hr;
+
 	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		0u | D3D11_CREATE_DEVICE_DEBUG,
+		swapChainCreateFlags,
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
