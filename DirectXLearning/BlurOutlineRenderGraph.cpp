@@ -34,39 +34,39 @@ namespace Rgph {
 			AppendPass(std::move(pass));
 		}
 		// Shadow Rasterizer
-		{
-			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>(gfx, 10000, 0.0005f, 1.0f);
-			AddGlobalSource(DirectBindableSource<Bind::ShadowRasterizer>::Make("shadowRasterizer", shadowRasterizer));
-		}
+		//{
+		//	shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>(gfx, 10000, 0.0005f, 1.0f);
+		//	AddGlobalSource(DirectBindableSource<Bind::ShadowRasterizer>::Make("shadowRasterizer", shadowRasterizer));
+		//}
 		{
 			auto pass = std::make_unique<ShadowMappingPass>(gfx, "shadowMap");
-			pass->SetSinkLinkage("shadowRasterizer", "$.shadowRasterizer");
+			//pass->SetSinkLinkage("shadowRasterizer", "$.shadowRasterizer");
 			AppendPass(std::move(pass));
 		}
 		// Shadow control buffer and sampler
-		{
-			Dcb::RawLayout lay;
-			lay.Add<Dcb::Integer>("pcfLevel");
-			lay.Add<Dcb::Float>("depthBias");
-			lay.Add<Dcb::Bool>("hardwarePcf");
-			Dcb::Buffer buf{ std::move(lay) };
-			buf["pcfLevel"] = 0;
-			buf["depthBias"] = 0.0005f;
-			buf["hardwarePcf"] = true;
-			shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 2);
-			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("shadowControl", shadowControl));
-		}
-		{							 
-			shadowSampler = std::make_shared<Bind::ShadowSampler>(gfx);
-			AddGlobalSource(DirectBindableSource<Bind::ShadowSampler>::Make("shadowSampler", shadowSampler));
-		}
+		//{
+		//	Dcb::RawLayout lay;
+		//	lay.Add<Dcb::Integer>("pcfLevel");
+		//	lay.Add<Dcb::Float>("depthBias");
+		//	lay.Add<Dcb::Bool>("hardwarePcf");
+		//	Dcb::Buffer buf{ std::move(lay) };
+		//	buf["pcfLevel"] = 0;
+		//	buf["depthBias"] = 0.0005f;
+		//	buf["hardwarePcf"] = true;
+		//	shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 2);
+		//	AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("shadowControl", shadowControl));
+		//}
+		//{							 
+		//	shadowSampler = std::make_shared<Bind::ShadowSampler>(gfx);
+		//	AddGlobalSource(DirectBindableSource<Bind::ShadowSampler>::Make("shadowSampler", shadowSampler));
+		//}
 		{
 			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
-			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
-			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+			//pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			//pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -166,7 +166,7 @@ namespace Rgph {
 
 	void BlurOutlineRenderGraph::RenderWindows(Graphics& gfx) {
 		RenderKernelWindow(gfx);
-		RenderShadowWindow(gfx);
+		//RenderShadowWindow(gfx);
 	}
 
 	void BlurOutlineRenderGraph::RenderShadowWindow(Graphics& gfx) {

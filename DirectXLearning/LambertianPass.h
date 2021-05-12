@@ -22,8 +22,9 @@ namespace Rgph {
 			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
 			AddBindSink<Bind::Bindable>("shadowMap");
-			AddBindSink<Bind::Bindable>("shadowControl");
-			AddBindSink<Bind::Bindable>("shadowSampler");
+			AddBind(std::make_shared<Bind::ShadowSampler>(gfx));
+			//AddBindSink<Bind::Bindable>("shadowControl");
+			//AddBindSink<Bind::Bindable>("shadowSampler");
 			AddBind(std::make_shared<Bind::Sampler>(gfx, Bind::Sampler::Type::Anisotropic, false, 2));
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
@@ -46,7 +47,7 @@ namespace Rgph {
 		}
 
 	private:
-		std::shared_ptr<Bind::ShadowSampler> pShadowSampler;
+		//std::shared_ptr<Bind::ShadowSampler> pShadowSampler;
 		std::shared_ptr<Bind::ShadowCameraCBuf> pShadowCBuf;
 		const Camera* pMainCamera = nullptr;
 	};

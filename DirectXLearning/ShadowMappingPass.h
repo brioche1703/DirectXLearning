@@ -3,7 +3,7 @@
 #include "RenderQueuePass.h"
 #include "BindableCommon.h"
 #include "Camera.h"
-
+#include "ShadowRasterizer.h"
 
 class Graphics;
 
@@ -19,15 +19,14 @@ namespace Rgph {
 			RenderQueuePass(std::move(name))
 		{
 			using namespace Bind;
-			depthStencil = std::make_shared<OutputOnlyDepthStencil>(gfx, size, size);
-			pDepthCube = std::make_shared<CubeTargetTexture>(gfx, size, size, 3, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT);
+			pDepthCube = std::make_shared<DepthCubeTexture>(gfx, size, 3);
 			AddBind(VertexShader::Resolve(gfx, "Shadow_VS.cso"));
-			AddBind(PixelShader::Resolve(gfx, "Shadow_PS.cso"));
+			AddBind(NullPixelShader::Resolve(gfx));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 			AddBind(Blender::Resolve(gfx, false));
 			AddBind(std::make_shared<Viewport>(gfx, (float)size, (float)size));
-			AddBindSink<Bind::Bindable>("shadowRasterizer");
-			RegisterSource(DirectBindableSource<Bind::CubeTargetTexture>::Make("map", pDepthCube));
+			AddBind(std::make_shared<Bind::ShadowRasterizer>(gfx, 50, 2.0f, 0.1f));
+			RegisterSource(DirectBindableSource<Bind::DepthCubeTexture>::Make("map", pDepthCube));
 
 			DirectX::XMStoreFloat4x4(
 				&projection,
@@ -57,6 +56,8 @@ namespace Rgph {
 			// -z
 			DirectX::XMStoreFloat3(&cameraDirections[5], DirectX::XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
 			DirectX::XMStoreFloat3(&cameraUps[5], DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+			SetDepthBuffer(pDepthCube->GetDepthBuffer(0));
 		}
 
 		void Execute(Graphics& gfx) const noxnd override {
@@ -68,10 +69,9 @@ namespace Rgph {
 			gfx.SetProjection(XMLoadFloat4x4(&projection));
 
 			for (size_t i = 0; i < 6; i++) {
-				auto rt = pDepthCube->GetRenderTarget(i);
-				rt->Clear(gfx);
-				depthStencil->Clear(gfx);
-				SetRenderTarget(std::move(rt));
+				auto d = pDepthCube->GetDepthBuffer(i);
+				d->Clear(gfx);
+				SetDepthBuffer(std::move(d));
 				const auto lookAt = pos + XMLoadFloat3(&cameraDirections[i]);
 				gfx.SetCamera(XMMatrixLookAtLH(pos, lookAt, XMLoadFloat3(&cameraUps[i])));
 
@@ -87,14 +87,14 @@ namespace Rgph {
 		}
 
 	private:
-		void SetRenderTarget(std::shared_ptr<Bind::RenderTarget> rt) const {
-			const_cast<ShadowMappingPass*>(this)->renderTarget = std::move(rt);
+		void SetDepthBuffer(std::shared_ptr<Bind::DepthStencil> ds) const {
+			const_cast<ShadowMappingPass*>(this)->depthStencil	 = std::move(ds);
 		}
 
 	private:
 		static constexpr UINT size = 1000;
 		const Camera* pShadowCamera = nullptr;
-		std::shared_ptr<Bind::CubeTargetTexture> pDepthCube;
+		std::shared_ptr<Bind::DepthCubeTexture> pDepthCube;
 		DirectX::XMFLOAT4X4 projection;
 		std::vector<DirectX::XMFLOAT3> cameraDirections{ 6 };
 		std::vector<DirectX::XMFLOAT3> cameraUps{ 6 };

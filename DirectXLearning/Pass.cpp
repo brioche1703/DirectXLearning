@@ -43,7 +43,7 @@ namespace Rgph {
 			}
 		}
 		std::ostringstream oss;
-		oss << "Sink name [" << name << "] not found in pass: " << GetName();
+		oss << "Sink name [" << registeredName << "] not found in pass: " << GetName();
 		throw RGC_EXCEPTION(oss.str());
 
 	}
