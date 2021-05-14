@@ -5,8 +5,8 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <assimp/scene.h>
-
+#include "assimp/scene.h"
+						  
 #include <cassert>
 #include <vector>
 #include <string>

@@ -692,7 +692,6 @@
     <None Include="DXTrace.inl">
       <Filter>Dxerr</Filter>
     </None>
-    <None Include="packages.config" />
     <None Include="process.json">
       <Filter>Source Files</Filter>
     </None>

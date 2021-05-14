@@ -4,7 +4,7 @@
 #include "BindableCommon.h"
 #include "Technique.h"
 
-#include <assimp/scene.h>
+#include "assimp/scene.h"
 #include <filesystem>
 #include <vector>
 
