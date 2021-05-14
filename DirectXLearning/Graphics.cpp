@@ -181,7 +181,6 @@ void Graphics::EndFrame()
 			throw GFX_EXCEPT(hr);
 		}
 	}
-	pSwapChain->Present(1u, 0u);
 }
 
 Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
