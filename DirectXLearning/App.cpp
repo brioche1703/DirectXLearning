@@ -113,7 +113,7 @@ void App::DoFrame(float dt) {
 	//nanoProbe.SpawnWindow(nano);
 
 	cameras.SpawnWindow(wnd.Gfx());
-	light.SpawnControlWindow();
+	light.SpawnControlWindow("Light 1");
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	tp.SpawnControlWindow(wnd.Gfx(), "Plane");
