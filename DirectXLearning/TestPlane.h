@@ -16,7 +16,7 @@ private:
 	} pmc;
 
 	DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 0.0f };
-	float roll = 0.0f;
+	float roll = 90.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
 };
