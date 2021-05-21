@@ -25,8 +25,8 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 c
 	pCamera = std::make_shared<Camera>(gfx, "Light", cbData.pos, 0.0f, PI / 2.0f, true);
 }
 
-void PointLight::SpawnControlWindow() noexcept {
-	if (ImGui::Begin("Light")) {
+void PointLight::SpawnControlWindow(std::string title) noexcept {
+	if (ImGui::Begin(title.c_str())) {
 		bool dirtyPos = false;
 		const auto dcheck = [&dirtyPos](bool dirty) { dirtyPos = dirtyPos || dirty; };
 
@@ -43,7 +43,6 @@ void PointLight::SpawnControlWindow() noexcept {
 		bool dirtyColor = false;
 		const auto ccheck = [&dirtyColor](bool dirty) { dirtyColor = dirtyColor || dirty; };
 		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2));
-		ImGui::ColorEdit3("Diffuse Color", &cbData.diffuseColor.x);
 		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 
 		ImGui::Text("Falloff");
@@ -71,7 +70,7 @@ void PointLight::SpawnControlWindow() noexcept {
 				};
 
 				if (auto v = buf["color"]; v.Exists()) {
-					dcheck(ImGui::ColorPicker3(tag("Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+					dcheck(ImGui::ColorEdit3(tag("Diffuse"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
 					*diffuseColor = static_cast<dx::XMFLOAT3>(v);
 				}
 				return dirty;

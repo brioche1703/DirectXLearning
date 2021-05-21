@@ -13,7 +13,7 @@ class Camera;
 class PointLight {
 public:
 	PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos = { 10.0f, 9.0f, 2.5f }, DirectX::XMFLOAT3 color = { 0.5f, 0.5f, 0.5f }, float radius = 0.5f);
-	void SpawnControlWindow() noexcept;
+	void SpawnControlWindow(std::string title) noexcept;
 	void Reset() noexcept;
 	void Submit(size_t channel) const noxnd;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept;
