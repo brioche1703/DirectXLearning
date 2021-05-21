@@ -1,18 +1,21 @@
 #include "PointLight.h"
 #include "Camera.h"
 #include "MathsUtils.h"
+#include "TechniqueProbe.h"
+#include "TechniqueProbe.h"
+#include "DynamicConstant.h"
 
 #include "external/imgui/imgui.h"
 
-PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos,float radius) 
+PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 color, float radius)
 	:
-	mesh(gfx, radius),
+	mesh(gfx, radius, color),
 	cbuf(gfx) 
 {
 	home = {
 		pos,
-		{0.05f, 0.05f, 0.05f},
-		{1.0f, 1.0f, 1.0f},
+		{0.2f, 0.2f, 0.2f},
+		color,
 		1.0f,
 		1.0f,
 		0.025f,
@@ -37,7 +40,9 @@ void PointLight::SpawnControlWindow() noexcept {
 		}
 
 		ImGui::Text("Intensity/Color");
-		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2);
+		bool dirtyColor = false;
+		const auto ccheck = [&dirtyColor](bool dirty) { dirtyColor = dirtyColor || dirty; };
+		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2));
 		ImGui::ColorEdit3("Diffuse Color", &cbData.diffuseColor.x);
 		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 
@@ -45,6 +50,38 @@ void PointLight::SpawnControlWindow() noexcept {
 		ImGui::SliderFloat("Constant", &cbData.attConst, 0.05f, 10.0f, "%.2f", 4);
 		ImGui::SliderFloat("Linear", &cbData.attLin, 0.0001f, 4.0f, "%.4f", 8);
 		ImGui::SliderFloat("Quadratic", &cbData.attQuad, 0.0000001f, 10.0f, "%.7f", 10);
+
+		class Probe : public TechniqueProbe {
+		public:
+
+			Probe(DirectX::XMFLOAT3 *diffuseColor)
+				:
+				diffuseColor(diffuseColor) {
+			}
+
+			bool OnVisitBuffer(Dcb::Buffer& buf) override {
+				namespace dx = DirectX;
+				float dirty = false;
+
+				const auto dcheck = [&dirty](bool changed) { dirty = dirty || changed; };
+				auto tag = [tagScratch = std::string{}, tagString = "##" + std::to_string(bufIdx)]
+				(const char* label) mutable {
+					tagScratch = label + tagString;
+					return tagScratch.c_str();
+				};
+
+				if (auto v = buf["color"]; v.Exists()) {
+					dcheck(ImGui::ColorPicker3(tag("Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+					*diffuseColor = static_cast<dx::XMFLOAT3>(v);
+				}
+				return dirty;
+			}
+
+		private:
+			DirectX::XMFLOAT3 *diffuseColor;
+		} probe(&cbData.diffuseColor);
+
+		mesh.Accept(probe);
 
 		if (ImGui::Button("Reset")) {
 			Reset();

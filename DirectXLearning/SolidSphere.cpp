@@ -6,7 +6,9 @@
 
 #include <memory>
 
-SolidSphere::SolidSphere(Graphics& gfx, float radius)
+SolidSphere::SolidSphere(Graphics& gfx, float radius, DirectX::XMFLOAT3 color)
+	:
+	color(color)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -30,11 +32,11 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 
 		only.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
 
-		struct PSColorConstant {
-			dx::XMFLOAT3 color = { 1.0f, 1.0f, 1.0f };
-			float padding;
-		} colorConst;
-		only.AddBindable(PixelConstantBuffer<PSColorConstant>::Resolve(gfx, colorConst, 1u));
+		Dcb::RawLayout lay;
+		lay.Add<Dcb::Float3>("color");
+		auto buf = Dcb::Buffer(std::move(lay));
+		buf["color"] = color;
+		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 1u));
 
 		only.AddBindable(std::make_shared<TransformCBuf>(gfx));
 
