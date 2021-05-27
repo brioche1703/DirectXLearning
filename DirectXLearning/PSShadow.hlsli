@@ -1,1 +1,1 @@
-#include "PSShadow_Static.hlsli"
+#include "PSShadowNew.hlsli"

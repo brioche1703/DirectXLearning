@@ -802,5 +802,8 @@
     <Text Include="PSShadow.hlsli">
       <Filter>Shader\Common</Filter>
     </Text>
+    <Text Include="PSShadowNew.hlsli">
+      <Filter>Shader\Common</Filter>
+    </Text>
   </ItemGroup>
 </Project>

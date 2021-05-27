@@ -11,10 +11,9 @@ namespace Bind {
 	Bind::CubeTexture::CubeTexture(Graphics& gfx, const std::string& path, UINT slot)
 		:
 		path(path),
-		slot(slot)
-	{
+		slot(slot) {
 		INFOMAN(gfx);
-	
+
 		std::vector<Surface> surfaces;
 		for (int i = 0; i < 6; i++) {
 			surfaces.push_back(Surface::FromFile(path + "\\" + std::to_string(i) + ".png"));
@@ -56,10 +55,9 @@ namespace Bind {
 		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
 	}
 
-	CubeTargetTexture::CubeTargetTexture(Graphics& gfx, UINT width, UINT height, UINT slot, DXGI_FORMAT format) 
+	CubeTargetTexture::CubeTargetTexture(Graphics& gfx, UINT width, UINT height, UINT slot, DXGI_FORMAT format)
 		:
-		slot(slot)
-	{
+		slot(slot) {
 		INFOMAN(gfx);
 
 		D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -103,10 +101,9 @@ namespace Bind {
 		return renderTargets[index];
 	}
 
-	DepthCubeTexture::DepthCubeTexture(Graphics& gfx, UINT size, UINT slot) 
+	DepthCubeTexture::DepthCubeTexture(Graphics& gfx, UINT size, UINT slot)
 		:
-		slot(slot)
-	{
+		slot(slot) {
 		INFOMAN(gfx);
 
 		D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -148,5 +145,19 @@ namespace Bind {
 
 	std::shared_ptr<OutputOnlyDepthStencil> DepthCubeTexture::GetDepthBuffer(size_t index) const {
 		return depthBuffers[index];
+	}
+
+	DepthCubeSingleTexture::DepthCubeSingleTexture(Graphics& gfx, UINT size, UINT slot) {
+		INFOMAN(gfx);
+
+		depthBuffer = std::make_shared<ShaderInputDepthStencil>(gfx, size, size * 6, slot, Bind::DepthStencil::Usage::ShadowDepth);
+	}
+
+	void DepthCubeSingleTexture::Bind(Graphics& gfx) noxnd {
+		depthBuffer->Bind(gfx);
+	}
+
+	std::shared_ptr<ShaderInputDepthStencil> DepthCubeSingleTexture::GetDepthBuffer() const {
+		return depthBuffer;
 	}
 }

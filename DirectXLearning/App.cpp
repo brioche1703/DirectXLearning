@@ -24,33 +24,31 @@ App::App(const std::string& commandLine)
 
 	tc1.SetPos({ 10.0f, 5.0f, 6.0f });
 	tc2.SetPos({ 10.0f, 5.0f, 14.0f });
-	tp.SetRotation(PI / 2.0f, 0.0f, 0.0f);
+	//tp.SetRotation(PI / 2.0f, 0.0f, 0.0f);
+	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
+	//bluePlane.SetPos(cam.GetPos());
+	//redPlane.SetPos(cam.GetPos());
 
-	//nano.SetRootTransform(
-	//	dx::XMMatrixRotationY(PI / 2.0f) *
-	//dx::XMMatrixTranslation(27.0f, -0.56f, 1.7f)
-	//);
-	//goblin.SetRootTransform(
-	//	dx::XMMatrixRotationY(-PI / 2.0f) *
-	//	dx::XMMatrixTranslation(-8.0f, 10.0f, 0.0f)
-	//);
+	nano.SetRootTransform(
+		dx::XMMatrixRotationY(PI / 2.0f) *
+	dx::XMMatrixTranslation(27.0f, -0.56f, 1.7f)
+	);
+	goblin.SetRootTransform(
+		dx::XMMatrixRotationY(-PI / 2.0f) *
+		dx::XMMatrixTranslation(-8.0f, 10.0f, 0.0f)
+	);
 
 	tc1.LinkTechniques(rg);
 	tc2.LinkTechniques(rg);
-	tp.LinkTechniques(rg);
+	//tp.LinkTechniques(rg);
 	light.LinkTechniques(rg);
-	//sponza.LinkTechniques(rg);
-	//nano.LinkTechniques(rg);
-	//goblin.LinkTechniques(rg);
+	sponza.LinkTechniques(rg);
+	nano.LinkTechniques(rg);
+	goblin.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 
 	rg.BindShadowCamera(*light.ShareCamera());
 	//TestDynamicConstant();
-	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
-	//bluePlane.SetPos(cam.GetPos());
-	//redPlane.SetPos(cam.GetPos());
-	//goblin.SetRootTransform(DirectX::XMMatrixRotationY(-146.0f) * DirectX::XMMatrixTranslation(-10.0f, 8.4f, -4.0f));
-	//nano.SetRootTransform(DirectX::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 }
 
 App::~App()
@@ -79,18 +77,18 @@ void App::DoFrame(float dt) {
 	light.Submit(Chan::main);
 	tc1.Submit(Chan::main);
 	tc2.Submit(Chan::main);
-	tp.Submit(Chan::main);
-	//sponza.Submit(Chan::main);
-	//goblin.Submit(Chan::main);
-	//nano.Submit(Chan::main);
+	//tp.Submit(Chan::main);
+	sponza.Submit(Chan::main);
+	goblin.Submit(Chan::main);
+	nano.Submit(Chan::main);
 	cameras.Submit(Chan::main);
 
 	tc1.Submit(Chan::shadow);
 	tc2.Submit(Chan::shadow);
-	tp.Submit(Chan::shadow);
-	//sponza.Submit(Chan::shadow);
-	//goblin.Submit(Chan::shadow);
-	//nano.Submit(Chan::shadow);
+	//tp.Submit(Chan::shadow);
+	sponza.Submit(Chan::shadow);
+	goblin.Submit(Chan::shadow);
+	nano.Submit(Chan::shadow);
 
 	rg.Execute(wnd.Gfx());
 
@@ -108,15 +106,15 @@ void App::DoFrame(float dt) {
 	static MP nanoProbe{"Nano"};
 
 	// IMGUI
-	//sponzaProbe.SpawnWindow(sponza);
-	//goblinProbe.SpawnWindow(goblin);
-	//nanoProbe.SpawnWindow(nano);
+	sponzaProbe.SpawnWindow(sponza);
+	goblinProbe.SpawnWindow(goblin);
+	nanoProbe.SpawnWindow(nano);
 
 	cameras.SpawnWindow(wnd.Gfx());
 	light.SpawnControlWindow("Light 1");
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
-	tp.SpawnControlWindow(wnd.Gfx(), "Plane");
+	//tp.SpawnControlWindow(wnd.Gfx(), "Plane");
 	rg.RenderWindows(wnd.Gfx());
 	ShowImguiDemoWindow();
 

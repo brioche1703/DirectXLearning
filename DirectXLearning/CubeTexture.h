@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bindable.h"
+#include "DepthStencil.h"
 
 #include <memory>
 #include <vector>
@@ -48,5 +49,15 @@ namespace Bind {
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
 		std::vector<std::shared_ptr<OutputOnlyDepthStencil>> depthBuffers;
+	};
+
+	class DepthCubeSingleTexture : public Bindable {
+	public:
+		DepthCubeSingleTexture(Graphics& gfx, UINT size, UINT slot = 0);
+		void Bind(Graphics& gfx) noxnd override;
+		std::shared_ptr<ShaderInputDepthStencil> GetDepthBuffer() const;
+
+	protected:
+		std::shared_ptr<ShaderInputDepthStencil> depthBuffer;
 	};
 }
