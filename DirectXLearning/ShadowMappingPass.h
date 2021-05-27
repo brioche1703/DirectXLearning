@@ -85,10 +85,8 @@ namespace Rgph {
 		}
 
 		void DumpShadowMap(Graphics& gfx, const std::string& path) const {
-			//for (size_t i = 0; i < 6; i++) {
 			auto d = pDepthCube->GetDepthBuffer();
 			d->ToSurface(gfx).Save("src\\images\\dumps\\" + path + "Single.png");
-			//}
 		}
 
 	private:
