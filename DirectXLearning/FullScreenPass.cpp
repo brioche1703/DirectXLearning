@@ -31,7 +31,6 @@ namespace Rgph {
 
 	void FullScreenPass::Execute(Graphics& gfx) const noxnd {
 		BindAll(gfx);
-
 		gfx.DrawIndexed(6u);
 	}
 }

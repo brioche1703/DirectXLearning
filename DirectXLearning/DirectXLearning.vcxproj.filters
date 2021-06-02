@@ -315,6 +315,9 @@
     <ClCompile Include="SkyboxTransformCBuf.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="ViewportPass.cpp">
+      <Filter>Source Files\Jobber\PassLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -671,6 +674,12 @@
     <ClInclude Include="Viewport.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="DepthTexturePass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewportPass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -795,6 +804,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shadow_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="DepthTexture_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

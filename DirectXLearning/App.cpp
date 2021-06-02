@@ -24,7 +24,7 @@ App::App(const std::string& commandLine)
 
 	tc1.SetPos({ 10.0f, 5.0f, 6.0f });
 	tc2.SetPos({ 10.0f, 5.0f, 14.0f });
-	//tp.SetRotation(PI / 2.0f, 0.0f, 0.0f);
+	tp.SetRotation(PI / 2.0f, 0.0f, 0.0f);
 	//wall.SetRootTransform(DirectX::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
 	//bluePlane.SetPos(cam.GetPos());
 	//redPlane.SetPos(cam.GetPos());
@@ -40,7 +40,7 @@ App::App(const std::string& commandLine)
 
 	tc1.LinkTechniques(rg);
 	tc2.LinkTechniques(rg);
-	//tp.LinkTechniques(rg);
+	tp.LinkTechniques(rg);
 	light.LinkTechniques(rg);
 	sponza.LinkTechniques(rg);
 	nano.LinkTechniques(rg);
@@ -77,7 +77,7 @@ void App::DoFrame(float dt) {
 	light.Submit(Chan::main);
 	tc1.Submit(Chan::main);
 	tc2.Submit(Chan::main);
-	//tp.Submit(Chan::main);
+	tp.Submit(Chan::main);
 	sponza.Submit(Chan::main);
 	goblin.Submit(Chan::main);
 	nano.Submit(Chan::main);
@@ -85,7 +85,7 @@ void App::DoFrame(float dt) {
 
 	tc1.Submit(Chan::shadow);
 	tc2.Submit(Chan::shadow);
-	//tp.Submit(Chan::shadow);
+	tp.Submit(Chan::shadow);
 	sponza.Submit(Chan::shadow);
 	goblin.Submit(Chan::shadow);
 	nano.Submit(Chan::shadow);
@@ -93,7 +93,7 @@ void App::DoFrame(float dt) {
 	rg.Execute(wnd.Gfx());
 
 	if (savingDepth) {
-		rg.DumpShadowMap(wnd.Gfx(), "shadow.png");
+		rg.DumpShadowMap(wnd.Gfx(), "shadowSingle.png");
 		savingDepth = false;
 	}
 
@@ -114,7 +114,7 @@ void App::DoFrame(float dt) {
 	light.SpawnControlWindow("Light 1");
 	tc1.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	tc2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
-	//tp.SpawnControlWindow(wnd.Gfx(), "Plane");
+	tp.SpawnControlWindow(wnd.Gfx(), "Plane");
 	rg.RenderWindows(wnd.Gfx());
 	ShowImguiDemoWindow();
 

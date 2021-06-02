@@ -25,8 +25,7 @@ namespace Rgph {
 			AddBind(NullPixelShader::Resolve(gfx));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 			AddBind(Blender::Resolve(gfx, false));
-			//AddBind(std::make_shared<Viewport>(gfx, (float)size, (float)size));
-			AddBind(std::make_shared<Bind::ShadowRasterizer>(gfx, 50, 2.0f, 0.1f));
+			AddBindSink<Bind::Bindable>("shadowRasterizer");
 			RegisterSource(DirectBindableSource<Bind::DepthCubeSingleTexture>::Make("map", pDepthCube));
 
 			DirectX::XMStoreFloat4x4(
@@ -86,7 +85,7 @@ namespace Rgph {
 
 		void DumpShadowMap(Graphics& gfx, const std::string& path) const {
 			auto d = pDepthCube->GetDepthBuffer();
-			d->ToSurface(gfx).Save("src\\images\\dumps\\" + path + "Single.png");
+			d->ToSurface(gfx).Save("src\\images\\dumps\\" + path);
 		}
 
 	private:

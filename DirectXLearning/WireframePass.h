@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderQueuePass.h"
-#include "Stencil.h"
+#include "BindableCommon.h"
 
 class Graphics;
 

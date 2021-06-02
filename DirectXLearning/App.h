@@ -50,7 +50,7 @@ private:
 	//TestPlane redPlane{ wnd.Gfx(), 6.0 , {1.0f, 0.3f, 0.3f, 0.5f}};
 	TestCube tc1{ wnd.Gfx(), 4.0f };
 	TestCube tc2{ wnd.Gfx(), 4.0f };
-	//TestPlane tp{ wnd.Gfx(), 50.0f, {0.8f, 0.8f, 0.8f, 1.0f}};
+	TestPlane tp{ wnd.Gfx(), 50.0f, {0.8f, 0.8f, 0.8f, 1.0f}};
 
 	bool savingDepth = true;
 };
