@@ -31,9 +31,9 @@ void PointLight::SpawnControlWindow(std::string title) noexcept {
 		const auto dcheck = [&dirtyPos](bool dirty) { dirtyPos = dirtyPos || dirty; };
 
 		ImGui::Text("Position");
-		dcheck(ImGui::SliderFloat("X", &cbData.pos.x, -60.0f, 60.0f, "%.1f"));
-		dcheck(ImGui::SliderFloat("Y", &cbData.pos.y, -60.0f, 60.0f, "%.1f"));
-		dcheck(ImGui::SliderFloat("Z", &cbData.pos.z, -60.0f, 60.0f, "%.1f"));
+		dcheck(ImGui::SliderFloat("X", &cbData.pos.x, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
+		dcheck(ImGui::SliderFloat("Y", &cbData.pos.y, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
+		dcheck(ImGui::SliderFloat("Z", &cbData.pos.z, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
 
 		if (dirtyPos) {
 			pCamera->SetPos(cbData.pos);
@@ -42,13 +42,13 @@ void PointLight::SpawnControlWindow(std::string title) noexcept {
 		ImGui::Text("Intensity/Color");
 		bool dirtyColor = false;
 		const auto ccheck = [&dirtyColor](bool dirty) { dirtyColor = dirtyColor || dirty; };
-		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2));
+		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", ImGuiSliderFlags_Logarithmic));
 		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 
 		ImGui::Text("Falloff");
-		ImGui::SliderFloat("Constant", &cbData.attConst, 0.05f, 10.0f, "%.2f", 4);
-		ImGui::SliderFloat("Linear", &cbData.attLin, 0.0001f, 4.0f, "%.4f", 8);
-		ImGui::SliderFloat("Quadratic", &cbData.attQuad, 0.0000001f, 10.0f, "%.7f", 10);
+		ImGui::SliderFloat("Constant", &cbData.attConst, 0.05f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Linear", &cbData.attLin, 0.0001f, 4.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Quadratic", &cbData.attQuad, 0.0000001f, 10.0f, "%.7f", ImGuiSliderFlags_Logarithmic);
 
 		class Probe : public TechniqueProbe {
 		public:

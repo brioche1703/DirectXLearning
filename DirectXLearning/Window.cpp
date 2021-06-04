@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iostream>
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 Window::WindowClass Window::WindowClass::wndClass;
 Window::WindowClass::WindowClass() noexcept
 	: hInst(GetModuleHandle(nullptr)) {

@@ -318,6 +318,9 @@
     <ClCompile Include="ViewportPass.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
+    <ClCompile Include="external\imgui\imgui_tables.cpp">
+      <Filter>Header Files\external\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">

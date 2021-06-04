@@ -182,7 +182,7 @@ namespace Rgph {
 			auto ctrl = shadowControl->GetBuffer();
 			auto bilin = shadowSampler->GetBilinear();
 			bool pcfChange = ImGui::SliderInt("PCF Level", &ctrl["pcfLevel"], 0, 4);
-			bool biasChange = ImGui::SliderFloat("Post Bias", &ctrl["depthBias"], 0.0f, 1.0f, "%.6f", 3.6f);
+			bool biasChange = ImGui::SliderFloat("Post Bias", &ctrl["depthBias"], 0.0f, 1.0f, "%.6f");
 			bool hardwarePcfChange = ImGui::Checkbox("Harware PCF", &ctrl["hardwarePcf"]);
 			ImGui::Checkbox("Bilinear", &bilin);
 			if (pcfChange || biasChange || hardwarePcfChange) {
@@ -196,8 +196,8 @@ namespace Rgph {
 				auto slop = shadowRasterizer->GetSlopBias();
 				auto clamp = shadowRasterizer->GetClamp();
 				bool biasChanged = ImGui::SliderInt("Pre Bias", &bias, 0, 100000);
-				bool slopChanged = ImGui::SliderFloat("Slope Bias", &slop, 0.0f, 100.0f, "%.4f", 4.0f);
-				bool clampChanged = ImGui::SliderFloat("Clamp", &clamp, 0.0001f, 0.5f, "%.4f", 2.5f);
+				bool slopChanged = ImGui::SliderFloat("Slope Bias", &slop, 0.0f, 100.0f, "%.4f");
+				bool clampChanged = ImGui::SliderFloat("Clamp", &clamp, 0.0001f, 0.5f, "%.4f");
 				if (biasChanged || slopChanged || clampChanged) {
 					shadowRasterizer->ChangeDepthBiasParameters(gfx, bias, slop, clamp);
 				}
