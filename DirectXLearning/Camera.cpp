@@ -15,7 +15,7 @@ Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float
 	homePos(homePos),
 	homePitch(homePitch),
 	homeYaw(homeYaw),
-	proj(gfx, 1.0f, 9.0f / 16.0f, 0.5f, 400.0f),
+	proj(gfx, 1.0f, (float)gfx.GetHeight() / (float)gfx.GetWidth(), 0.5f, 200.0f),
 	indicator(gfx)
 {
 	if (tethered) {

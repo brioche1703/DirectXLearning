@@ -31,4 +31,5 @@ private:
 	float homeNearZ;
 	float homeFarZ;
 	Frustum frustum;
+	Graphics* gfx;
 };

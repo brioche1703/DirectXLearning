@@ -6,7 +6,6 @@
 #include <iostream>
 
 Window::WindowClass Window::WindowClass::wndClass;
-
 Window::WindowClass::WindowClass() noexcept
 	: hInst(GetModuleHandle(nullptr)) {
 	WNDCLASSEX wc = { 0 };
@@ -38,7 +37,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept {
 	return wndClass.hInst;
 }
 
-Window::Window(int width, int height, const char* name) 
+Window::Window(int width, int height, const char* name)
 	: width(width), height(height) {
 	RECT wr;
 	wr.left = 100;
@@ -53,7 +52,8 @@ Window::Window(int width, int height, const char* name)
 	hWnd = CreateWindow(
 		WindowClass::GetName(),
 		name,
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		//WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME,
+		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		wr.right - wr.left,
@@ -110,8 +110,7 @@ std::optional<int> Window::ProcessMessages() noexcept {
 	return {};
 }
 
-Graphics& Window::Gfx()
-{
+Graphics& Window::Gfx() {
 	return *pGfx;
 }
 
@@ -160,7 +159,7 @@ bool Window::CursorEnabled() const noexcept {
 	return cursorEnabled;
 }
 
-LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept{
+LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 	if (msg == WM_NCCREATE) {
 		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
 		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
@@ -189,7 +188,6 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		PostQuitMessage(0);
 		return 0;
 
-		// Keyboard events
 	case WM_KILLFOCUS:
 		kbd.ClearState();
 		break;
@@ -207,7 +205,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		}
 		break;
 
-	// KEYBOARD *************************************************
+		// KEYBOARD *************************************************
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 		if (imio.WantCaptureKeyboard) {
@@ -232,9 +230,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		}
 		kbd.OnChar(static_cast<unsigned char>(wParam));
 		break;
-	// *****************************************************************
 
-	// MOUSE *********************************************************** 
+		// MOUSE *********************************************************** 
 	case WM_MOUSEMOVE:
 	{
 		const POINTS pt = MAKEPOINTS(lParam);
@@ -283,12 +280,11 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		}
 		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnLeftReleased(pt.x, pt.y);
-		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height)
-		{
+		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height) {
 			ReleaseCapture();
 			mouse.OnMouseLeave();
 		}
-		break;	
+		break;
 	}
 	case WM_RBUTTONDOWN:
 	{
@@ -306,12 +302,11 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		}
 		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnRightReleased(pt.x, pt.y);
-		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height)
-		{
+		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height) {
 			ReleaseCapture();
 			mouse.OnMouseLeave();
 		}
-		break;	
+		break;
 	}
 	case WM_MOUSEWHEEL:
 	{
@@ -323,8 +318,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		mouse.OnWheelDelta(pt.x, pt.y, delta);
 		break;
 	}
-
 	case WM_INPUT:
+	{
 		if (!mouse.RawEnabled()) {
 			break;
 		}
@@ -357,15 +352,42 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		break;
 	}
 
+	// WINDOW *********************************************************** 
+	case WM_SIZE:
+		WindowResize(hWnd, wParam, lParam);
+		break;
+	case WM_SIZING:
+		break;
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+BOOL Window::WindowResize(HWND hWnd, WPARAM wParam, LPARAM lParam) noexcept {
+	width = LOWORD(lParam);
+	height = HIWORD(lParam) - 100;
+
+	RECT wr;
+	wr.left = 100;
+	wr.right = width + wr.left;
+	wr.top = 100;
+	wr.bottom = height + wr.top;
+
+	if (AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) == 0) {
+		throw DXWND_LAST_EXCEPT();
+	}
+
+	if (pGfx) {
+		pGfx->Resize(width, height);
+	}
+}
 
 // Window exceptions
 Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept
 	:
 	Exception(line, file),
-	hr(hr) {}
+	hr(hr) {
+}
 
 const char* Window::HrException::what() const noexcept {
 	std::ostringstream oss;

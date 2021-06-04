@@ -115,6 +115,10 @@ namespace Bind {
 		GetContext(gfx)->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	}
 
+	void DepthStencil::Reset() noxnd {
+		pDepthStencilView.Reset();
+	}
+
 	Surface DepthStencil::ToSurface(Graphics& gfx, bool linearize) const {
 		INFOMAN(gfx);
 		namespace wrl = Microsoft::WRL;
@@ -262,5 +266,43 @@ namespace Bind {
 
 	void OutputOnlyDepthStencil::Bind(Graphics& gfx) noxnd {
 		assert("OutputOnlyDepthStencil cannot be bound as shader input" && false);
+	}
+	void OutputOnlyDepthStencil::Update(Graphics& gfx, ID3D11Texture2D* pTexture) noxnd {
+		INFOMAN(gfx);
+
+		D3D11_TEXTURE2D_DESC textureDesc;
+		pTexture->GetDesc(&textureDesc);
+		width = textureDesc.Width;
+		height = textureDesc.Height;
+
+		// Create depth stencil texture 
+		wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+		D3D11_TEXTURE2D_DESC descDepth = {};
+		descDepth.Width = width;
+		descDepth.Height = height;
+		descDepth.MipLevels = 1u;
+		descDepth.ArraySize = 1u;
+		descDepth.Format = MapUsageTypeless(Usage::DepthStencil);
+		descDepth.SampleDesc.Count = 1u;
+		descDepth.SampleDesc.Quality = 0u;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+			&descDepth,
+			nullptr,
+			&pDepthStencil));
+
+		// Create depth stencil target view 
+		D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
+		descView.Format = MapUsageTyped(Usage::DepthStencil);
+		descView.Flags = 0;
+		descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		descView.Texture2D.MipSlice = 0;
+
+		GFX_THROW_INFO(GetDevice(gfx)->CreateDepthStencilView(
+			pDepthStencil.Get(),
+			&descView,
+			&pDepthStencilView));
 	}
 }

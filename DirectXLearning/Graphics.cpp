@@ -72,6 +72,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	wrl::ComPtr<ID3D11Texture2D> pBackBuffer;
 	GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer));
 	pTarget = std::shared_ptr<Bind::RenderTarget>{ new Bind::OutputOnlyRenderTarget(*this, pBackBuffer.Get()) };
+	pDepthStencil = std::make_shared<Bind::OutputOnlyDepthStencil>(*this);
 
 	D3D11_VIEWPORT vp;
 	vp.Width = (float)width;
@@ -102,8 +103,7 @@ void Graphics::SetCamera(DirectX::FXMMATRIX cam) noexcept {
 	camera = cam;
 }
 
-DirectX::XMMATRIX Graphics::GetCamera() const noexcept
-{
+DirectX::XMMATRIX Graphics::GetCamera() const noexcept {
 	return camera;
 }
 
@@ -126,6 +126,49 @@ UINT Graphics::GetHeight() const noexcept {
 	return height;
 }
 
+void Graphics::SetWidth(UINT widthIn) noexcept {
+	width = widthIn;
+}
+
+void Graphics::SetHeight(UINT heightIn) noexcept {
+	height = heightIn;
+}
+
+void Graphics::Resize(UINT widthIn, UINT heightIn) noexcept {
+	SetWidth(widthIn);
+	SetHeight(heightIn);
+
+	if (pSwapChain) {
+		HRESULT hr;
+
+		ID3D11RenderTargetView* nullViews[] = { nullptr };
+		pContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
+		pTarget->Reset();
+		pDepthStencil->Reset();
+		pContext->Flush();
+
+		UINT swapChainCreateFlags = 0u;
+#ifndef NDEBUG
+		swapChainCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif // !NDEBUG
+		pSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+
+		wrl::ComPtr<ID3D11Texture2D> pBackBuffer;
+		GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer));
+		pTarget->Update(*this, pBackBuffer.Get());
+		pDepthStencil->Update(*this, pBackBuffer.Get());
+
+		D3D11_VIEWPORT vp;
+		vp.Width = (float)width;
+		vp.Height = (float)height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		pContext->RSSetViewports(1u, &vp);
+	}
+}
+
 std::string Graphics::GetGpuName() const noexcept {
 	return gpuName;
 }
@@ -146,6 +189,10 @@ std::string Graphics::GetGpuName_() const noexcept {
 
 std::shared_ptr<Bind::RenderTarget> Graphics::GetTarget() {
 	return pTarget;
+}
+
+std::shared_ptr<Bind::OutputOnlyDepthStencil> Graphics::GetDepthStencil() {
+	return pDepthStencil;
 }
 
 void Graphics::BeginFrame(float red, float green, float blue) noexcept

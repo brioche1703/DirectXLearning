@@ -23,6 +23,7 @@ namespace Bind {
 		void BindAsBuffer(Graphics& gfx, BufferResource* renderTarget) noxnd override;
 		void BindAsBuffer(Graphics& gfx, RenderTarget* rt) noxnd;
 		void Clear(Graphics& gfx) noxnd override;
+		void Reset() noxnd;
 		Surface ToSurface(Graphics& gfx, bool linearlize = true) const;
 		unsigned int GetWidth() const;
 		unsigned int GetHeight() const;
@@ -53,5 +54,6 @@ namespace Bind {
 		OutputOnlyDepthStencil(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture, UINT face);
 		OutputOnlyDepthStencil(Graphics& gfx, UINT width, UINT height);
 		void Bind(Graphics& gfx) noxnd override;
+		void Update(Graphics& gfx, ID3D11Texture2D* pTexture) noxnd;
 	};
 }

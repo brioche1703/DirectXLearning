@@ -8,11 +8,12 @@ Projection::Projection(Graphics& gfx, float width, float height, float nearZ, fl
 	nearZ(nearZ),
 	farZ(farZ),
 	frustum(gfx, width, height, nearZ, farZ),
-	homeWidth(width), homeHeight(height), homeNearZ(nearZ), homeFarZ(farZ)
+	homeWidth(width), homeHeight(height), homeNearZ(nearZ), homeFarZ(farZ),
+	gfx(&gfx)
 {}
 
 DirectX::XMMATRIX Projection::GetMatrix() const {
-	return DirectX::XMMatrixPerspectiveLH(width, height, nearZ, farZ);
+	return DirectX::XMMatrixPerspectiveLH(1.0f, (float)gfx->GetHeight() / (float)gfx->GetWidth(), nearZ, farZ);
 }
 
 void Projection::RenderWidgets(Graphics& gfx) {

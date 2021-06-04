@@ -18,6 +18,8 @@ namespace Bind {
 		void BindAsBuffer(Graphics& gfx, DepthStencil* depthStencil) noxnd;
 		void Clear(Graphics& gfx) noxnd override;
 		void Clear(Graphics& gfx, const std::array<float, 4>& color) noxnd;
+		void Reset() noxnd;
+		void Update(Graphics& gfx, ID3D11Texture2D* pTexture, std::optional<UINT> face = {});
 		UINT GetWidth() const noxnd;
 		UINT GetHeight() const noxnd;
 

@@ -16,5 +16,11 @@ namespace Rgph {
 		ViewportPass(Graphics& gfx, std::string name, Bind::Viewport vp)noxnd;
 		void Execute(Graphics& gfx) const noxnd override;
 	};
+
+	class ShadowMapViewportPass : public ViewportPass {
+	public:
+		ShadowMapViewportPass(Graphics& gfx, std::string name) noxnd;
+		void Execute(Graphics& gfx) const noxnd override;
+	};
 }
 

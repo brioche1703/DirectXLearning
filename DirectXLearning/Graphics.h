@@ -14,6 +14,7 @@
 namespace Bind {
 	class Bindable;
 	class RenderTarget;
+	class OutputOnlyDepthStencil;
 }
 
 class Graphics {
@@ -80,8 +81,12 @@ public:
 
 	UINT GetWidth() const noexcept;
 	UINT GetHeight() const noexcept;
+	void SetWidth(UINT width) noexcept;
+	void SetHeight(UINT height) noexcept;
+	void Resize(UINT width, UINT height) noexcept;
 	std::string GetGpuName() const noexcept;
 	std::shared_ptr<Bind::RenderTarget> GetTarget();
+	std::shared_ptr<Bind::OutputOnlyDepthStencil> GetDepthStencil();
 
 private:
 	std::string GetGpuName_() const noexcept;
@@ -102,4 +107,5 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	std::shared_ptr<Bind::RenderTarget> pTarget;
+	std::shared_ptr<Bind::OutputOnlyDepthStencil> pDepthStencil;
 };

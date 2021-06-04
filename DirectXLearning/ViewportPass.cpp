@@ -35,3 +35,15 @@ void Rgph::ViewportPass::Execute(Graphics& gfx) const noxnd {
 		BindAll(gfx);
 		gfx.DrawIndexed(6u);
 }
+
+Rgph::ShadowMapViewportPass::ShadowMapViewportPass(Graphics& gfx, std::string name) noxnd
+	:
+	ViewportPass(gfx, name, Bind::Viewport{ gfx, (gfx.GetHeight() - 100.0f) / 6.0f, gfx.GetHeight() - 100.0f, 20.0f, 20.0f })
+{}
+
+void Rgph::ShadowMapViewportPass::Execute(Graphics& gfx) const noxnd {
+		BindAll(gfx);
+		auto vp = std::make_unique<Bind::Viewport>(gfx, (gfx.GetHeight() - 100.0f) / 6.0f, gfx.GetHeight() - 100.0f, 20.0f, 20.0f);
+		vp->Bind(gfx);
+		gfx.DrawIndexed(6u);
+}

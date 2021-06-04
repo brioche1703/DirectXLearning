@@ -6,11 +6,11 @@
 class Graphics;
 
 namespace Rgph {
-	class DepthTexturePass : public ViewportPass {
+	class DepthTexturePass : public ShadowMapViewportPass {
 	public:
 		DepthTexturePass(Graphics& gfx, std::string name)
 			:
-			ViewportPass(gfx, std::move(name), Bind::Viewport(gfx, 100, 600, 20.0f, 20.0f))
+			ShadowMapViewportPass(gfx, std::move(name))
 		{
 			using namespace Bind;
 			AddBind(PixelShader::Resolve(gfx, "DepthTexture_PS.cso"));
@@ -26,7 +26,7 @@ namespace Rgph {
 		}
 
 		void Execute(Graphics& gfx) const noxnd {
-			ViewportPass::Execute(gfx);
+			ShadowMapViewportPass::Execute(gfx);
 		}
 	};
 }
