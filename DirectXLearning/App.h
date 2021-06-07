@@ -28,11 +28,9 @@ public:
 private:
 	void DoFrame(float dt);
 	void HandleInput(float dt);
-	void ShowImguiDemoWindow();
 
 private:
 	std::string commandLine;
-	bool showDemoWindow = true;
 	ImguiManager imguiManager;
 	Window wnd;
 	ScriptCommander scriptCommander;

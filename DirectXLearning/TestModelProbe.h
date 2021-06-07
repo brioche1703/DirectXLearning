@@ -36,10 +36,10 @@ public:
 		};
 
 		if (auto v = buf["scale"]; v.Exists()) {
-			dcheck(ImGui::SliderFloat(tag("Scale"), &v, 1.0f, 2.0f, "%.3f", 3.5f));
+			dcheck(ImGui::SliderFloat(tag("Scale"), &v, 1.0f, 2.0f, "%.3f", ImGuiSliderFlags_Logarithmic));
 		}
 		if (auto v = buf["offset"]; v.Exists()) {
-			dcheck(ImGui::SliderFloat(tag("Offset"), &v, 0.0f, 1.0f, "%.3f", 2.5f));
+			dcheck(ImGui::SliderFloat(tag("Offset"), &v, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_Logarithmic));
 		}
 		if (auto v = buf["materialColor"]; v.Exists()) {
 			dcheck(ImGui::ColorPicker3(tag("Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
@@ -48,7 +48,7 @@ public:
 			dcheck(ImGui::ColorPicker3(tag("Spec. Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
 		}
 		if (auto v = buf["specularGloss"]; v.Exists()) {
-			dcheck(ImGui::SliderFloat(tag("Glossiness"), &v, 1.0f, 100.0f, "%.1f", 1.5f));
+			dcheck(ImGui::SliderFloat(tag("Glossiness"), &v, 1.0f, 100.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
 		}
 		if (auto v = buf["specularWeight"]; v.Exists()) {
 			dcheck(ImGui::SliderFloat(tag("Spec. Weight"), &v, 0.0f, 2.0f));
@@ -120,7 +120,23 @@ protected:
 			node_flags, node.GetName().c_str()
 		);
 
-		if (ImGui::IsItemClicked()) {
+		if (ImGui::IsItemClicked()) 			{
+			struct Probe : public TechniqueProbe 				{
+				virtual void OnSetTechnique() 					{
+					if (pTech->GetName() == "Outline") 						{
+						pTech->SetActiveState(highlighted);
+					}
+				}
+				bool highlighted = false;
+			} probe;
+
+			if (pSelectedNode != nullptr) 				{
+				pSelectedNode->Accept(probe);
+			}
+
+			probe.highlighted = true;
+			node.Accept(probe);
+
 			pSelectedNode = &node;
 		}
 

@@ -23,8 +23,6 @@ namespace dx = DirectX;
 #pragma comment(lib,"D3DCompiler.lib")
 #pragma comment(lib,"dxgi.lib")
 
-
-
 Graphics::Graphics(HWND hWnd, int width, int height) 
 	:
 	width(width),
@@ -83,8 +81,10 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
 
+	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
-	gpuName = GetGpuName_();
+
+	gpuName = GetGpuName();
 }
 
 void Graphics::DrawIndexed(UINT count) noxnd {
@@ -197,12 +197,6 @@ std::shared_ptr<Bind::OutputOnlyDepthStencil> Graphics::GetDepthStencil() {
 
 void Graphics::BeginFrame(float red, float green, float blue) noexcept
 {
-	if (imguiEnabled)
-	{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-	}
 	ID3D11ShaderResourceView* const pNullTex = nullptr;
 	pContext->PSSetShaderResources(0, 1, &pNullTex);
 	pContext->PSSetShaderResources(3, 1, &pNullTex);
@@ -210,12 +204,6 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 
 void Graphics::EndFrame()
 {
-	if (imguiEnabled)
-	{
-		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	}
-
 	HRESULT hr;
 #ifndef NDEBUG
 	infoManager.Set();

@@ -63,6 +63,7 @@ int App::Go() {
 
 void App::DoFrame(float dt) {
 
+	imguiManager.NewFrame();
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 	light.Bind(wnd.Gfx(), cameras->GetMatrix());
 	rg.BindMainCamera(cameras.GetActiveCamera());
@@ -86,15 +87,17 @@ void App::DoFrame(float dt) {
 	static MP nanoProbe{"Nano"};
 
 	// IMGUI
-	sponzaProbe.SpawnWindow(sponza);
-	goblinProbe.SpawnWindow(goblin);
-	nanoProbe.SpawnWindow(nano);
+	if (imguiManager.IsEnabled()) {
+		sponzaProbe.SpawnWindow(sponza);
+		goblinProbe.SpawnWindow(goblin);
+		nanoProbe.SpawnWindow(nano);
 
-	cameras.SpawnWindow(wnd.Gfx());
-	light.SpawnControlWindow("Light 1");
-	rg.RenderWindows(wnd.Gfx());
-	ShowImguiDemoWindow();
+		cameras.SpawnWindow(wnd.Gfx());
+		light.SpawnControlWindow("Light 1");
+		rg.RenderWindows(wnd.Gfx());
+	}
 
+	imguiManager.EndFrame();
 	wnd.Gfx().EndFrame();
 	rg.Reset();
 }
@@ -116,7 +119,7 @@ void App::HandleInput(float dt) {
 			}
 			break;
 		case VK_F1:
-			showDemoWindow = !showDemoWindow;
+			imguiManager.Toggle();
 			break;
 		case 'P':
 			savingDepth = true;
@@ -151,10 +154,4 @@ void App::HandleInput(float dt) {
 		}
 	}
 
-}
-
-void App::ShowImguiDemoWindow() {
-	if (showDemoWindow) {
-		ImGui::ShowDemoWindow(&showDemoWindow);
-	}
 }

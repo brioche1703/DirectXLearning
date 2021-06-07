@@ -73,6 +73,12 @@
     <Filter Include="Source Files\Jobber\GraphLib">
       <UniqueIdentifier>{ecdf50de-be3b-4cab-969e-40265fd0fde7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{d1ae8ef0-9fbe-4b1d-a158-bcc6bbf9c562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{3a2e1b62-8874-4131-8eb9-68a06da92270}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -158,9 +164,6 @@
     </ClCompile>
     <ClCompile Include="external\imgui\imgui_widgets.cpp">
       <Filter>Header Files\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImguiManager.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
@@ -321,6 +324,9 @@
     <ClCompile Include="external\imgui\imgui_tables.cpp">
       <Filter>Header Files\external\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -445,9 +451,6 @@
     </ClInclude>
     <ClInclude Include="external\imgui\imstb_truetype.h">
       <Filter>Header Files\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImguiManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
@@ -682,6 +685,9 @@
     </ClInclude>
     <ClInclude Include="ViewportPass.h">
       <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiManager.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
