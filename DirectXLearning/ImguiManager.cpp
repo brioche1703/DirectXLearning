@@ -1,4 +1,9 @@
 #include "ImguiManager.h"
+#include "FileDialogs.h"
+#include "Window.h"
+#include "Scene.h"
+#include "Graphics.h"
+#include "Model.h"
 
 #include "external/imgui/imgui.h"
 #include "external/imgui/imgui_impl_win32.h"
@@ -39,6 +44,23 @@ void ImguiManager::EndFrame() {
 
 void ImguiManager::ShowDemoWindow() {
 	ImGui::ShowDemoWindow();
+}
+
+void ImguiManager::ShowMainMenuBar(Window* wnd, Graphics& gfx, Rgph::RenderGraph& rg) {
+	if (ImGui::BeginMainMenuBar()) {
+
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("New", "Ctrl+N")) {
+			}
+			if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+				std::string file = FileDialogs::OpenFile(wnd->GetWindowH());
+				Scene::AddModel("model1", gfx, rg, file);
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
 }
 
 void ImguiManager::Toggle() noexcept {

@@ -327,6 +327,9 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -688,6 +691,12 @@
     </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="FileDialogs.h">
+      <Filter>Header Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

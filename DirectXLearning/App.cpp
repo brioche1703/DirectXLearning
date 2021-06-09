@@ -14,32 +14,28 @@ App::App(const std::string& commandLine)
 	commandLine(commandLine),
 	wnd(1280, 720, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)),
-	light(wnd.Gfx(), { 10.0f, 18.0f, 0.0f })
-{
+	light(wnd.Gfx(), { 10.0f, 18.0f, 0.0f }) {
 	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
 	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
 	cameras.AddCamera(light.ShareCamera());
 
 	TestDynamicMeshLoading(wnd.Gfx());
 
-	nano.SetRootTransform(
+	scene.AddModel("goblin", wnd.Gfx(), rg, "src\\models\\gobber\\GoblinX.obj", 4.0f);
+	scene.AddModel("nano", wnd.Gfx(), rg, "src\\models\\nano_textured\\nanosuit.obj", 1.5f);
+	scene.AddModel("sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 20.0f);
+	
+	scene.GetModel("nano")->SetRootTransform(
 		dx::XMMatrixRotationY(PI / 2.0f) *
 		dx::XMMatrixTranslation(27.0f, -0.56f, 1.7f)
 	);
-	goblin.SetRootTransform(
+	scene.GetModel("goblin")->SetRootTransform(
 		dx::XMMatrixRotationY(-PI / 2.0f) *
 		dx::XMMatrixTranslation(-8.0f, 10.0f, 0.0f)
 	);
 
-	models.push_back(&nano);
-	models.push_back(&goblin);
-	models.push_back(&sponza);
-
 	light.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
-	for(auto m : models) {
-		m->LinkTechniques(rg);
-	}
 
 	rg.BindShadowCamera(*light.ShareCamera());
 }
@@ -61,6 +57,10 @@ int App::Go() {
 	}
 }
 
+HWND App::GetWindowHandler() const noexcept {
+	return wnd.GetWindowH();
+}
+
 void App::DoFrame(float dt) {
 
 	imguiManager.NewFrame();
@@ -70,10 +70,8 @@ void App::DoFrame(float dt) {
 
 	light.Submit(Chan::main);
 	cameras.Submit(Chan::main);
-	for (auto m : models) {
-		m->Submit(Chan::main);
-		m->Submit(Chan::shadow);
-	}
+	scene.Submit(Chan::main);
+	scene.Submit(Chan::shadow);
 
 	rg.Execute(wnd.Gfx());
 
@@ -82,21 +80,16 @@ void App::DoFrame(float dt) {
 		savingDepth = false;
 	}
 
-	static MP sponzaProbe{ "Sponza" };
-	static MP goblinProbe{ "Goblin" };
-	static MP nanoProbe{"Nano"};
-
 	// IMGUI
 	if (imguiManager.IsEnabled()) {
-		sponzaProbe.SpawnWindow(sponza);
-		goblinProbe.SpawnWindow(goblin);
-		nanoProbe.SpawnWindow(nano);
+		scene.SpawnAllProbeWindow();
 
 		cameras.SpawnWindow(wnd.Gfx());
 		light.SpawnControlWindow("Light 1");
 		rg.RenderWindows(wnd.Gfx());
 	}
 
+	imguiManager.ShowMainMenuBar(&wnd, wnd.Gfx(), rg);
 	imguiManager.EndFrame();
 	wnd.Gfx().EndFrame();
 	rg.Reset();

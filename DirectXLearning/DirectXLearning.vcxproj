@@ -239,6 +239,7 @@
     <ClCompile Include="NullPixelShader.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Projection.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
     <ClCompile Include="ShadowRasterizer.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="external\imgui\imstb_rectpack.h" />
     <ClInclude Include="external\imgui\imstb_textedit.h" />
     <ClInclude Include="external\imgui\imstb_truetype.h" />
+    <ClInclude Include="FileDialogs.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Graphics.h" />
@@ -348,6 +350,7 @@
     <ClInclude Include="OutlineMaskGenerationPass.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Projection.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
     <ClInclude Include="ShadowRasterizer.h" />

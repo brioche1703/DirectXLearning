@@ -20,7 +20,7 @@ namespace Rgph {
 
 class Model {
 public:
-	Model(Graphics& gfx, const std::string& pathString, const float scale = 1.0f);
+	Model(Graphics& gfx, const std::string name, const std::string& pathString, const float scale = 1.0f);
 	~Model() noexcept;
 
 	void Submit(size_t channels) const noxnd;
@@ -33,6 +33,7 @@ private:
 	std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node, float scale) noexcept;
 
 private:
+	std::string name;
 	std::unique_ptr<Node> pRoot;
 	std::vector<std::unique_ptr<Mesh>> meshPtrs;
 };

@@ -65,6 +65,7 @@ public:
 	void EnableCursor() noexcept;
 	void DisableCursor() noexcept;
 	bool CursorEnabled() const noexcept;
+	HWND GetWindowH() const noexcept;
 
 private:
 	void FreeCursor() noexcept;

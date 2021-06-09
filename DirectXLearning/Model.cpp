@@ -11,7 +11,9 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-Model::Model(Graphics& gfx, const std::string& pathString, const float scale)
+Model::Model(Graphics& gfx, const std::string name, const std::string& pathString, const float scale) 
+	:
+	name(name)
 {
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile(
@@ -40,7 +42,6 @@ Model::Model(Graphics& gfx, const std::string& pathString, const float scale)
 
 	int nextId = 0;
 	pRoot = ParseNode(nextId, *pScene->mRootNode, scale);
-
 }
 
 Model::~Model() noexcept {}

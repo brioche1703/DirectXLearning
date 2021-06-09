@@ -157,6 +157,10 @@ bool Window::CursorEnabled() const noexcept {
 	return cursorEnabled;
 }
 
+HWND Window::GetWindowH() const noexcept {
+	return hWnd;
+}
+
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 	if (msg == WM_NCCREATE) {
 		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
