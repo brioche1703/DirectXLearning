@@ -27,6 +27,5 @@ public:
 	void SpawnAllProbeWindow() noexcept;
 
 private:
-	static std::map<std::string, std::shared_ptr<Model>> models;
-	static std::map<std::string, std::shared_ptr<MP>> modelsProbes;
+	static std::map<std::string, std::pair<std::shared_ptr<Model>, std::shared_ptr<MP>>> models;
 };
