@@ -1,4 +1,5 @@
 #include "ImguiManager.h"
+
 #include "FileDialogs.h"
 #include "Window.h"
 #include "Scene.h"
@@ -53,8 +54,8 @@ void ImguiManager::ShowMainMenuBar(Window* wnd, Graphics& gfx, Rgph::RenderGraph
 			if (ImGui::MenuItem("New", "Ctrl+N")) {
 			}
 			if (ImGui::MenuItem("Open...", "Ctrl+O")) {
-				std::string file = FileDialogs::OpenFile(wnd->GetWindowH());
-				Scene::AddModel("model1", gfx, rg, file);
+				std::filesystem::path path = FileDialogs::OpenFile(wnd->GetWindowH());
+				Scene::AddModel(path.filename().string(), gfx, rg, path.string());
 			}
 			ImGui::EndMenu();
 		}

@@ -36,3 +36,8 @@ std::vector<std::string> SplitString(const std::string& s, const std::string& de
 bool StringContains(std::string_view haystack, std::string_view needle) {
 	return std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end()) != haystack.end();
 }
+
+std::string RemoveFileExtension(const std::string& s) {
+	size_t lastIndex = s.find_last_of(".");
+	return s.substr(0, lastIndex);
+}

@@ -1,7 +1,9 @@
 #include "Scene.h"
+
 #include "Model.h"
 #include "TestModelProbe.h"
 #include "ModelProbe.h"
+#include "Utils.h"
 
 Scene::Scene() {}
 
@@ -18,10 +20,12 @@ void Scene::Submit(size_t channel) noxnd {
 }
 
 void Scene::AddModel(std::string name, Graphics& gfx, Rgph::RenderGraph& rg, std::string path, const float scale) noexcept {
-	auto m = std::make_shared<Model>(gfx, name, path, scale);
-	auto mp = std::make_shared<MP>(name);
+	auto title = RemoveFileExtension(name);
+	title = GenerateUID(title, models);
+	auto m = std::make_shared<Model>(gfx, title, path, scale);
+	auto mp = std::make_shared<MP>(title);
 	m->LinkTechniques(rg);
-	models.emplace(name, std::make_pair(m, mp));
+	models.emplace(title, std::make_pair(m, mp));
 }
 
 std::shared_ptr<Model> Scene::GetModel(std::string name) noexcept {

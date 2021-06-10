@@ -1,13 +1,15 @@
 #pragma once
 
-#include <string>
 #include <Windows.h>
+#include <string>
+#include <filesystem>
 
 class FileDialogs {
 public:
-	static std::string OpenFile(HWND hWnd) {
+	static std::filesystem::path OpenFile(HWND hWnd) {
 		OPENFILENAME ofn = { 0 };
 		TCHAR szFile[260] = { 0 };
+		TCHAR szFileTitle[260] = { 0 };
 		// Initialize remaining fields of OPENFILENAME structure
 		ofn.lStructSize = sizeof(ofn);
 		ofn.lpstrInitialDir = "src\\models";
@@ -16,18 +18,16 @@ public:
 		ofn.nMaxFile = sizeof(szFile);
 		ofn.lpstrFilter = "Obj files (*.obj)|*.obj|All files (*.*)|*.*";
 		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
+		ofn.lpstrFileTitle = szFileTitle;
+		ofn.nMaxFileTitle = sizeof(szFileTitle);
 		ofn.lpstrInitialDir = NULL;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 		if (GetOpenFileName(&ofn) == TRUE) {
-			return ofn.lpstrFile;
+			return std::filesystem::path(ofn.lpstrFile);
 		}
 
 		return "null";
 	}
-
-private:
 
 };
