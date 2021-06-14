@@ -87,6 +87,7 @@ public:
 			dcheck(ImGui::SliderFloat("X", &tf.x, -60.f, 60.f));
 			dcheck(ImGui::SliderFloat("Y", &tf.y, -60.f, 60.f));
 			dcheck(ImGui::SliderFloat("Z", &tf.z, -60.f, 60.f));
+			dcheck(ImGui::SliderFloat("Scale", &tf.scale, 0.1f, 5.0f));
 			ImGui::TextColored({ 0.4f,1.0f,0.6f,1.0f }, "Orientation");
 			dcheck(ImGui::SliderAngle("X-rotation", &tf.xRot, -180.0f, 180.0f));
 			dcheck(ImGui::SliderAngle("Y-rotation", &tf.yRot, -180.0f, 180.0f));
@@ -94,6 +95,7 @@ public:
 			if (dirty)
 			{
 				pSelectedNode->SetAppliedTransform(
+					dx::XMMatrixScaling(tf.scale, tf.scale, tf.scale) *
 					dx::XMMatrixRotationX(tf.xRot) *
 					dx::XMMatrixRotationY(tf.yRot) *
 					dx::XMMatrixRotationZ(tf.zRot) *
@@ -157,6 +159,7 @@ private:
 		float x = 0.0f;
 		float y = 0.0f;
 		float z = 0.0f;
+		float scale = 1.0f;
 	};
 
 	std::string name;
@@ -183,6 +186,7 @@ private:
 		tp.x = translation.x;
 		tp.y = translation.y;
 		tp.z = translation.z;
+		tp.scale = 1.0f;
 		return transformParams.insert({ id,{ tp } }).first->second;
 	}
 };
