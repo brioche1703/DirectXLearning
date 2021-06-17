@@ -6,8 +6,12 @@
 #include "MathsUtils.h"
 #include "Camera.h"
 #include "Channels.h"
+#include "ECS.h"
+
+Ecs::Coordinator gCoordinator;
 
 namespace dx = DirectX;
+
 
 App::App(const std::string& commandLine)
 	:

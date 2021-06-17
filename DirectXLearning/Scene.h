@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "ECS.h"
 
 #include <vector>
 #include <string>
@@ -13,6 +14,24 @@ class MP;
 namespace Rgph {
 	class RenderGraph;
 }
+
+extern Ecs::Coordinator gCoordinator;
+
+class SceneSystem : public Ecs::System {
+public:
+	void Init() {
+
+	}
+
+	void Update() {
+		static float scale = 0.1f;
+		for (auto const& entity : entities) {
+			auto& model = gCoordinator.GetComponent<std::shared_ptr<Model>>(entity);
+			//model->SetRootTransform(DirectX::XMMatrixScaling(scale, scale, scale));
+		}
+		scale += 0.1f;
+	}
+};
 
 class Scene {
 public:
@@ -27,5 +46,6 @@ public:
 	void SpawnAllProbeWindow() noexcept;
 
 private:
-	static std::map<std::string, std::pair<std::shared_ptr<Model>, std::shared_ptr<MP>>> models;
+
+	std::shared_ptr<SceneSystem> sceneSystem;
 };

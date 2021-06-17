@@ -311,6 +311,7 @@
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="DynamicConstant.h" />
+    <ClInclude Include="ECS.h" />
     <ClInclude Include="external\imgui\imconfig.h" />
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_impl_dx11.h" />

@@ -86,3 +86,7 @@ void Model::LinkTechniques(Rgph::RenderGraph& rg) {
 		pMesh->LinkTechniques(rg);
 	}
 }
+
+std::string Model::GetName() const noexcept {
+	return name;
+}
