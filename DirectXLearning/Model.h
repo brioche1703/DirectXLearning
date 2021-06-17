@@ -28,6 +28,7 @@ public:
 
 	void Submit(size_t channels) const noxnd;
 	void SetRootTransform(DirectX::FXMMATRIX tf) noexcept;
+	const DirectX::XMFLOAT4X4 GetRootTransform() const noexcept;
 	void Accept(class ModelProbe& probe);
 	void LinkTechniques(Rgph::RenderGraph&);
 	std::string GetName() const noexcept;

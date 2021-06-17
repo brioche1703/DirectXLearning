@@ -238,13 +238,16 @@ namespace Ecs {
 
 	class Coordinator {
 	public:
+		Coordinator() {
+			Init();
+		}
+
 		void Init() 	{
 			componentManager = std::make_unique<ComponentManager>();
 			entityManager = std::make_unique<EntityManager>();
 			systemManager = std::make_unique<SystemManager>();
 		}
 
-		// Entity methods
 		Entity CreateEntity() 	{
 			return entityManager->CreateEntity();
 		}
@@ -255,7 +258,6 @@ namespace Ecs {
 			systemManager->EntityDestroyed(entity);
 		}
 
-		// Component methods
 		template<typename T>
 		void RegisterComponent() 	{
 			componentManager->RegisterComponent<T>();
@@ -293,8 +295,6 @@ namespace Ecs {
 			return componentManager->GetComponentType<T>();
 		}
 
-
-		// System methods
 		template<typename T>
 		std::shared_ptr<T> RegisterSystem() 	{
 			return systemManager->RegisterSystem<T>();

@@ -77,6 +77,10 @@ void Model::SetRootTransform(DirectX::FXMMATRIX tf) noexcept {
 	pRoot->SetAppliedTransform(tf);
 }
 
+const DirectX::XMFLOAT4X4 Model::GetRootTransform() const noexcept {
+	return pRoot->GetAppliedTransform();
+}
+
 void Model::Accept(ModelProbe& probe) {
 	pRoot->Accept(probe);
 }

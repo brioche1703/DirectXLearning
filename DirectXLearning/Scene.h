@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "Camera.h"
 #include "ECS.h"
 
 #include <vector>
@@ -19,17 +20,20 @@ extern Ecs::Coordinator gCoordinator;
 
 class SceneSystem : public Ecs::System {
 public:
-	void Init() {
+	void Init() {}
 
-	}
-
-	void Update() {
-		static float scale = 0.1f;
+	void Update(float dt) {
 		for (auto const& entity : entities) {
 			auto& model = gCoordinator.GetComponent<std::shared_ptr<Model>>(entity);
-			//model->SetRootTransform(DirectX::XMMatrixScaling(scale, scale, scale));
+			DirectX::XMFLOAT4X4 f = model->GetRootTransform();
+			DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&f);
+			if (model->GetName() != "sponza") {
+				model->SetRootTransform(
+					DirectX::XMMatrixScaling(1.001f, 1.001f, 1.001f) *
+					m
+					);
+			}
 		}
-		scale += 0.1f;
 	}
 };
 
@@ -44,6 +48,8 @@ public:
 	std::shared_ptr<Model> GetModel(std::string name) noexcept;
 	void SpawnProbeWindow(std::string name) noexcept;
 	void SpawnAllProbeWindow() noexcept;
+
+	void ScalingTest(float dt);
 
 private:
 

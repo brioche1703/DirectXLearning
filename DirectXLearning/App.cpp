@@ -84,10 +84,12 @@ void App::DoFrame(float dt) {
 		savingDepth = false;
 	}
 
+	//scene.ScalingTest(dt);
+	//cameras.TravelingTest(dt);
+
 	// IMGUI
 	if (imguiManager.IsEnabled()) {
 		scene.SpawnAllProbeWindow();
-
 		cameras.SpawnWindow(wnd.Gfx());
 		light.SpawnControlWindow("Light 1");
 		rg.RenderWindows(wnd.Gfx());

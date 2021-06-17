@@ -4,12 +4,11 @@
 #include "TestModelProbe.h"
 #include "ModelProbe.h"
 #include "Utils.h"
+#include "Camera.h"
 
 extern Ecs::Coordinator gCoordinator;
 
 Scene::Scene() {
-	gCoordinator.Init();
-
 	gCoordinator.RegisterComponent<std::shared_ptr<Model>>();
 	gCoordinator.RegisterComponent<std::shared_ptr<MP>>();
 
@@ -73,4 +72,8 @@ void Scene::SpawnAllProbeWindow() noexcept {
 		auto& mp = gCoordinator.GetComponent<std::shared_ptr<MP>>(entity);
 		mp->SpawnWindow(*model);
 	}
+}
+
+void Scene::ScalingTest(float dt) {
+	sceneSystem->Update(dt);
 }
