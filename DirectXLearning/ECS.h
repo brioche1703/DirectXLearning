@@ -148,6 +148,12 @@ namespace Ecs {
 		}
 
 		template<typename T>
+		bool HasComponent() {
+			const char* typeName = typeid(T).name();
+			return componentTypes.find(typeName) != componentTypes.end();
+		}
+
+		template<typename T>
 		void AddComponent(Entity entity, T component) {
 			GetComponentArray<T>()->InsertData(entity, component);
 		}
@@ -293,6 +299,11 @@ namespace Ecs {
 		template<typename T>
 		ComponentType GetComponentType() 	{
 			return componentManager->GetComponentType<T>();
+		}
+		
+		template<typename T>
+		bool HasComponent() {
+			return componentManager->HasComponent<T>();
 		}
 
 		template<typename T>

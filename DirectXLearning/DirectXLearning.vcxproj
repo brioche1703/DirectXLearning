@@ -352,6 +352,7 @@
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneEntity.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
     <ClInclude Include="ShadowRasterizer.h" />

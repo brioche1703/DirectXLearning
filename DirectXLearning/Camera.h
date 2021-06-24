@@ -2,13 +2,14 @@
 
 #include "Projection.h"
 #include "CameraIndicator.h"
+#include "SceneEntity.h"
 
 #include <DirectXMath.h>
 #include <string>
 
 class Graphics;
 
-class Camera {
+class Camera : public SceneEntity{
 public:
 	Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos = { 0.0f, 0.0f, 0.0f }, float homePitch = 0.0f, float homeYaw = 0.0f, bool tethered = false) noexcept;
 	void BindToGraphics(Graphics& gfx) const;
@@ -20,11 +21,14 @@ public:
 	void Rotate(float dx, float dy) noexcept;
 	void Translate(DirectX::XMFLOAT3 translation) noexcept;
 	DirectX::XMFLOAT3 GetPos() const noexcept;
-	const std::string& GetName() const noexcept;
-	void LinkTechniques(Rgph::RenderGraph& rg);
-	void Submit(size_t channel) const;
+
+	const std::string& GetName() const noexcept override;
+	void LinkTechniques(Rgph::RenderGraph& rg) override;
+	void Submit(size_t channel) const noxnd override;
+	void OnImguiRender(bool enable) noexcept override;
 
 private:
+	Graphics& gfx;
 	bool tethered;
 	std::string name;
 	DirectX::XMFLOAT3 homePos;

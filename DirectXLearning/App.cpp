@@ -19,9 +19,11 @@ App::App(const std::string& commandLine)
 	wnd(1280, 720, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)),
 	light(wnd.Gfx(), { 10.0f, 18.0f, 0.0f }) {
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
+	cameras.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
+	cameras.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
 	cameras.AddCamera(light.ShareCamera());
+
+	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "C", dx::XMFLOAT3{ 0.0f, 1.0f, 0.0f }, 0.0f, PI / 2.0f));
 
 	TestDynamicMeshLoading(wnd.Gfx());
 

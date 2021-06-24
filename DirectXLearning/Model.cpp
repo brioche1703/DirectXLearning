@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "XMUtils.h"
+#include "TestModelProbe.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -91,6 +92,15 @@ void Model::LinkTechniques(Rgph::RenderGraph& rg) {
 	}
 }
 
-std::string Model::GetName() const noexcept {
+const std::string& Model::GetName() const noexcept {
 	return name;
+}
+
+void Model::OnImguiRender(bool enable) noexcept {
+	if (probe == nullptr) {
+		probe = std::make_unique<MP>(name);
+	}
+	if (enable) {
+		probe->PrintProbe(*this);
+	}
 }

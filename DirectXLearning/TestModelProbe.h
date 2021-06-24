@@ -7,6 +7,7 @@
 #include "ModelProbe.h"
 #include "Node.h"
 #include "XMUtils.h"
+#include "SceneEntity.h"
 
 #include "external/imgui/imgui.h"
 
@@ -66,12 +67,12 @@ public:
 	}
 };
 
-class MP : ModelProbe {
+class MP : public ModelProbe {
 public:
 	MP(std::string name)
 		:
-		name(std::move(name))
-	{}
+		name(std::move(name)) {
+	}
 
 	void SpawnWindow(Model& model) {
 		ImGui::Begin(name.c_str());
@@ -92,8 +93,7 @@ public:
 			dcheck(ImGui::SliderAngle("X-rotation", &tf.xRot, -180.0f, 180.0f));
 			dcheck(ImGui::SliderAngle("Y-rotation", &tf.yRot, -180.0f, 180.0f));
 			dcheck(ImGui::SliderAngle("Z-rotation", &tf.zRot, -180.0f, 180.0f));
-			if (dirty)
-			{
+			if (dirty) {
 				pSelectedNode->SetAppliedTransform(
 					dx::XMMatrixScaling(tf.scale, tf.scale, tf.scale) *
 					dx::XMMatrixRotationX(tf.xRot) *
@@ -109,6 +109,39 @@ public:
 		ImGui::End();
 	}
 
+	void PrintProbe(Model& model) {
+		ImGui::Columns(2, nullptr, true);
+
+		model.Accept(*this);
+		ImGui::NextColumn();
+		if (pSelectedNode != nullptr) {
+			bool dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+			auto& tf = ResolveTransform();
+			ImGui::TextColored({ 0.4f,1.0f,0.6f,1.0f }, "Translation");
+			dcheck(ImGui::SliderFloat("X", &tf.x, -60.f, 60.f));
+			dcheck(ImGui::SliderFloat("Y", &tf.y, -60.f, 60.f));
+			dcheck(ImGui::SliderFloat("Z", &tf.z, -60.f, 60.f));
+			dcheck(ImGui::SliderFloat("Scale", &tf.scale, 0.1f, 5.0f));
+			ImGui::TextColored({ 0.4f,1.0f,0.6f,1.0f }, "Orientation");
+			dcheck(ImGui::SliderAngle("X-rotation", &tf.xRot, -180.0f, 180.0f));
+			dcheck(ImGui::SliderAngle("Y-rotation", &tf.yRot, -180.0f, 180.0f));
+			dcheck(ImGui::SliderAngle("Z-rotation", &tf.zRot, -180.0f, 180.0f));
+			if (dirty) {
+				pSelectedNode->SetAppliedTransform(
+					dx::XMMatrixScaling(tf.scale, tf.scale, tf.scale) *
+					dx::XMMatrixRotationX(tf.xRot) *
+					dx::XMMatrixRotationY(tf.yRot) *
+					dx::XMMatrixRotationZ(tf.zRot) *
+					dx::XMMatrixTranslation(tf.x, tf.y, tf.z)
+				);
+			}
+
+			TP probe;
+			pSelectedNode->Accept(probe);
+		}
+	}
+
 protected:
 	bool PushNode(Node& node) override {
 		const int selectedId = (pSelectedNode == nullptr) ? -1 : pSelectedNode->GetId();
@@ -122,22 +155,25 @@ protected:
 			node_flags, node.GetName().c_str()
 		);
 
-		if (ImGui::IsItemClicked()) 			{
-			struct Probe : public TechniqueProbe 				{
-				virtual void OnSetTechnique() 					{
-					if (pTech->GetName() == "Outline") 						{
-						pTech->SetActiveState(highlighted);
-					}
+		struct Probe : public TechniqueProbe {
+			virtual void OnSetTechnique() {
+				if (pTech->GetName() == "Outline") {
+					pTech->SetActiveState(highlighted);
 				}
-				bool highlighted = false;
-			} probe;
-
-			if (pSelectedNode != nullptr) 				{
-				pSelectedNode->Accept(probe);
 			}
+			bool highlighted = false;
+		} outlineProbe;
 
-			probe.highlighted = true;
-			node.Accept(probe);
+
+		if (ImGui::IsItemClicked()) {
+			if (pSelectedNode != nullptr) {
+				if (pSelectedNode != &node) {
+					outlineProbe.highlighted = false;
+				}
+				pSelectedNode->Accept(outlineProbe);
+			}
+			outlineProbe.highlighted = true;
+			node.Accept(outlineProbe);
 
 			pSelectedNode = &node;
 		}

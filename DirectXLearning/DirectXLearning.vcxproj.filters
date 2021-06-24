@@ -701,6 +701,9 @@
     <ClInclude Include="ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">

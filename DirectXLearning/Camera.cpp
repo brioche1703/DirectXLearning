@@ -10,6 +10,7 @@ namespace dx = DirectX;
  
 Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw, bool tethered) noexcept
 	:
+	gfx(gfx),
 	tethered(tethered),
 	name(std::move(name)),
 	homePos(homePos),
@@ -147,5 +148,11 @@ void Camera::Submit(size_t channel) const {
 	}
 	if (enableFrustumIndicator) {
 		proj.Submit(channel);
+	}
+}
+
+void Camera::OnImguiRender(bool enable) noexcept {
+	if (enable) {
+		SpawnControlWidgets(gfx);
 	}
 }
