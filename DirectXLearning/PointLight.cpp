@@ -7,11 +7,12 @@
 
 #include "external/imgui/imgui.h"
 
-PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 color, float radius)
+PointLight::PointLight(Graphics& gfx, std::string name, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 color, float radius)
 	:
 	mesh(gfx, radius, color),
-	cbuf(gfx) 
+	cbuf(gfx)
 {
+	this->name = name;
 	home = {
 		pos,
 		{0.2f, 0.2f, 0.2f},
@@ -27,6 +28,42 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 c
 
 void PointLight::SpawnControlWindow(std::string title) noexcept {
 	if (ImGui::Begin(title.c_str())) {
+		OnImguiRender(true);
+	}
+	ImGui::End();
+}
+
+void PointLight::Reset() noexcept {
+	cbData = home;
+}
+
+void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept {
+	auto dataCopy = cbData;
+	const auto pos = DirectX::XMLoadFloat3(&cbData.pos);
+	DirectX::XMStoreFloat3(&dataCopy.pos, DirectX::XMVector3Transform(pos, view));
+	cbuf.Update(gfx, dataCopy);
+	cbuf.Bind(gfx);
+}
+
+std::shared_ptr<Camera> PointLight::ShareCamera() const noexcept {
+	return pCamera;
+}
+
+void PointLight::Submit(size_t channel) const noxnd {
+	mesh.SetPos(cbData.pos);
+	mesh.Submit(channel);
+}
+
+void PointLight::LinkTechniques(Rgph::RenderGraph& rg) {
+	mesh.LinkTechniques(rg);
+}
+
+const std::string& PointLight::GetName() const noexcept {
+	return name;
+}
+
+void PointLight::OnImguiRender(bool enable) noexcept {
+	if (enable) {
 		bool dirtyPos = false;
 		const auto dcheck = [&dirtyPos](bool dirty) { dirtyPos = dirtyPos || dirty; };
 
@@ -53,7 +90,7 @@ void PointLight::SpawnControlWindow(std::string title) noexcept {
 		class Probe : public TechniqueProbe {
 		public:
 
-			Probe(DirectX::XMFLOAT3 *diffuseColor)
+			Probe(DirectX::XMFLOAT3* diffuseColor)
 				:
 				diffuseColor(diffuseColor) {
 			}
@@ -77,7 +114,7 @@ void PointLight::SpawnControlWindow(std::string title) noexcept {
 			}
 
 		private:
-			DirectX::XMFLOAT3 *diffuseColor;
+			DirectX::XMFLOAT3* diffuseColor;
 		} probe(&cbData.diffuseColor);
 
 		mesh.Accept(probe);
@@ -86,30 +123,4 @@ void PointLight::SpawnControlWindow(std::string title) noexcept {
 			Reset();
 		}
 	}
-	ImGui::End();
-}
-
-void PointLight::Reset() noexcept {
-	cbData = home;
-}
-
-void PointLight::Submit(size_t channel) const noxnd {
-	mesh.SetPos(cbData.pos);
-	mesh.Submit(channel);
-}
-
-void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept {
-	auto dataCopy = cbData;
-	const auto pos = DirectX::XMLoadFloat3(&cbData.pos);
-	DirectX::XMStoreFloat3(&dataCopy.pos, DirectX::XMVector3Transform(pos, view));
-	cbuf.Update(gfx, dataCopy);
-	cbuf.Bind(gfx);
-}
-
-void PointLight::LinkTechniques(Rgph::RenderGraph& rg) {
-	mesh.LinkTechniques(rg);
-}
-
-std::shared_ptr<Camera> PointLight::ShareCamera() const noexcept {
-	return pCamera;
 }

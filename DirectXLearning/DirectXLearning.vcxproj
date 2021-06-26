@@ -240,6 +240,8 @@
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneHierarchyPanel.cpp" />
+    <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
     <ClCompile Include="ShadowRasterizer.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
@@ -296,6 +298,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraContainer.h" />
     <ClInclude Include="CameraIndicator.h" />
+    <ClInclude Include="CameraSystem.h" />
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ConditionalNoexcept.h" />
@@ -337,12 +340,14 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="LambertianPass.h" />
     <ClInclude Include="LayoutCodex.h" />
+    <ClInclude Include="LightSystem.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathsUtils.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelException.h" />
     <ClInclude Include="ModelProbe.h" />
+    <ClInclude Include="ModelSystem.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="NormalMapTwerker.h" />
@@ -353,6 +358,8 @@
     <ClInclude Include="Projection.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneEntity.h" />
+    <ClInclude Include="SceneHierarchyPanel.h" />
+    <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
     <ClInclude Include="ShadowRasterizer.h" />

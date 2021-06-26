@@ -1,4 +1,5 @@
 #include "CameraContainer.h"
+#include "CameraSystem.h"
 #include "Camera.h"
 #include "Graphics.h"
 #include "RenderGraph.h"
@@ -91,20 +92,6 @@ Camera& CameraContainer::GetActiveCamera() {
 	}
 }
 
-std::shared_ptr<Camera> CameraContainer::GetActiveCameraPointer() {
-	for (auto& entity : cameraSystem->entities) {
-		auto& cam = gCoordinator.GetComponent<std::shared_ptr<Camera>>(entity);
-		if (cam == activeCamera) {
-			return cam;
-		}
-	}
-}
-
-void CameraContainer::TravelingTest(float dt) {
-	float speed = 120.0f;
-	activeCamera->Rotate(speed * dt, 0.0f);
-}
-
 Camera& CameraContainer::GetControlledCamera() {
 	for (auto& entity : cameraSystem->entities) {
 		auto& cam = gCoordinator.GetComponent<std::shared_ptr<Camera>>(entity);
@@ -112,4 +99,9 @@ Camera& CameraContainer::GetControlledCamera() {
 			return *cam;
 		}
 	}
+}
+
+void CameraContainer::TravelingTest(float dt) {
+	float speed = 120.0f;
+	activeCamera->Rotate(speed * dt, 0.0f);
 }

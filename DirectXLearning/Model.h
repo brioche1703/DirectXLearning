@@ -42,7 +42,6 @@ private:
 	std::unique_ptr<Node> ParseNode(int& nextId, const aiNode& node, float scale) noexcept;
 
 private:
-	std::string name;
 	std::unique_ptr<Node> pRoot;
 	std::vector<std::unique_ptr<Mesh>> meshPtrs;
 

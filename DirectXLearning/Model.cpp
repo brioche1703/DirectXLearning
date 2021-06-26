@@ -12,10 +12,8 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-Model::Model(Graphics& gfx, const std::string name, const std::string& pathString, const float scale) 
-	:
-	name(name)
-{
+Model::Model(Graphics& gfx, const std::string name, const std::string& pathString, const float scale) {
+	this->name = name;
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile(
 		pathString.c_str(),

@@ -30,7 +30,6 @@ public:
 private:
 	Graphics& gfx;
 	bool tethered;
-	std::string name;
 	DirectX::XMFLOAT3 homePos;
 	float homePitch;
 	float homeYaw;

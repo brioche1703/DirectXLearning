@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "SolidSphere.h"
 #include "ConstantBuffers.h"
+#include "SceneEntity.h"
 
 namespace Rgph {
 	class RenderGraph;
@@ -10,15 +11,18 @@ namespace Rgph {
 
 class Camera;
 
-class PointLight {
+class PointLight : public SceneEntity {
 public:
-	PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos = { 10.0f, 9.0f, 2.5f }, DirectX::XMFLOAT3 color = { 0.5f, 0.5f, 0.5f }, float radius = 0.5f);
-	void SpawnControlWindow(std::string title) noexcept;
+	PointLight(Graphics& gfx, std::string name, DirectX::XMFLOAT3 pos = { 10.0f, 9.0f, 2.5f }, DirectX::XMFLOAT3 color = { 0.5f, 0.5f, 0.5f }, float radius = 0.5f);
 	void Reset() noexcept;
-	void Submit(size_t channel) const noxnd;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept;
-	void LinkTechniques(Rgph::RenderGraph&);
 	std::shared_ptr<Camera> ShareCamera() const noexcept;
+	void SpawnControlWindow(std::string title) noexcept;
+
+	void Submit(size_t channels) const noxnd override;
+	void LinkTechniques(Rgph::RenderGraph&) override;
+	const std::string& GetName() const noexcept override;
+	void OnImguiRender(bool enable) noexcept override;
 
 private:
 	struct PointLightCBuf {

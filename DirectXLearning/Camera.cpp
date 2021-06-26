@@ -12,13 +12,13 @@ Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float
 	:
 	gfx(gfx),
 	tethered(tethered),
-	name(std::move(name)),
 	homePos(homePos),
 	homePitch(homePitch),
 	homeYaw(homeYaw),
 	proj(gfx, 1.0f, (float)gfx.GetHeight() / (float)gfx.GetWidth(), 0.5f, 200.0f),
 	indicator(gfx)
 {
+	this->name = name;
 	if (tethered) {
 		pos = homePos;
 		indicator.SetPos(pos);
