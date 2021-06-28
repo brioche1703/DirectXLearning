@@ -51,9 +51,7 @@ void ImguiManager::ShowMainMenuBar(Window* wnd, Graphics& gfx, Rgph::RenderGraph
 	if (ImGui::BeginMainMenuBar()) {
 
 		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("New", "Ctrl+N")) {
-			}
-			if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+			if (ImGui::MenuItem("Add Model...", "Ctrl+O")) {
 				std::filesystem::path path = FileDialogs::OpenFile(wnd->GetWindowH());
 				Scene::AddModel(path.filename().string(), gfx, rg, path.string());
 			}

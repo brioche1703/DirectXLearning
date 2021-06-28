@@ -19,6 +19,7 @@ class Graphics;
 class SceneSystem;
 class LightSystem;
 class ModelSystem;
+class Window;
 
 namespace Rgph {
 	class RenderGraph;
@@ -32,7 +33,7 @@ public:
 	void Submit(size_t channel);
 
 	static void AddModel(std::string name, Graphics& gfx, Rgph::RenderGraph& rg, std::string path, const float scale = 1.0f) noexcept;
-	void AddCamera(std::shared_ptr<Camera> pCam) noexcept;
+	static void AddCamera(std::shared_ptr<Camera> pCam, Rgph::RenderGraph& rg) noexcept;
 	void AddPointLight(std::shared_ptr<PointLight> pLight) noexcept;
 
 	CameraContainer& GetCameraContrainer() noexcept;
@@ -40,7 +41,7 @@ public:
 	std::shared_ptr<PointLight> GetLight(std::string name) noexcept;
 
 	void SpawnProbeWindow(std::string name) noexcept;
-	void SpawnHierarchyPanel() noexcept;
+	void SpawnHierarchyPanel(Window* wnd, Graphics& gfx, Rgph::RenderGraph& rg) noexcept;
 
 	void ScalingTest(float dt);
 
@@ -50,5 +51,6 @@ private:
 	std::shared_ptr<LightSystem> lightSystem;
 	std::shared_ptr<ModelSystem> modelSystem;
 	SceneHierarchyPanel sceneHierarchyPanel;
-	CameraContainer cameraContainer;
+
+	static CameraContainer cameraContainer;
 };

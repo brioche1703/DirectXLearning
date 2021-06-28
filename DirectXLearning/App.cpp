@@ -19,8 +19,8 @@ App::App(const std::string& commandLine)
 	wnd(1280, 720, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)) 
 {
-	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f));
-	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
+	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f), rg);
+	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f), rg);
 
 	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }));
 
@@ -80,18 +80,16 @@ void App::DoFrame(float dt) {
 		savingDepth = false;
 	}
 
-	//scene.ScalingTest(dt);
-	//scene.GetCameraContrainer().TravelingTest(dt);
-
 	// IMGUI
 	if (imguiManager.IsEnabled()) {
 		imguiManager.NewFrame();
 
-		scene.SpawnHierarchyPanel();
+		scene.SpawnHierarchyPanel(&wnd, wnd.Gfx(), rg);
 		scene.GetCameraContrainer().SpawnWindow(wnd.Gfx());
 		rg.RenderWindows(wnd.Gfx());
 
 		imguiManager.ShowMainMenuBar(&wnd, wnd.Gfx(), rg);
+		imguiManager.ShowDemoWindow();
 		imguiManager.EndFrame();
 	}
 

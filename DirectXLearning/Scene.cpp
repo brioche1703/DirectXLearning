@@ -51,10 +51,6 @@ Scene::Scene() {
 }
 
 void Scene::LinkTechniques(Rgph::RenderGraph& rg) {
-	for (auto& entity : cameraContainer.cameraSystem->entities) {
-		auto& e = gCoordinator.GetComponent<std::shared_ptr<Camera>>(entity);
-		e->LinkTechniques(rg);
-	}
 	for (auto& entity : lightSystem->entities) {
 		auto& e = gCoordinator.GetComponent<std::shared_ptr<PointLight>>(entity);
 		e->LinkTechniques(rg);
@@ -78,8 +74,9 @@ void Scene::AddModel(std::string name, Graphics& gfx, Rgph::RenderGraph& rg, std
 	gCoordinator.AddComponent(entity, std::shared_ptr<Model>(model));
 }
 
-void Scene::AddCamera(std::shared_ptr<Camera> pCam) noexcept {
+void Scene::AddCamera(std::shared_ptr<Camera> pCam, Rgph::RenderGraph& rg) noexcept {
 	auto entity = gCoordinator.CreateEntity();
+	pCam->LinkTechniques(rg);
 	gCoordinator.AddComponent(entity, std::shared_ptr<SceneEntity>(pCam));
 	cameraContainer.AddCamera(pCam);
 }
@@ -124,10 +121,12 @@ void Scene::SpawnProbeWindow(std::string name) noexcept {
 	}
 }
 
-void Scene::SpawnHierarchyPanel() noexcept {
-	sceneHierarchyPanel.SpawnPanel();
+void Scene::SpawnHierarchyPanel(Window* wnd, Graphics& gfx, Rgph::RenderGraph& rg) noexcept {
+	sceneHierarchyPanel.SpawnPanel(wnd, gfx, rg);
 }
 
 void Scene::ScalingTest(float dt) {
 	sceneSystem->Update(dt);
 }
+
+CameraContainer Scene::cameraContainer;
