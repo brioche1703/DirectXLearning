@@ -89,7 +89,7 @@ void App::DoFrame(float dt) {
 		rg.RenderWindows(wnd.Gfx());
 
 		imguiManager.ShowMainMenuBar(&wnd, wnd.Gfx(), rg);
-		imguiManager.ShowDemoWindow();
+		//imguiManager.ShowDemoWindow();
 		imguiManager.EndFrame();
 	}
 
