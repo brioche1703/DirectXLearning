@@ -114,7 +114,7 @@ modelPath(path.string())
 			if (auto r = buf["specularGloss"]; r.Exists()) {
 				float gloss = 8.0f;
 				material.Get(AI_MATKEY_SHININESS, gloss);
-				r = gloss;
+				r = gloss + 0.001f;
 			}
 			buf["useNormalMap"].SetIfExists(true);
 			buf["normalMapWeight"].SetIfExists(1.0f);

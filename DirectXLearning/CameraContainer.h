@@ -39,4 +39,6 @@ private:
 private:
 	std::shared_ptr<Camera> activeCamera;
 	std::shared_ptr<Camera> controlledCamera;
+
+	bool traveling = false;
 };

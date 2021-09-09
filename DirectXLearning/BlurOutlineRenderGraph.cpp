@@ -138,7 +138,7 @@ namespace Rgph {
 			AppendPass(std::move(pass));
 		}
 
-		SetSinkTarget("backbuffer", "shadowMapOverview.renderTarget");
+		SetSinkTarget("backbuffer", "shadowMapTexture.renderTarget");
 		Finalize();
 	}
 
@@ -182,8 +182,8 @@ namespace Rgph {
 			auto ctrl = shadowControl->GetBuffer();
 			auto bilin = shadowSampler->GetBilinear();
 			bool pcfChange = ImGui::SliderInt("PCF Level", &ctrl["pcfLevel"], 0, 4);
-			bool biasChange = ImGui::SliderFloat("Post Bias", &ctrl["depthBias"], 0.0f, 1.0f, "%.6f");
-			bool hardwarePcfChange = ImGui::Checkbox("Harware PCF", &ctrl["hardwarePcf"]);
+			bool biasChange = ImGui::SliderFloat("Post Bias", &ctrl["depthBias"], 0.0f, 0.0010f, "%.6f");
+			bool hardwarePcfChange = ImGui::Checkbox("Hardware PCF", &ctrl["hardwarePcf"]);
 			ImGui::Checkbox("Bilinear", &bilin);
 			if (pcfChange || biasChange || hardwarePcfChange) {
 				shadowControl->SetBuffer(ctrl);

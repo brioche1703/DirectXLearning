@@ -79,7 +79,7 @@ void PointLight::OnImguiRender(bool enable) noexcept {
 		ImGui::Text("Intensity/Color");
 		bool dirtyColor = false;
 		const auto ccheck = [&dirtyColor](bool dirty) { dirtyColor = dirtyColor || dirty; };
-		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", ImGuiSliderFlags_Logarithmic));
+		ccheck(ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic));
 		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 
 		ImGui::Text("Falloff");

@@ -16,26 +16,17 @@ namespace dx = DirectX;
 App::App(const std::string& commandLine)
 	:
 	commandLine(commandLine),
-	wnd(1280, 720, "DirectX Learning"),
+	wnd(1920, 1080, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)) 
 {
-	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ -13.5f, 6.0f, 3.5f }, 0.0f, PI / 2.0f), rg);
+	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ 0.0f, 8.0f, 0.0f }, 0.0f, PI / 2.0f), rg);
 	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f), rg);
 
 	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }));
 
-	scene.AddModel("goblin", wnd.Gfx(), rg, "src\\models\\gobber\\GoblinX.obj", 4.0f);
-	scene.AddModel("nano", wnd.Gfx(), rg, "src\\models\\nano_textured\\nanosuit.obj", 1.5f);
-	scene.AddModel("sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 20.0f);
+	scene.AddModel("Nano", wnd.Gfx(), rg, "src\\models\\nano_textured\\nanosuit.obj", 1.5f);
+	scene.AddModel("Sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 15.0f);
 
-	scene.GetModel("nano")->SetRootTransform(
-		dx::XMMatrixRotationY(PI / 2.0f) *
-		dx::XMMatrixTranslation(27.0f, -0.56f, 1.7f)
-	);
-	scene.GetModel("goblin")->SetRootTransform(
-		dx::XMMatrixRotationY(-PI / 2.0f) *
-		dx::XMMatrixTranslation(-8.0f, 10.0f, 0.0f)
-	);
 
 	scene.LinkTechniques(rg);
 	
@@ -69,6 +60,7 @@ void App::DoFrame(float dt) {
 
 	scene.GetLight("Light 1")->Bind(wnd.Gfx(), scene.GetCameraContrainer()->GetMatrix());
 	rg.BindMainCamera(scene.GetCameraContrainer().GetActiveCamera());
+	scene.GetCameraContrainer().TravelingTest(dt);
 
 	scene.Submit(Chan::main);
 	scene.Submit(Chan::shadow);

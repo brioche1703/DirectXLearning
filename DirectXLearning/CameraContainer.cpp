@@ -43,6 +43,9 @@ void CameraContainer::SpawnWindow(Graphics& gfx) {
 			ImGui::EndCombo();
 		}
 		GetControlledCamera().SpawnControlWidgets(gfx);
+		if (ImGui::Checkbox("Traveling Test", &traveling)) {
+
+		}
 	}
 	ImGui::End();
 }
@@ -102,6 +105,8 @@ Camera& CameraContainer::GetControlledCamera() {
 }
 
 void CameraContainer::TravelingTest(float dt) {
-	float speed = 120.0f;
-	activeCamera->Rotate(speed * dt, 0.0f);
+	if (traveling) {
+		float speed = 120.0f;
+		activeCamera->Rotate(speed * dt, 0.0f);
+	}
 }
