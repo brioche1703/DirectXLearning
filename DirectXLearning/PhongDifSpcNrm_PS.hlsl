@@ -12,6 +12,7 @@ cbuffer ObjectCBuf : register(b1)
     float specularGloss;
     bool useNormalMap;
     float normalMapWeight;
+    bool gammaCorrectionEnabled;
 };
 
 Texture2D tex : register(t0);
@@ -71,7 +72,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
         }
     
      // attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
+        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL, gammaCorrectionEnabled);
     	// diffuse light
         diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
 
@@ -90,5 +91,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
     }
     
 	// final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-    return float4(saturate((diffuse + ambient) * dtex.rgb + specularReflected), 1.0f);
+    float4 color = float4(saturate((GammaCorrection(diffuse) + ambient) * dtex.rgb + specularReflected), 1.0f);
+    return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
+
 }

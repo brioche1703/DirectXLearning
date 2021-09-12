@@ -300,9 +300,6 @@
     <ClCompile Include="CameraIndicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Frustum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BlurOutlineRenderGraph.cpp">
       <Filter>Source Files\Jobber\GraphLib</Filter>
     </ClCompile>
@@ -341,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="SceneSystem.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

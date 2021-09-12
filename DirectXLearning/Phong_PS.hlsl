@@ -9,6 +9,7 @@ cbuffer ObjectCBuf : register(b1)
     float3 specularColor;
     float specularWeight;
     float specularGloss;
+    bool gammaCorrectionEnabled;
 };
 
 
@@ -25,7 +26,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float4 sp
 	// fragment to light vector data
         const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
 	// attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
+        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL, gammaCorrectionEnabled);
 	// diffuse
         diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
     // specular
@@ -41,5 +42,6 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float4 sp
         diffuse = specular = 0.0f;
     }
 	// final color
-    return float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
+    float4 color = float4(saturate((diffuse + ambient) * materialColor + specular), 1.0f);
+    return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
 }

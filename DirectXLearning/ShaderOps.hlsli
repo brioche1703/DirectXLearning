@@ -15,9 +15,9 @@ float3 MapNormal(
     return normalize(mul(tanNormal, tanToTarget));
 }
 
-float Attenuate(uniform float attConst, uniform float attLin, uniform float attQuad, const in float distFragToL)
+float Attenuate(uniform float attConst, uniform float attLin, uniform float attQuad, const in float distFragToL, const bool gammaCorrectionEnabled)
 {
-    return 1.0f / (attConst + attLin * distFragToL + attQuad * (distFragToL * distFragToL));
+    return 1.0f / pow(attConst + attLin * distFragToL + attQuad * (distFragToL * distFragToL), 2);
 }
 
 float3 Diffuse(
@@ -28,6 +28,13 @@ float3 Diffuse(
     const in float3 viewNormal)
 {
     return diffuseColor * diffuseIntensity * att * max(0.0f, dot(viewDirFragToL, viewNormal));
+}
+
+float3 GammaCorrection(
+    const float3 color)
+{
+    const float gammaFactor = 2.2f;
+    return pow(color, 1.0f / gammaFactor);
 }
 
 float3 Speculate(

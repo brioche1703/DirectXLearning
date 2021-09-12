@@ -8,6 +8,7 @@ cbuffer ObjectCBuf : register(b1)
     float3 specularColor;
     float specularWeight;
     float specularGloss;
+    bool gammaCorrectionEnabled;
 };
 
 Texture2D tex : register(t0);
@@ -28,7 +29,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
 	    // fragment to light vector data
         const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
 	    // attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
+        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL, gammaCorrectionEnabled);
 	    // diffuse
         diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
 	    // specular
@@ -42,5 +43,6 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
         diffuse = specular = 0.0f;
     }
 	// final color
-    return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+    float4 color = float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+    return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
 }
