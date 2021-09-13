@@ -8,9 +8,12 @@ cbuffer ObjectCBuf : register(b1)
     float3 specularColor;
     float specularWeight;
     float specularGloss;
-    bool gammaCorrectionEnabled;
 };
 
+cbuffer ObjectCBuf : register(b3)
+{
+    bool gammaCorrectionEnabled;
+};
 Texture2D tex : register(t0);
 SamplerState samplerState : register(s0);
 

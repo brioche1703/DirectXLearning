@@ -97,7 +97,6 @@ modelPath(path.string())
 			}
 
 			// PS material params (cbuf)
-			pscLayout.Add<Dcb::Bool>("gammaCorrectionEnabled");
 			Dcb::Buffer buf{ std::move(pscLayout) };
 			if (auto r = buf["materialColor"]; r.Exists()) {
 				aiColor3D color = { 0.45f, 0.45f, 0.85f };
@@ -119,7 +118,6 @@ modelPath(path.string())
 			}
 			buf["useNormalMap"].SetIfExists(true);
 			buf["normalMapWeight"].SetIfExists(1.0f);
-			buf["gammaCorrectionEnabled"].SetIfExists(true);
 			step.AddBindable(std::make_unique<Bind::CachingPixelConstantBufferEx>(gfx, std::move(buf), 1u));
 		}
 

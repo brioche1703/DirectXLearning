@@ -10,6 +10,10 @@ cbuffer ObjectCBuf : register(b1)
     float3 specularColor;
     float specularWeight;
     float specularGloss;
+};
+
+cbuffer ObjectCBuf : register(b3)
+{
     bool gammaCorrectionEnabled;
 };
 

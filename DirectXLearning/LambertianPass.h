@@ -25,6 +25,7 @@ namespace Rgph {
 			AddBindSink<Bind::Bindable>("shadowMap");
 			AddBind(std::make_shared<Bind::ShadowSampler>(gfx));
 			AddBindSink<Bind::Bindable>("shadowControl");
+			AddBindSink<Bind::Bindable>("gammaCorrectionControl");
 			AddBindSink<Bind::Bindable>("shadowSampler");
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));

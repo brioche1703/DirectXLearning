@@ -10,9 +10,12 @@ cbuffer ObjectCBuf : register(b1)
     float specularGloss;
     bool useNormalMap;
     float normalMapWeight;
-    bool gammaCorrectionEnabled;
 };
 
+cbuffer ObjectCBuf : register(b3)
+{
+    bool gammaCorrectionEnabled;
+};
 Texture2D tex : register(t0);
 Texture2D nmap : register(t2);
 

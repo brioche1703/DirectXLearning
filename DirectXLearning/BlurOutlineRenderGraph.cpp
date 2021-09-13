@@ -62,11 +62,18 @@ namespace Rgph {
 			AddGlobalSource(DirectBindableSource<Bind::ShadowSampler>::Make("shadowSampler", shadowSampler));
 		}
 		{
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Bool>("gammaCorrection");
+			Dcb::Buffer buf{ std::move(lay) };
+			buf["gammaCorrection"] = true;
+			gammaCorrectionControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 3);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("gammaCorrectionControl", gammaCorrectionControl));
 			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("gammaCorrectionControl", "$.gammaCorrectionControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
@@ -178,7 +185,17 @@ namespace Rgph {
 	}
 
 	void BlurOutlineRenderGraph::RenderShadowWindow(Graphics& gfx) {
-		if (ImGui::Begin("Shadows")) {
+		if (ImGui::Begin("Settings")) {
+			ImGui::Text("General Settings");
+			auto gammaCtrl = gammaCorrectionControl->GetBuffer();
+			bool gammaCorrectionChange = ImGui::Checkbox("Gamma Correction", &gammaCtrl["gammaCorrection"]);
+			if (gammaCorrectionChange) {
+				gammaCorrectionControl->SetBuffer(gammaCtrl);
+			}
+
+
+			ImGui::Separator();
+			ImGui::Text("Shadows Settings");
 			auto ctrl = shadowControl->GetBuffer();
 			auto bilin = shadowSampler->GetBilinear();
 			bool pcfChange = ImGui::SliderInt("PCF Level", &ctrl["pcfLevel"], 0, 4);

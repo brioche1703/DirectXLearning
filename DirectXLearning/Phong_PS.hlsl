@@ -9,9 +9,12 @@ cbuffer ObjectCBuf : register(b1)
     float3 specularColor;
     float specularWeight;
     float specularGloss;
-    bool gammaCorrectionEnabled;
 };
 
+cbuffer ObjectCBuf : register(b3)
+{
+    bool gammaCorrectionEnabled;
+};
 
 float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float4 spos : ShadowPosition) : SV_Target
 {    

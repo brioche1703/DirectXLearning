@@ -37,9 +37,11 @@ namespace Rgph {
 		static constexpr int maxRadius = 15;
 		int radius = 4;
 		float sigma = 2.0f;
+		bool gammaCorrection = true;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurKernel;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurDirection;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> shadowControl;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> gammaCorrectionControl;
 		std::shared_ptr<Bind::ShadowSampler> shadowSampler;
 		std::shared_ptr<Bind::ShadowRasterizer> shadowRasterizer;
 	};
