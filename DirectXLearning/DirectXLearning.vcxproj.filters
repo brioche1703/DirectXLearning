@@ -765,6 +765,9 @@
     <None Include="PSShadow_Dynamic.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="MultipleLights.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Solid_PS.hlsl">

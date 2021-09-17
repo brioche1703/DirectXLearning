@@ -11,6 +11,16 @@ namespace Rgph {
 
 class Camera;
 
+struct PointLightCBuf {
+	alignas(16) DirectX::XMFLOAT3 pos;
+	alignas(16) DirectX::XMFLOAT3 ambient;
+	alignas(16) DirectX::XMFLOAT3 diffuseColor;
+	float diffuseIntensity;
+	float attConst;
+	float attLin;
+	float attQuad;
+};
+
 class PointLight : public SceneEntity {
 public:
 	PointLight(Graphics& gfx, std::string name, DirectX::XMFLOAT3 pos = { 10.0f, 9.0f, 2.5f }, DirectX::XMFLOAT3 color = { 0.5f, 0.5f, 0.5f }, float radius = 0.5f);
@@ -23,17 +33,7 @@ public:
 	void LinkTechniques(Rgph::RenderGraph&) override;
 	const std::string& GetName() const noexcept override;
 	void OnImguiRender(bool enable) noexcept override;
-
-private:
-	struct PointLightCBuf {
-		alignas(16) DirectX::XMFLOAT3 pos;
-		alignas(16) DirectX::XMFLOAT3 ambient;
-		alignas(16) DirectX::XMFLOAT3 diffuseColor;
-		float diffuseIntensity;
-		float attConst;
-		float attLin;
-		float attQuad;
-	};
+	PointLightCBuf GetCBuf() const noexcept;
 
 private:
 	PointLightCBuf home;

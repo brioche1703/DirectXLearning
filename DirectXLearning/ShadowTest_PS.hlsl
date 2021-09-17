@@ -1,6 +1,7 @@
 #include "ShaderOps.hlsli"
 #include "LightVectorData.hlsli"
-#include "PointLight.hlsli"
+//#include "PointLight.hlsli"
+#include "MultipleLights.hlsli"
 #include "PSShadow.hlsli"
 
 cbuffer ObjectCBuf : register(b1)
@@ -23,30 +24,33 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
 {
     float3 diffuse;
     float3 specular;
+    float4 color;
     
+    // renormalize interpolated normal
+    viewNormal = normalize(viewNormal);
+
     // shadow map test
     const float shadowLevel = Shadow(spos);
-    if (shadowLevel != 0.0f)
-    {
-        // renormalize interpolated normal
-        viewNormal = normalize(viewNormal);
-	    // fragment to light vector data
-        const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
-	    // attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL, gammaCorrectionEnabled);
-	    // diffuse
-        diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
-	    // specular
-        specular = Speculate(diffuseColor * diffuseIntensity * specularColor, specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularGloss);
-
-        diffuse *= shadowLevel;
-        specular *= shadowLevel;
-    }
-    else
+    for (int i = 0; i < numLights; i++)
     {
         diffuse = specular = 0.0f;
+        if (shadowLevel != 0.0f)
+        {
+	        // fragment to light vector data
+            const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
+	        // attenuation
+            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+	        // diffuse
+            diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
+	        // specular
+            specular = Speculate(lights[i].diffuseColor * lights[i].diffuseIntensity * specularColor, specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularGloss);
+
+            diffuse *= shadowLevel;
+            specular *= shadowLevel;
+        }
+
+        color += float4(saturate((diffuse + lights[i].ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
     }
 	// final color
-    float4 color = float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
     return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
 }

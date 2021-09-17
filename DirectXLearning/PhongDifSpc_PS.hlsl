@@ -1,6 +1,7 @@
 #include "ShaderOps.hlsli"
 #include "LightVectorData.hlsli"
-#include "PointLight.hlsli"
+//#include "PointLight.hlsli"
+#include "MultipleLights.hlsli"
 #include "PSShadow.hlsli"
 
 cbuffer ObjectCBuf : register(b1)
@@ -27,48 +28,45 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
 {
     float3 diffuse;
     float3 specularReflected;
+    float4 color;
 
-    const float shadowLevel = Shadow(spos);
-    if (shadowLevel != 0.0f)
+    viewNormal = normalize(viewNormal);
+
+    // specular parameters
+    float specularPowerLoaded = specularGloss;
+    const float4 specularSample = spec.Sample(samplerState, tc);
+    float3 specularReflectionColor;
+    if (useSpecularMap)
     {
-        // normalize the mesh normal
-        viewNormal = normalize(viewNormal);
-	    // fragment to light vector data
-        const LightVectorData lv = CalculateLightVectorData(viewLightPos, viewFragPos);
-        // specular parameters
-        float specularPowerLoaded = specularGloss;
-        const float4 specularSample = spec.Sample(samplerState, tc);
-        float3 specularReflectionColor;
-        if (useSpecularMap)
-        {
-            specularReflectionColor = specularSample.rgb;
-        }
-        else
-        {
-            specularReflectionColor = specularColor;
-        }
-        if (useGlossAlpha)
-        {
-            specularPowerLoaded = pow(2.0f, specularSample.a * 13.0f);
-        }
-	    // attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL, gammaCorrectionEnabled);
-	    // diffuse light
-        diffuse = Diffuse(diffuseColor, diffuseIntensity, att, lv.dirToL, viewNormal);
-        // specular reflected
-        specularReflected = Speculate(
-            diffuseColor * specularReflectionColor, specularWeight, viewNormal,
-            lv.vToL, viewFragPos, att, specularPowerLoaded
-        );
-        
-        diffuse *= shadowLevel;
-        specularReflected *= shadowLevel;
+        specularReflectionColor = specularSample.rgb;
     }
     else
     {
+        specularReflectionColor = specularColor;
+    }
+    if (useGlossAlpha)
+    {
+        specularPowerLoaded = pow(2.0f, specularSample.a * 13.0f);
+    }
+
+    const float shadowLevel = Shadow(spos);
+    for (int i = 0; i < numLights; i++)
+    {
         diffuse = specularReflected = 0.0f;
+        if (shadowLevel != 0.0f)
+        {
+            const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
+            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+            diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
+            specularReflected = Speculate(lights[i].diffuseColor * specularReflectionColor, specularWeight, viewNormal,
+                lv.vToL, viewFragPos, att, specularPowerLoaded);
+        
+            diffuse *= shadowLevel;
+            specularReflected *= shadowLevel;
+        }
+
+        color += float4(saturate((diffuse + lights[i].ambient) * tex.Sample(samplerState, tc).rgb + specularReflected), 1.0f);
     }
 	// final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-    float4 color = float4(saturate((GammaCorrection(diffuse)  + ambient) * tex.Sample(samplerState, tc).rgb + specularReflected), 1.0f);
     return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
 }

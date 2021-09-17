@@ -50,13 +50,6 @@ Scene::Scene() {
 	}
 }
 
-void Scene::LinkTechniques(Rgph::RenderGraph& rg) {
-	for (auto& entity : lightSystem->entities) {
-		auto& e = gCoordinator.GetComponent<std::shared_ptr<PointLight>>(entity);
-		e->LinkTechniques(rg);
-	}
-}
-
 void Scene::Submit(size_t channel) noxnd {
 	for (auto& entity : sceneSystem->entities) {
 		auto& e = gCoordinator.GetComponent<std::shared_ptr<SceneEntity>>(entity);
@@ -81,11 +74,12 @@ void Scene::AddCamera(std::shared_ptr<Camera> pCam, Rgph::RenderGraph& rg) noexc
 	cameraContainer.AddCamera(pCam);
 }
 
-void Scene::AddPointLight(std::shared_ptr<PointLight> pLight) noexcept {
+void Scene::AddPointLight(std::shared_ptr<PointLight> pLight, Rgph::RenderGraph& rg) noexcept {
 	auto entity = gCoordinator.CreateEntity();
 	gCoordinator.AddComponent(entity, std::shared_ptr<SceneEntity>(pLight));
 	gCoordinator.AddComponent(entity, pLight);
 	cameraContainer.AddCamera(pLight->ShareCamera());
+	pLight->LinkTechniques(rg);
 }
 
 CameraContainer& Scene::GetCameraContrainer() noexcept {
@@ -108,6 +102,23 @@ std::shared_ptr<PointLight> Scene::GetLight(std::string name) noexcept {
 			return light;
 		}
 	}
+}
+
+void Scene::BindLights(Graphics& gfx) const noexcept {
+	struct LightControl {
+		int lightNumber;
+		PointLightCBuf buffer[MAX_NUM_LIGHTS];
+	} lightsBuffer;
+
+	lightsBuffer.lightNumber = lightSystem->entities.size();
+	int i = 0;
+	for (auto& entity : lightSystem->entities) {
+		auto& light = gCoordinator.GetComponent<std::shared_ptr<PointLight>>(entity);
+		lightsBuffer.buffer[i++] = light->GetCBuf();
+	}
+	Bind::PixelConstantBuffer<LightControl> cbuf(gfx);
+	cbuf.Update(gfx, lightsBuffer);
+	cbuf.Bind(gfx);
 }
 
 void Scene::SpawnProbeWindow(std::string name) noexcept {

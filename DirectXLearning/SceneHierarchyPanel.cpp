@@ -68,6 +68,9 @@ void SceneHierarchyPanel::SpawnPanel(Window* wnd, Graphics& gfx, Rgph::RenderGra
 		if (ImGui::MenuItem("Add Camera")) {
 			Scene::AddCamera(std::make_shared<Camera>(gfx, "New Camera"), rg);
 		}
+		if (ImGui::MenuItem("Add Light")) {
+			Scene::AddPointLight(std::make_shared<PointLight>(gfx, "Light New", dx::XMFLOAT3{ 0.0f, 20.0f, 0.0f }), rg);
+		}
 		ImGui::EndPopup();
 	}
 

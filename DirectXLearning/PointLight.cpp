@@ -15,12 +15,12 @@ PointLight::PointLight(Graphics& gfx, std::string name, DirectX::XMFLOAT3 pos, D
 	this->name = name;
 	home = {
 		pos,
-		{0.2f, 0.2f, 0.2f},
+		{0.05f, 0.05f, 0.05f},
 		color,
 		1.0f,
 		1.0f,
-		0.025f,
-		0.0030f
+		0.090f,
+		0.032f
 	};
 	Reset();
 	pCamera = std::make_shared<Camera>(gfx, "Light", cbData.pos, 0.0f, PI / 2.0f, true);
@@ -123,4 +123,8 @@ void PointLight::OnImguiRender(bool enable) noexcept {
 			Reset();
 		}
 	}
+}
+
+PointLightCBuf PointLight::GetCBuf() const noexcept {
+	return cbData;
 }

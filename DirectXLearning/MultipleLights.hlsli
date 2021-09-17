@@ -1,4 +1,6 @@
-cbuffer PointLightCBuf : register(b0)
+#define MAX_NUM_LIGHTS 10
+
+struct PointLight
 {
     float3 viewLightPos;
     float3 ambient;
@@ -9,4 +11,8 @@ cbuffer PointLightCBuf : register(b0)
     float attQuad;
 };
 
-
+cbuffer PointLightCBuf : register(b0)
+{
+    int numLights;
+    PointLight lights[MAX_NUM_LIGHTS];
+};

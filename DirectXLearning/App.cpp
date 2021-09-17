@@ -22,14 +22,13 @@ App::App(const std::string& commandLine)
 	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ 0.0f, 8.0f, 0.0f }, 0.0f, PI / 2.0f), rg);
 	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f), rg);
 
-	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }));
-
 	scene.AddModel("Nano", wnd.Gfx(), rg, "src\\models\\nano_textured\\nanosuit.obj", 1.5f);
 	scene.AddModel("Sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 15.0f);
 
+	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }), rg);
+	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 2", dx::XMFLOAT3{ -10.0f, 18.0f, 0.0f }), rg);
+	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 3", dx::XMFLOAT3{ 0.0f, 18.0f, 3.0f }), rg);
 
-	scene.LinkTechniques(rg);
-	
 	rg.BindShadowCamera(*scene.GetLight("Light 1")->ShareCamera());
 }
 
@@ -58,7 +57,8 @@ void App::DoFrame(float dt) {
 
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 
-	scene.GetLight("Light 1")->Bind(wnd.Gfx(), scene.GetCameraContrainer()->GetMatrix());
+	//scene.GetLight("Light 1")->Bind(wnd.Gfx(), scene.GetCameraContrainer()->GetMatrix());
+	scene.BindLights(wnd.Gfx());
 	rg.BindMainCamera(scene.GetCameraContrainer().GetActiveCamera());
 	scene.GetCameraContrainer().TravelingTest(dt);
 

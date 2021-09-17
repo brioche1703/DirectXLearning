@@ -17,7 +17,8 @@ float3 MapNormal(
 
 float Attenuate(uniform float attConst, uniform float attLin, uniform float attQuad, const in float distFragToL, const bool gammaCorrectionEnabled)
 {
-    return 1.0f / pow(attConst + attLin * distFragToL + attQuad * (distFragToL * distFragToL), 2);
+    return 1.0f / (attConst + attLin * distFragToL + attQuad * (distFragToL * distFragToL));
+
 }
 
 float3 Diffuse(
