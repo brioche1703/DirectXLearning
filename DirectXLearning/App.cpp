@@ -26,8 +26,8 @@ App::App(const std::string& commandLine)
 	scene.AddModel("Sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 15.0f);
 
 	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }), rg);
-	//scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 2", dx::XMFLOAT3{ -10.0f, 18.0f, 0.0f }), rg);
-	//scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 3", dx::XMFLOAT3{ 0.0f, 18.0f, 3.0f }), rg);
+	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 2", dx::XMFLOAT3{ -10.0f, 18.0f, 0.0f }), rg);
+	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 3", dx::XMFLOAT3{ 0.0f, 18.0f, 3.0f }), rg);
 
 	rg.BindShadowCamera(*scene.GetLight("Light 1")->ShareCamera());
 }
@@ -57,10 +57,9 @@ void App::DoFrame(float dt) {
 
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 
-	//scene.GetLight("Light 1")->Bind(wnd.Gfx(), scene.GetCameraContrainer()->GetMatrix());
-	scene.BindLights(wnd.Gfx());
-	rg.BindMainCamera(scene.GetCameraContrainer().GetActiveCamera());
-	scene.GetCameraContrainer().TravelingTest(dt);
+	scene.BindLights(wnd.Gfx(), scene.GetCameraContainer()->GetMatrix());
+	rg.BindMainCamera(scene.GetCameraContainer().GetActiveCamera());
+	scene.GetCameraContainer().TravelingTest(dt);
 
 	scene.Submit(Chan::main);
 	scene.Submit(Chan::shadow);
@@ -77,7 +76,7 @@ void App::DoFrame(float dt) {
 		imguiManager.NewFrame();
 
 		scene.SpawnHierarchyPanel(&wnd, wnd.Gfx(), rg);
-		scene.GetCameraContrainer().SpawnWindow(wnd.Gfx());
+		scene.GetCameraContainer().SpawnWindow(wnd.Gfx());
 		rg.RenderWindows(wnd.Gfx());
 
 		imguiManager.ShowMainMenuBar(&wnd, wnd.Gfx(), rg);
@@ -116,28 +115,28 @@ void App::HandleInput(float dt) {
 
 	if (!wnd.CursorEnabled()) {
 		if (wnd.kbd.KeyIsPressed('W')) {
-			scene.GetCameraContrainer()->Translate({ 0.0f, 0.0f, dt });
+			scene.GetCameraContainer()->Translate({ 0.0f, 0.0f, dt });
 		}
 		if (wnd.kbd.KeyIsPressed('S')) {
-			scene.GetCameraContrainer()->Translate({ 0.0f, 0.0f, -dt });
+			scene.GetCameraContainer()->Translate({ 0.0f, 0.0f, -dt });
 		}
 		if (wnd.kbd.KeyIsPressed('A')) {
-			scene.GetCameraContrainer()->Translate({ -dt, 0.0f, 0.0f });
+			scene.GetCameraContainer()->Translate({ -dt, 0.0f, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('D')) {
-			scene.GetCameraContrainer()->Translate({ dt, 0.0f, 0.0f });
+			scene.GetCameraContainer()->Translate({ dt, 0.0f, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('R')) {
-			scene.GetCameraContrainer()->Translate({ 0.0f, dt, 0.0f });
+			scene.GetCameraContainer()->Translate({ 0.0f, dt, 0.0f });
 		}
 		if (wnd.kbd.KeyIsPressed('F')) {
-			scene.GetCameraContrainer()->Translate({ 0.0f, -dt, 0.0f });
+			scene.GetCameraContainer()->Translate({ 0.0f, -dt, 0.0f });
 		}
 	}
 
 	while (const auto delta = wnd.mouse.ReadRawDelta()) {
 		if (!wnd.CursorEnabled()) {
-			scene.GetCameraContrainer()->Rotate((float)delta->x, (float)delta->y);
+			scene.GetCameraContainer()->Rotate((float)delta->x, (float)delta->y);
 		}
 	}
 

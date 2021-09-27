@@ -82,7 +82,7 @@ void Scene::AddPointLight(std::shared_ptr<PointLight> pLight, Rgph::RenderGraph&
 	pLight->LinkTechniques(rg);
 }
 
-CameraContainer& Scene::GetCameraContrainer() noexcept {
+CameraContainer& Scene::GetCameraContainer() noexcept {
 	return cameraContainer;
 }
 
@@ -104,7 +104,7 @@ std::shared_ptr<PointLight> Scene::GetLight(std::string name) noexcept {
 	}
 }
 
-void Scene::BindLights(Graphics& gfx) const noexcept {
+void Scene::BindLights(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept {
 	struct LightControl {
 		int lightNumber;
 		PointLightCBuf buffer[MAX_NUM_LIGHTS];
@@ -114,7 +114,10 @@ void Scene::BindLights(Graphics& gfx) const noexcept {
 	int i = 0;
 	for (auto& entity : lightSystem->entities) {
 		auto& light = gCoordinator.GetComponent<std::shared_ptr<PointLight>>(entity);
-		lightsBuffer.buffer[i++] = light->GetCBuf();
+		lightsBuffer.buffer[i] = light->GetCBuf();
+		const auto pos = DirectX::XMLoadFloat3(&lightsBuffer.buffer[i].pos);
+		DirectX::XMStoreFloat3(&lightsBuffer.buffer[i].pos, DirectX::XMVector3Transform(pos, view));
+		i++;
 	}
 	Bind::PixelConstantBuffer<LightControl> cbuf(gfx);
 	cbuf.Update(gfx, lightsBuffer);

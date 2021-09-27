@@ -37,10 +37,10 @@ public:
 	static void AddCamera(std::shared_ptr<Camera> pCam, Rgph::RenderGraph& rg) noexcept;
 	static void AddPointLight(std::shared_ptr<PointLight> pLight, Rgph::RenderGraph& rg) noexcept;
 
-	CameraContainer& GetCameraContrainer() noexcept;
+	CameraContainer& GetCameraContainer() noexcept;
 	std::shared_ptr<Model> GetModel(std::string name) noexcept;
 	std::shared_ptr<PointLight> GetLight(std::string name) noexcept;
-	void BindLights(Graphics& gfx) const noexcept;
+	void BindLights(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept;
 
 	void SpawnProbeWindow(std::string name) noexcept;
 	void SpawnHierarchyPanel(Window* wnd, Graphics& gfx, Rgph::RenderGraph& rg) noexcept;
