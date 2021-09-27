@@ -35,7 +35,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float4 sp
 	        // fragment to light vector data
             const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
 	        // attenuation
-            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL);
 	        // diffuse
             diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
             // specular

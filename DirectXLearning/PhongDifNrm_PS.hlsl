@@ -25,42 +25,79 @@ SamplerState splr : register(s0);
 
 float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 viewTan : Tangent, float3 viewBitan : Bitangent, float2 tc : Texcoord, float4 spos : ShadowPosition) : SV_Target
 {
+   // float3 diffuse;
+   // float3 specular;
+   // float4 color;
+
+   // // normalize the mesh normal
+   // viewNormal = normalize(viewNormal);
+   // // replace normal with mapped if normal mapping enabled
+   // if (useNormalMap)
+   // {
+   //     const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
+   //     viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
+   // }
+
+   // const float shadowLevel = Shadow(spos);
+   // for (int i = 0; i < numLights; i++)
+   // {
+   //     diffuse = specular = 0.0f;
+   //     if (shadowLevel != 0.0f)
+   //     {
+   //         // fragment to light vector data
+   //         const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
+   //         // attenuation
+   //         const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+   //         // diffuse
+   //         diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
+   //         // specular
+   //         specular = Speculate(lights[i].diffuseColor * lights[i].diffuseIntensity * specularColor,
+   //         specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularGloss);
+
+   //         diffuse *= shadowLevel;
+   //         specular *= shadowLevel;
+   //     }
+
+   //     color += float4(saturate((diffuse + lights[i].ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+   // }
+   // // final color
+   // return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), 1.0f) : color;
+    
+
     float3 diffuse;
     float3 specular;
-    float4 color;
-
-    // normalize the mesh normal
-    viewNormal = normalize(viewNormal);
-    // replace normal with mapped if normal mapping enabled
-    if (useNormalMap)
-    {
-        const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
-        viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
-    }
-
+    
+    // shadow map test
     const float shadowLevel = Shadow(spos);
-    for (int i = 0; i < numLights; i++)
+    if (shadowLevel != 0.0f)
+    {
+        // normalize the mesh normal
+        viewNormal = normalize(viewNormal);
+        // replace normal with mapped if normal mapping enabled
+        if (useNormalMap)
+        {
+            const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
+            viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
+        }
+	    // fragment to light vector data
+        const LightVectorData lv = CalculateLightVectorData(lights[0].viewLightPos, viewFragPos);
+	    // attenuation
+        const float att = Attenuate(lights[0].attConst, lights[0].attLin, lights[0].attQuad, lv.distToL);
+	    // diffuse
+        diffuse = Diffuse(lights[0].diffuseColor, lights[0].diffuseIntensity, att, lv.dirToL, viewNormal);
+        // specular
+        specular = Speculate(
+            lights[0].diffuseColor * lights[0].diffuseIntensity * specularColor, specularWeight, viewNormal,
+            lv.vToL, viewFragPos, att, specularGloss
+        );
+        // scale by shadow level
+        diffuse *= shadowLevel;
+        specular *= shadowLevel;
+    }
+    else
     {
         diffuse = specular = 0.0f;
-        if (shadowLevel != 0.0f)
-        {
-	        // fragment to light vector data
-            const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
-	        // attenuation
-            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
-	        // diffuse
-            diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
-            // specular
-            specular = Speculate(lights[i].diffuseColor * lights[i].diffuseIntensity * specularColor,
-            specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularGloss);
-
-            diffuse *= shadowLevel;
-            specular *= shadowLevel;
-        }
-
-        color += float4(saturate((diffuse + lights[i].ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
     }
 	// final color
-    return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
-    
+    return float4(saturate((diffuse + lights[0].ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
 }

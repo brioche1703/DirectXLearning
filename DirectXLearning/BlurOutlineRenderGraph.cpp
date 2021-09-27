@@ -137,15 +137,15 @@ namespace Rgph {
 		  pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
 		  AppendPass(std::move(pass));
 		}
-		{
-			auto pass = std::make_unique<DepthTexturePass>(gfx, "shadowMapOverview");
-			pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "wireframe.depthStencil");
-			pass->SetSinkLinkage("shadowMapTexture", "shadowMap.map");
-			AppendPass(std::move(pass));
-		}
+		//{
+		//	auto pass = std::make_unique<DepthTexturePass>(gfx, "shadowMapOverview");
+		//	pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
+		//	pass->SetSinkLinkage("depthStencil", "wireframe.depthStencil");
+		//	pass->SetSinkLinkage("shadowMapTexture", "shadowMap.map");
+		//	AppendPass(std::move(pass));
+		//}
 
-		SetSinkTarget("backbuffer", "shadowMapTexture.renderTarget");
+		SetSinkTarget("backbuffer", "wireframe.renderTarget");
 		Finalize();
 	}
 

@@ -30,12 +30,12 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
 {
     float3 diffuse;
     float3 specularReflected;
-    float4 color;
-
-    // alpha testing
+    
+    // sample diffuse texture
     const float4 dtex = tex.Sample(splr, tc);
     
 #ifdef MASK_BOI
+    // bail if highly translucent
     clip(dtex.a < 0.1f ? -1 : 1);
     // flip normal when backface
     if (dot(viewNormal, viewFragPos) >= 0.0f)
@@ -43,59 +43,54 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float3 vi
         viewNormal = -viewNormal;
     }
 #endif
-
-    viewNormal = normalize(viewNormal);
-    // replace normal with mapped if normal mapping enabled
-    if (useNormalMap)
-    {
-        const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
-        viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
-    }
-
-    // specular parameter determination (mapped or uniform)
-    float specularPower = specularGloss;
-    const float4 specularSample = spec.Sample(splr, tc);
     
-    float3 specularReflectionColor;
-    if (useSpecularMap)
+    // shadow map test
+    const float shadowLevel = Shadow(spos);
+    if (shadowLevel != 0.0f)
     {
-        specularReflectionColor = specularSample.rgb;
+        // normalize the mesh normal
+        viewNormal = normalize(viewNormal);
+        // replace normal with mapped if normal mapping enabled
+        if (useNormalMap)
+        {
+            const float3 mappedNormal = MapNormal(normalize(viewTan), normalize(viewBitan), viewNormal, tc, nmap, splr);
+            viewNormal = lerp(viewNormal, mappedNormal, normalMapWeight);
+        }
+	    // fragment to light vector data
+        const LightVectorData lv = CalculateLightVectorData(lights[0].viewLightPos, viewFragPos);
+        // specular parameter determination (mapped or uniform)
+        float3 specularReflectionColor;
+        float specularPower = specularGloss;
+        const float4 specularSample = spec.Sample(splr, tc);
+        if (useSpecularMap)
+        {
+            specularReflectionColor = specularSample.rgb;
+        }
+        else
+        {
+            specularReflectionColor = specularColor;
+        }
+        if (useGlossAlpha)
+        {
+            specularPower = pow(2.0f, specularSample.a * 13.0f);
+        }
+	    // attenuation
+        const float att = Attenuate(lights[0].attConst, lights[0].attLin, lights[0].attQuad, lv.distToL);
+	    // diffuse light
+        diffuse = Diffuse(lights[0].diffuseColor, lights[0].diffuseIntensity, att, lv.dirToL, viewNormal);
+        // specular reflected
+        specularReflected = Speculate(
+            lights[0].diffuseColor * lights[0].diffuseIntensity * specularReflectionColor, specularWeight, viewNormal,
+            lv.vToL, viewFragPos, att, specularPower
+        );
+        // scale by shadow level
+        diffuse *= shadowLevel;
+        specularReflected *= shadowLevel;
     }
     else
     {
-        specularReflectionColor = specularColor;
-    }
-
-    if (useGlossAlpha)
-    {
-        specularPower = pow(2.0f, specularSample.a * 13.0f);
-    }
-    
-    const float shadowLevel = Shadow(spos);
-    for (int i = 0; i < numLights; i++)
-    {
         diffuse = specularReflected = 0.0f;
-        if (shadowLevel != 0.0f)
-        {
-            // fragment to light vector data
-            const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
-    
-            // attenuation
-            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
-    	    // diffuse light
-            diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
-
-            // specular reflected
-            specularReflected = Speculate(lights[i].diffuseColor * lights[i].diffuseIntensity * specularReflectionColor,
-            specularWeight, viewNormal, lv.vToL, viewFragPos, att, specularPower);
-
-            diffuse *= shadowLevel;
-            specularReflected *= shadowLevel;
-        }
-
-	    // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-        color += float4(saturate((diffuse + lights[i].ambient) * dtex.rgb + specularReflected), 1.0f);
     }
-    return gammaCorrectionEnabled ? float4(GammaCorrection(color.rgb), color.a) : color;
-
+	// final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
+    return float4(saturate((diffuse + lights[0].ambient) * dtex.rgb + specularReflected), 1.0f);
 }

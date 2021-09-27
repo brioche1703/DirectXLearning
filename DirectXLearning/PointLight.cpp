@@ -19,8 +19,8 @@ PointLight::PointLight(Graphics& gfx, std::string name, DirectX::XMFLOAT3 pos, D
 		color,
 		1.0f,
 		1.0f,
-		0.090f,
-		0.032f
+		0.025,
+		0.0030
 	};
 	Reset();
 	pCamera = std::make_shared<Camera>(gfx, "Light", cbData.pos, 0.0f, PI / 2.0f, true);

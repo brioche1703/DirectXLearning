@@ -26,8 +26,8 @@ App::App(const std::string& commandLine)
 	scene.AddModel("Sponza", wnd.Gfx(), rg, "src\\models\\Sponza\\sponza.obj", 1.0f / 15.0f);
 
 	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 1", dx::XMFLOAT3{ 10.0f, 18.0f, 0.0f }), rg);
-	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 2", dx::XMFLOAT3{ -10.0f, 18.0f, 0.0f }), rg);
-	scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 3", dx::XMFLOAT3{ 0.0f, 18.0f, 3.0f }), rg);
+	//scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 2", dx::XMFLOAT3{ -10.0f, 18.0f, 0.0f }), rg);
+	//scene.AddPointLight(std::make_shared<PointLight>(wnd.Gfx(), "Light 3", dx::XMFLOAT3{ 0.0f, 18.0f, 3.0f }), rg);
 
 	rg.BindShadowCamera(*scene.GetLight("Light 1")->ShareCamera());
 }

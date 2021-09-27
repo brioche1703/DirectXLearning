@@ -36,7 +36,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
             const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
 	
 	        // Diffuse attenuation
-            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL);
 	
 	        // Diffuse intensity
             diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);

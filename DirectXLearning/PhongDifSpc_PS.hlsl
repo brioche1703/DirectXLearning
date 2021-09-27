@@ -56,7 +56,7 @@ float4 main(float3 viewFragPos : Position, float3 viewNormal : Normal, float2 tc
         if (shadowLevel != 0.0f)
         {
             const LightVectorData lv = CalculateLightVectorData(lights[i].viewLightPos, viewFragPos);
-            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL, gammaCorrectionEnabled);
+            const float att = Attenuate(lights[i].attConst, lights[i].attLin, lights[i].attQuad, lv.distToL);
             diffuse = Diffuse(lights[i].diffuseColor, lights[i].diffuseIntensity, att, lv.dirToL, viewNormal);
             specularReflected = Speculate(lights[i].diffuseColor * specularReflectionColor, specularWeight, viewNormal,
                 lv.vToL, viewFragPos, att, specularPowerLoaded);
