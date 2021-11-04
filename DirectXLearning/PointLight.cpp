@@ -68,9 +68,9 @@ void PointLight::OnImguiRender(bool enable) noexcept {
 		const auto dcheck = [&dirtyPos](bool dirty) { dirtyPos = dirtyPos || dirty; };
 
 		ImGui::Text("Position");
-		dcheck(ImGui::SliderFloat("X", &cbData.pos.x, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
-		dcheck(ImGui::SliderFloat("Y", &cbData.pos.y, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
-		dcheck(ImGui::SliderFloat("Z", &cbData.pos.z, -60.0f, 60.0f, "%.1f", ImGuiSliderFlags_Logarithmic));
+		dcheck(ImGui::SliderFloat("X", &cbData.pos.x, -100.0f, 100.0f, "%.1f", ImGuiSliderFlags_None));
+		dcheck(ImGui::SliderFloat("Y", &cbData.pos.y, -100.0f, 100.0f, "%.1f", ImGuiSliderFlags_None));
+		dcheck(ImGui::SliderFloat("Z", &cbData.pos.z, -100.0f, 100.0f, "%.1f", ImGuiSliderFlags_None));
 
 		if (dirtyPos) {
 			pCamera->SetPos(cbData.pos);

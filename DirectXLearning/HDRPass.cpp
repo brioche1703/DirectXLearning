@@ -15,6 +15,7 @@ namespace Rgph {
 		AddBind(PixelShader::Resolve(gfx, "HDR_PS.cso"));
 
 		AddBindSink<RenderTarget>("hdrIn");
+		AddBindSink<Bind::Bindable>("hdrControl");
 		RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
 
 		RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));

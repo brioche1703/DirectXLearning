@@ -87,9 +87,21 @@ namespace Rgph {
 
 		// HDR Pass
 		{
+			{
+				Dcb::RawLayout lay;
+				lay.Add<Dcb::Bool>("hdrEnabled");
+				lay.Add<Dcb::Float>("hdrExposure");
+				Dcb::Buffer buf{ std::move(lay) };
+				buf["hdrEnabled"] = true;
+				buf["hdrExposure"] = 1.0f;
+				hdrControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4);
+				AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("hdrControl", hdrControl));
+			}
+
 			auto pass = std::make_unique<HDRPass>("hdr", gfx);
 			pass->SetSinkLinkage("hdrIn", "lambertian.renderTarget");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			pass->SetSinkLinkage("hdrControl", "$.hdrControl");
 			AppendPass(std::move(pass));
 		}
 
@@ -209,12 +221,22 @@ namespace Rgph {
 	void BlurOutlineRenderGraph::RenderShadowWindow(Graphics& gfx) {
 		if (ImGui::Begin("Settings")) {
 			ImGui::Text("General Settings");
+			ImGui::Separator();
+			ImGui::Text("Gamma Correction");
 			auto gammaCtrl = gammaCorrectionControl->GetBuffer();
-			bool gammaCorrectionChange = ImGui::Checkbox("Gamma Correction", &gammaCtrl["gammaCorrection"]);
+			bool gammaCorrectionChange = ImGui::Checkbox("Gamma Correction Enabled", &gammaCtrl["gammaCorrection"]);
 			if (gammaCorrectionChange) {
 				gammaCorrectionControl->SetBuffer(gammaCtrl);
 			}
 
+			ImGui::Separator();
+			ImGui::Text("HDR Correction");
+			auto hdrCtrl = hdrControl->GetBuffer();
+			bool hdrCtrlChange = ImGui::Checkbox("HDR Enabled", &hdrCtrl["hdrEnabled"]);
+			bool hdrExposureChange = ImGui::SliderFloat("Exposure", &hdrCtrl["hdrExposure"], 0.1f, 10.0f, "%.01f");
+			if (hdrCtrlChange || hdrExposureChange) {
+				hdrControl->SetBuffer(hdrCtrl);
+			}
 
 			ImGui::Separator();
 			ImGui::Text("Shadows Settings");
