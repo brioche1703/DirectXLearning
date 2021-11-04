@@ -160,6 +160,51 @@ namespace Bind {
 			pRes.Get(), &srvDesc, &pShaderResourceView));
 	}
 
+	void ShaderInputRenderTarget::Update(Graphics& gfx, ID3D11Texture2D* pTextureIn, std::optional<UINT> face) {
+		INFOMAN(gfx);
+
+		D3D11_TEXTURE2D_DESC textureDescIn;
+		pTextureIn->GetDesc(&textureDescIn);
+		width = textureDescIn.Width;
+		height = textureDescIn.Height;
+
+		// Texture resource
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = width;
+		textureDesc.Height = height;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+		wrl::ComPtr<ID3D11Texture2D> pTexture;
+		GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+			&textureDesc, nullptr, &pTexture));
+
+		// Target view
+		D3D11_RENDER_TARGET_VIEW_DESC targetViewDesc = {};
+		targetViewDesc.Format = textureDesc.Format;
+		targetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		targetViewDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+		GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(pTexture.Get(), &targetViewDesc, &pTargetView));
+
+		wrl::ComPtr<ID3D11Resource> pRes;
+		pTargetView->GetResource(&pRes);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = 1;
+
+		GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+			pRes.Get(), &srvDesc, &pShaderResourceView));
+	}
+
 	void ShaderInputRenderTarget::Bind(Graphics& gfx) noxnd {
 		INFOMAN_NOHR(gfx);
 		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
@@ -218,4 +263,21 @@ namespace Bind {
 		:
 		RenderTarget(gfx, pTexture, face)
 	{}
+
+	WindowSizeShaderInputRenderTarget::WindowSizeShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot) 
+		:
+		ShaderInputRenderTarget(gfx, width, height, slot),
+		Observer(gfx)
+	{}
+
+	void WindowSizeShaderInputRenderTarget::Update(const std::string& message) {
+			this->messageFromSubject = message;
+			if (messageFromSubject == "RESET") {
+				Reset();
+			}
+			else if (messageFromSubject == "UPDATE") {
+				Graphics& gfx = dynamic_cast<Graphics&>(subject);
+				ShaderInputRenderTarget::Update(gfx, gfx.GetBackBufferTexture());
+			}
+	}
 }

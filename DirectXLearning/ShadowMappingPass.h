@@ -76,7 +76,7 @@ namespace Rgph {
 				SetDepthBuffer(std::move(d));
 				const auto lookAt = pos + XMLoadFloat3(&cameraDirections[i]);
 				gfx.SetCamera(XMMatrixLookAtLH(pos, lookAt, XMLoadFloat3(&cameraUps[i])));
-				Bind::Viewport vp(gfx, size, size, 0.0f, i * size);
+				Bind::Viewport vp(gfx, size, size, 0.0f, (float)i * size);
 				vp.Bind(gfx);
 
 				RenderQueuePass::Execute(gfx);

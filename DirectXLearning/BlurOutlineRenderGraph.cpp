@@ -16,6 +16,7 @@
 #include "ShadowRasterizer.h"
 #include "SkyboxPass.h"
 #include "DepthTexturePass.h"
+#include "HDRPass.h"
 
 #include "external/imgui/imgui.h"
 
@@ -34,16 +35,20 @@ namespace Rgph {
 			pass->SetSinkLinkage("buffer", "$.masterDepth");
 			AppendPass(std::move(pass));
 		}
+
 		// Shadow Rasterizer
 		{
 			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>(gfx, 10000, 0.0005f, 1.0f);
 			AddGlobalSource(DirectBindableSource<Bind::ShadowRasterizer>::Make("shadowRasterizer", shadowRasterizer));
 		}
+
+		// Shadow Mapping Pass
 		{
 			auto pass = std::make_unique<ShadowMappingPass>(gfx, "shadowMap");
 			pass->SetSinkLinkage("shadowRasterizer", "$.shadowRasterizer");
 			AppendPass(std::move(pass));
 		}
+
 		// Shadow control buffer and sampler
 		{
 			Dcb::RawLayout lay;
@@ -61,6 +66,8 @@ namespace Rgph {
 			shadowSampler = std::make_shared<Bind::ShadowSampler>(gfx);
 			AddGlobalSource(DirectBindableSource<Bind::ShadowSampler>::Make("shadowSampler", shadowSampler));
 		}
+
+		// Lambertian Pass
 		{
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Bool>("gammaCorrection");
@@ -68,21 +75,33 @@ namespace Rgph {
 			buf["gammaCorrection"] = true;
 			gammaCorrectionControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 3);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("gammaCorrectionControl", gammaCorrectionControl));
-			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
+
+			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian", gfx.GetWidth(), gfx.GetHeight());
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
-			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("gammaCorrectionControl", "$.gammaCorrectionControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
+
+		// HDR Pass
+		{
+			auto pass = std::make_unique<HDRPass>("hdr", gfx);
+			pass->SetSinkLinkage("hdrIn", "lambertian.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			AppendPass(std::move(pass));
+		}
+
+		// Skybox Pass
 		{
 			auto pass = std::make_unique<SkyboxPass>(gfx, "skybox");
-			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "hdr.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "lambertian.depthStencil");
 			AppendPass(std::move(pass));
 		}
+
+		// Outline Pass
 		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>(gfx, "outlineMask");
 			pass->SetSinkLinkage("depthStencil", "skybox.depthStencil");
@@ -131,12 +150,15 @@ namespace Rgph {
 			pass->SetSinkLinkage("direction", "$.blurDirection");
 			AppendPass(std::move(pass));
 		}
+
+		// Wireframe Pass (camera indicator)
 		{
 		  auto pass = std::make_unique<WireframePass>(gfx, "wireframe");
 		  pass->SetSinkLinkage("renderTarget", "vertical.renderTarget");
 		  pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
 		  AppendPass(std::move(pass));
 		}
+		// Shadow Map Viewport Overview Pass
 		//{
 		//	auto pass = std::make_unique<DepthTexturePass>(gfx, "shadowMapOverview");
 		//	pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");

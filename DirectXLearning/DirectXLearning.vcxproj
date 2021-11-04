@@ -223,6 +223,7 @@
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="HDRPass.cpp" />
     <ClCompile Include="HorizontalBlurPass.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
+    <ClInclude Include="HDRPass.h" />
     <ClInclude Include="HorizontalBlurPass.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="IncludeWin.h" />
@@ -352,6 +354,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="NormalMapTwerker.h" />
     <ClInclude Include="NullPixelShader.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="OutlineDrawingPass.h" />
     <ClInclude Include="OutlineMaskGenerationPass.h" />
     <ClInclude Include="Pass.h" />
@@ -460,6 +463,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="HDR_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="LightVectorData.hlsli">

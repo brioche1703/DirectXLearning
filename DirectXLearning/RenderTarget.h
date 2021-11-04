@@ -2,6 +2,7 @@
 
 #include "Bindable.h"
 #include "BufferResource.h"
+#include "Observer.h"
 
 #include <optional>
 
@@ -38,12 +39,21 @@ namespace Bind {
 	class ShaderInputRenderTarget : public RenderTarget {
 	public:
 		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot);
+
 		void Bind(Graphics& gfx) noxnd override;
 		Surface ToSurface(Graphics& gfx) const;
+		void Update(Graphics& gfx, ID3D11Texture2D* pTexture, std::optional<UINT> face = {});
 
 	private:
 		UINT slot;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+	};
+
+	class WindowSizeShaderInputRenderTarget : public ShaderInputRenderTarget, public Obs::Observer {
+	public:
+		WindowSizeShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot);
+
+		void Update(const std::string& message) override;
 	};
 
 	class OutputOnlyRenderTarget : public RenderTarget {

@@ -326,7 +326,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		if (!mouse.RawEnabled()) {
 			break;
 		}
-		UINT size;
+		UINT size = 0;
 		if (GetRawInputData(
 			reinterpret_cast<HRAWINPUT>(lParam),
 			RID_INPUT,
@@ -366,7 +366,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-BOOL Window::WindowResize(HWND hWnd, WPARAM wParam, LPARAM lParam) noexcept {
+void Window::WindowResize(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 	width = LOWORD(lParam);
 	height = HIWORD(lParam) - 100;
 

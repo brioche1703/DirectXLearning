@@ -4,6 +4,7 @@
 #include "DirectXException.h"
 #include "DxgiInfoManager.h"
 #include "ConditionalNoexcept.h"
+#include "Observer.h"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -17,7 +18,7 @@ namespace Bind {
 	class OutputOnlyDepthStencil;
 }
 
-class Graphics {
+class Graphics : public Obs::Subject {
 	friend class GraphicsResource;
 public:
 	class Exception : public DirectXException {
@@ -84,6 +85,7 @@ public:
 	void SetWidth(UINT width) noexcept;
 	void SetHeight(UINT height) noexcept;
 	void Resize(UINT width, UINT height) noexcept;
+	ID3D11Texture2D* GetBackBufferTexture() noexcept;
 	std::string GetGpuName() const noexcept;
 	std::shared_ptr<Bind::RenderTarget> GetTarget();
 	std::shared_ptr<Bind::OutputOnlyDepthStencil> GetDepthStencil();

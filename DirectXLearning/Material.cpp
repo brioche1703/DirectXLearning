@@ -174,7 +174,6 @@ modelPath(path.string())
 		}
 		techniques.push_back(std::move(map));
 	}
-
 }
 
 dxLearning::VertexBuffer Material::ExtractVertices(const aiMesh& mesh) const noexcept {

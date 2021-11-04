@@ -9,26 +9,33 @@
 #include "ShadowSampler.h"
 #include "Sampler.h"
 #include "Viewport.h"
+#include "BindableCommon.h"
 
 namespace Rgph {
+	using namespace Bind;
+
 	class LambertianPass : public RenderQueuePass {
 	public:
-		LambertianPass(Graphics& gfx, std::string name)
+		LambertianPass(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight)
 			:
 			RenderQueuePass(std::move(name)),
 			pShadowCBuf(std::make_shared<Bind::ShadowCameraCBuf>(gfx))
 		{
-			using namespace Bind;
 			AddBind(pShadowCBuf);
-			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
+
+			renderTarget = std::make_shared<WindowSizeShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
+
 			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
+
 			AddBindSink<Bind::Bindable>("shadowMap");
 			AddBind(std::make_shared<Bind::ShadowSampler>(gfx));
 			AddBindSink<Bind::Bindable>("shadowControl");
 			AddBindSink<Bind::Bindable>("gammaCorrectionControl");
 			AddBindSink<Bind::Bindable>("shadowSampler");
-			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
+
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
+
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 		}
 

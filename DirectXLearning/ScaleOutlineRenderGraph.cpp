@@ -20,7 +20,7 @@ namespace Rgph {
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
+			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian", gfx.GetWidth(), gfx.GetHeight());
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));

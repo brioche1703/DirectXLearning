@@ -144,6 +144,9 @@ void Graphics::Resize(UINT widthIn, UINT heightIn) noexcept {
 		ID3D11RenderTargetView* nullViews[] = { nullptr };
 		pContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
 		pTarget->Reset();
+		CreateMessage("RESET");
+		Notify();
+
 		pDepthStencil->Reset();
 		pContext->Flush();
 
@@ -156,6 +159,8 @@ void Graphics::Resize(UINT widthIn, UINT heightIn) noexcept {
 		wrl::ComPtr<ID3D11Texture2D> pBackBuffer;
 		GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer));
 		pTarget->Update(*this, pBackBuffer.Get());
+		CreateMessage("UPDATE");
+		Notify();
 		pDepthStencil->Update(*this, pBackBuffer.Get());
 
 		D3D11_VIEWPORT vp;
@@ -168,6 +173,17 @@ void Graphics::Resize(UINT widthIn, UINT heightIn) noexcept {
 		pContext->RSSetViewports(1u, &vp);
 	}
 }
+
+ID3D11Texture2D* Graphics::GetBackBufferTexture() noexcept {
+	HRESULT hr;
+	if (pSwapChain) {
+		wrl::ComPtr<ID3D11Texture2D> pBackBuffer;
+		GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &pBackBuffer));
+		return pBackBuffer.Get();
+	}
+	return nullptr;
+}
+
 
 std::string Graphics::GetGpuName() const noexcept {
 	return gpuName;

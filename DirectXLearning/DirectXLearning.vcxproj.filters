@@ -85,6 +85,9 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{64bf7f52-0d64-4de1-90e1-a011e1e2d5c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Observer">
+      <UniqueIdentifier>{a8f62f11-6fc4-4315-a62c-f99212ca76a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -340,6 +343,9 @@
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files\Jobber\PassLib</Filter>
+    </ClCompile>
+    <ClCompile Include="HDRPass.cpp">
       <Filter>Source Files\Jobber\PassLib</Filter>
     </ClCompile>
   </ItemGroup>
@@ -731,6 +737,12 @@
     <ClInclude Include="ModelSystem.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="HDRPass.h">
+      <Filter>Header Files\Jobber\PassLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Header Files\Observer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXLearning.rc">
@@ -879,6 +891,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PhongDifMskNrm_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="HDR_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@ App::App(const std::string& commandLine)
 	wnd(1920, 1080, "DirectX Learning"),
 	scriptCommander(TokenizeQuoted(commandLine)) 
 {
-	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ 0.0f, 8.0f, 0.0f }, 0.0f, PI / 2.0f), rg);
+	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera A", dx::XMFLOAT3{ 51.0f, 27.0f, -6.0f }, PI / 180.0f * 13.0f, PI / 180.0f * -88.0f), rg);
 	scene.AddCamera(std::make_shared<Camera>(wnd.Gfx(), "Camera B", dx::XMFLOAT3{ -13.5f, 28.8f, -6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f), rg);
 
 	scene.AddModel("Nano", wnd.Gfx(), rg, "src\\models\\nano_textured\\nanosuit.obj", 1.5f);
